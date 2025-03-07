@@ -15,8 +15,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.7</maven.compiler.source>
-    <maven.compiler.target>1.7</maven.compiler.target>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
   </properties>
 
   <dependencies>
@@ -56,11 +56,12 @@
       <artifactId>jooq</artifactId>
       <version>3.20.1</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-core -->
+    <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-database-postgresql -->
     <dependency>
       <groupId>org.flywaydb</groupId>
-      <artifactId>flyway-core</artifactId>
+      <artifactId>flyway-database-postgresql</artifactId>
       <version>11.3.4</version>
+      <scope>runtime</scope>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
     <dependency>
@@ -75,8 +76,6 @@
       <version>1.5.17</version>
       <scope>compile</scope>
     </dependency>
-
-
   </dependencies>
 
   <build>
@@ -124,6 +123,17 @@
         <plugin>
           <artifactId>maven-project-info-reports-plugin</artifactId>
           <version>3.0.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.flywaydb</groupId>
+          <artifactId>flyway-maven-plugin</artifactId>
+          <version>11.3.4</version>
+          <configuration>
+            <url>jdbc:postgresql://localhost:5432/marcusbike</url>
+            <user>postgres</user>
+            <password>admin</password>
+            <schemas>public</schemas>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
