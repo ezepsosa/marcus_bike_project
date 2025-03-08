@@ -1,5 +1,5 @@
-CREATE TYPE rol AS ENUM ('user', 'admin');
-CREATE TYPE category AS ENUM ('frame_type', 'frame_finish', 'wheel_type', 'rim_color', 'chain_type');
+CREATE TYPE user_rol AS ENUM ('user', 'admin');
+CREATE TYPE product_part_category AS ENUM ('frame_type', 'frame_finish', 'wheel_type', 'rim_colour', 'chain_type');
 
 
 create table app_user (
