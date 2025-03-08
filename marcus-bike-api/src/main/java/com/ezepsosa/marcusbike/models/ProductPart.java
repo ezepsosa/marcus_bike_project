@@ -1,4 +1,4 @@
-package com.ezepsosa.models;
+package com.ezepsosa.marcusbike.models;
 
 public class ProductPart {
 
