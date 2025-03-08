@@ -1,4 +1,4 @@
-package com.ezepsosa.models;
+package com.ezepsosa.marcusbike.models;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
