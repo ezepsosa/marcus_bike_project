@@ -50,12 +50,6 @@
       <artifactId>HikariCP</artifactId>
       <version>6.2.1</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.jooq/jooq -->
-    <dependency>
-      <groupId>org.jooq</groupId>
-      <artifactId>jooq</artifactId>
-      <version>3.20.1</version>
-    </dependency>
     <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-database-postgresql -->
     <dependency>
       <groupId>org.flywaydb</groupId>
