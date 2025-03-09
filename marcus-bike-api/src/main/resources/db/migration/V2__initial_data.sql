@@ -1,4 +1,4 @@
-INSERT INTO app_user (username, email, password_hash, rol) VALUES
+INSERT INTO app_user (username, email, password_hash, user_role) VALUES
 ('marcus', 'marcus@admin.com', 'password_hash_1', 'admin'),
 ('john', 'johndoe@example.com', 'password_hash_2', 'user');
 
@@ -35,7 +35,7 @@ INSERT INTO product_part (product_id, part_option, is_available, base_price, cat
 (2, 'Single-speed chain', true, 20, 'chain_type'),
 (2, '8-speed chain', true, 20, 'chain_type');
 
-INSERT INTO product_part_conditions (part_id, dependant_part_id, price_adjustment, is_restriction) VALUES 
+INSERT INTO product_part_condition (part_id, dependant_part_id, price_adjustment, is_restriction) VALUES 
 (7,2, 0, true),
 (7,3, 0, true),
 (8,10, 0, true),
