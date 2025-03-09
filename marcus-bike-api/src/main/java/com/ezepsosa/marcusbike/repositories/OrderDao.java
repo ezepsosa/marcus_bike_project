@@ -10,7 +10,6 @@ import java.util.List;
 import com.ezepsosa.marcusbike.config.HikariDatabaseConfig;
 import com.ezepsosa.marcusbike.models.Order;
 import com.ezepsosa.marcusbike.models.OrderLine;
-import com.ezepsosa.marcusbike.models.ProductPartCondition;
 import com.ezepsosa.marcusbike.models.User;
 import com.ezepsosa.marcusbike.models.UserRole;
 
