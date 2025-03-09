@@ -6,37 +6,37 @@ import java.util.ArrayList;
 public class Order {
 
     private Long id;
-    private Integer appUserId;
-    private LocalDateTime creationDate;
-    private Double totalPrice;
+    private User user;
+    private Double finalPrice;
+    private LocalDateTime createdAt;
     private ArrayList<OrderLine> orderLines;
 
     public Long getId() {
         return id;
     }
 
-    public Integer getAppUserId() {
-        return appUserId;
+    public User getUser() {
+        return user;
     }
 
-    public LocalDateTime getCreationDate() {
-        return creationDate;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public Double getTotalPrice() {
-        return totalPrice;
+    public Double getFinalPrice() {
+        return finalPrice;
     }
 
     public ArrayList<OrderLine> getOrderLines() {
         return orderLines;
     }
 
-    public void setAppUserId(Integer appUserId) {
-        this.appUserId = appUserId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public void setTotalPrice(Double totalPrice) {
-        this.totalPrice = totalPrice;
+    public void setFinalPrice(Double finalPrice) {
+        this.finalPrice = finalPrice;
     }
 
     public void setOrderLines(ArrayList<OrderLine> orderLines) {
@@ -46,27 +46,27 @@ public class Order {
     public Order() {
     }
 
-    public Order(Long id, Integer appUserId, LocalDateTime creationDate, Double totalPrice,
+    public Order(Long id, User user, LocalDateTime createdAt, Double finalPrice,
             ArrayList<OrderLine> orderLines) {
         this.id = id;
-        this.appUserId = appUserId;
-        this.creationDate = creationDate;
-        this.totalPrice = totalPrice;
+        this.user = user;
+        this.createdAt = createdAt;
+        this.finalPrice = finalPrice;
         this.orderLines = orderLines;
     }
 
-    public Order(Integer appUserId, Double totalPrice,
+    public Order(User user, Double finalPrice,
             ArrayList<OrderLine> orderLines) {
-        this.appUserId = appUserId;
-        this.totalPrice = totalPrice;
+        this.user = user;
+        this.finalPrice = finalPrice;
         this.orderLines = orderLines;
     }
 
     // Method for debugging and logs
     @Override
     public String toString() {
-        return "Order [id=" + id + ", appUserId=" + appUserId + ", creationDate=" + creationDate + ", totalPrice="
-                + totalPrice + ", orderLines=" + orderLines + "]";
+        return "Order [id=" + id + ", appUserId=" + user + ", creationDate=" + createdAt + ", totalPrice="
+                + finalPrice + ", orderLines=" + orderLines + "]";
     }
 
 }

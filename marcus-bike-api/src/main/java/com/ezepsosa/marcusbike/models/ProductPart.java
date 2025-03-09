@@ -1,15 +1,23 @@
 package com.ezepsosa.marcusbike.models;
 
+import java.time.LocalDateTime;
+
 public class ProductPart {
 
     private Long id;
+    private Product product;
     private String partOption;
     private Boolean isAvailable;
     private Double basePrice;
     private ProductPartCategory category;
+    private LocalDateTime createdAt;
 
     public Long getId() {
         return id;
+    }
+
+    public Product getProduct() {
+        return product;
     }
 
     public String getPartOption() {
@@ -26,6 +34,14 @@ public class ProductPart {
 
     public ProductPartCategory getCategory() {
         return category;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public void setPartOption(String partOption) {
@@ -47,16 +63,20 @@ public class ProductPart {
     public ProductPart() {
     }
 
-    public ProductPart(Long id, String partOption, Boolean isAvailable, Double basePrice,
-            ProductPartCategory category) {
+    public ProductPart(Long id, Product product, String partOption, Boolean isAvailable, Double basePrice,
+            ProductPartCategory category, LocalDateTime createdAt) {
         this.id = id;
+        this.product = product;
         this.partOption = partOption;
         this.isAvailable = isAvailable;
         this.basePrice = basePrice;
         this.category = category;
+        this.createdAt = createdAt;
     }
 
-    public ProductPart(String partOption, Boolean isAvailable, Double basePrice, ProductPartCategory category) {
+    public ProductPart(Product product, String partOption, Boolean isAvailable, Double basePrice,
+            ProductPartCategory category) {
+        this.product = product;
         this.partOption = partOption;
         this.isAvailable = isAvailable;
         this.basePrice = basePrice;
@@ -66,8 +86,9 @@ public class ProductPart {
     // Method for debugging and logs
     @Override
     public String toString() {
-        return "ProductPart [id=" + id + ", partOption=" + partOption + ", isAvailable=" + isAvailable + ", basePrice="
-                + basePrice + ", category=" + category + "]";
+        return "ProductPart [id=" + id + ", product=" + product + ", partOption=" + partOption + ", isAvailable="
+                + isAvailable + ", basePrice=" + basePrice + ", category=" + category + ", createdAt=" + createdAt
+                + "]";
     }
 
 }

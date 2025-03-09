@@ -1,12 +1,14 @@
 package com.ezepsosa.marcusbike.models;
 
+import java.time.LocalDateTime;
+
 public class OrderLine {
 
     private Long id;
     private Order order;
     private Product product;
     private Integer quantity;
-    private Double price;
+    private LocalDateTime createdAt;
 
     public Long getId() {
         return id;
@@ -24,8 +26,8 @@ public class OrderLine {
         return quantity;
     }
 
-    public Double getPrice() {
-        return price;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
     public void setOrder(Order order) {
@@ -40,33 +42,28 @@ public class OrderLine {
         this.quantity = quantity;
     }
 
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
     public OrderLine() {
     }
 
-    public OrderLine(Long id, Order order, Product product, Integer quantity, Double price) {
+    public OrderLine(Long id, Order order, Product product, Integer quantity, LocalDateTime createdAt) {
         this.id = id;
         this.order = order;
         this.product = product;
         this.quantity = quantity;
-        this.price = price;
+        this.createdAt = createdAt;
     }
 
-    public OrderLine(Order order, Product product, Integer quantity, Double price) {
+    public OrderLine(Order order, Product product, Integer quantity) {
         this.order = order;
         this.product = product;
         this.quantity = quantity;
-        this.price = price;
     }
 
     // Method for debugging and logs
     @Override
     public String toString() {
         return "OrderLine [id=" + id + ", order=" + order + ", product=" + product + ", quantity=" + quantity
-                + ", price=" + price + "]";
+                + ", price=" + createdAt + "]";
     }
 
 }

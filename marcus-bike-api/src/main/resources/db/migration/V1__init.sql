@@ -8,7 +8,7 @@ create table app_user (
     email VARCHAR(255) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    rol user_role);
+    user_role user_role);
 
 create table app_order (
 	id SERIAL PRIMARY KEY,
@@ -45,11 +45,12 @@ create table product_part(
     CONSTRAINT fk_product_part_product FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE CASCADE
     );
 
-create table product_part_conditions(
+create table product_part_condition(
     part_id INTEGER NOT NULL,
     dependant_part_id INTEGER NOT NULL,
     price_adjustment DECIMAL(10,2) DEFAULT 0,
     is_restriction BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (part_id, dependant_part_id),
     FOREIGN KEY (part_id) REFERENCES product_part(id) ON DELETE CASCADE,
     FOREIGN KEY (dependant_part_id) REFERENCES product_part(id) ON DELETE CASCADE,
