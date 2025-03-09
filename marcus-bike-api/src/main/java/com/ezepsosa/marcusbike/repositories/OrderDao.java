@@ -13,7 +13,7 @@ import com.ezepsosa.marcusbike.models.OrderLine;
 import com.ezepsosa.marcusbike.models.User;
 import com.ezepsosa.marcusbike.models.UserRole;
 
-public class OrderDao {
+public class OrderDAO {
 
     public List<Order> getAll() {
         String SQL_GET_ALL_QUERY = "SELECT appor.*, u.id AS user_id, u.username, u.email, u.password_hash, u.user_role, u.created_at as user_created_at FROM app_order appor JOIN app_user u ON appor.app_user_id = u.id ";
@@ -127,7 +127,7 @@ public class OrderDao {
                         rs.getString("password_hash"),
                         UserRole.valueOf(rs.getString("user_role").toUpperCase()),
                         rs.getTimestamp("user_created_at").toLocalDateTime()),
-                rs.getTimestamp("created_at").toLocalDateTime(),
-                rs.getDouble("final_price"), new ArrayList<OrderLine>());
+                rs.getDouble("final_price"), new ArrayList<OrderLine>(),
+                rs.getTimestamp("created_at").toLocalDateTime());
     }
 }

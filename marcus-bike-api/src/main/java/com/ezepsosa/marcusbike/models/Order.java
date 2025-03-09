@@ -46,8 +46,8 @@ public class Order {
     public Order() {
     }
 
-    public Order(Long id, User user, LocalDateTime createdAt, Double finalPrice,
-            ArrayList<OrderLine> orderLines) {
+    public Order(Long id, User user, Double finalPrice,
+            ArrayList<OrderLine> orderLines, LocalDateTime createdAt) {
         this.id = id;
         this.user = user;
         this.createdAt = createdAt;
