@@ -6,20 +6,34 @@ INSERT INTO product (product_name) VALUES
 ('bike TN'),
 ('bike MB');
 
-INSERT INTO product_part (part_option, is_available, base_price, category) VALUES
-('Full-suspension', true, 130, 'frame_type'),
-('diamond', true, 100, 'frame_type'),
-('Step-through', true, 80, 'frame_type'),
-('Matte', true, 35, 'frame_finish'),
-('Shiny', true, 15, 'frame_finish'),
-('Road wheels', true, 15, 'wheel_type'),
-('Mountain wheels', true, 15, 'wheel_type'),
-('Fat bike wheels', true, 15, 'wheel_type'),
-('Red', true, 15, 'rim_color'),
-('Black', true, 15, 'rim_color'),
-('Blue', true, 15, 'rim_color'),
-('Single-speed chain', true, 15, 'chain_type'),
-('8-speed chain', true, 15, 'chain_type');
+INSERT INTO product_part (product_id, part_option, is_available, base_price, category) VALUES
+(1, 'Full-suspension', true, 130, 'frame_type'),
+(1, 'Diamond', true, 100, 'frame_type'),
+(1, 'Step-through', true, 80, 'frame_type'),
+(1, 'Matte', true, 35, 'frame_finish'),
+(1, 'Shiny', true, 15, 'frame_finish'),
+(1, 'Road wheels', true, 15, 'wheel_type'),
+(1, 'Mountain wheels', true, 15, 'wheel_type'),
+(1, 'Fat bike wheels', true, 15, 'wheel_type'),
+(1, 'Red', true, 15, 'rim_colour'),
+(1, 'Black', true, 15, 'rim_colour'),
+(1, 'Blue', true, 15, 'rim_colour'),
+(1, 'Single-speed chain', true, 15, 'chain_type'),
+(1, '8-speed chain', true, 15, 'chain_type'),
+
+(2, 'Full-suspension', true, 140, 'frame_type'),
+(2, 'Diamond', true, 110, 'frame_type'),
+(2, 'Step-through', true, 85, 'frame_type'),
+(2, 'Matte', true, 40, 'frame_finish'),
+(2, 'Shiny', true, 20, 'frame_finish'),
+(2, 'Road wheels', true, 20, 'wheel_type'),
+(2, 'Mountain wheels', true, 20, 'wheel_type'),
+(2, 'Fat bike wheels', true, 20, 'wheel_type'),
+(2, 'Red', true, 20, 'rim_colour'),
+(2, 'Black', true, 20, 'rim_colour'),
+(2, 'Blue', true, 20, 'rim_colour'),
+(2, 'Single-speed chain', true, 20, 'chain_type'),
+(2, '8-speed chain', true, 20, 'chain_type');
 
 INSERT INTO product_part_conditions (part_id, dependant_part_id, price_adjustment, is_restriction) VALUES 
 (7,2, 0, true),
@@ -27,3 +41,20 @@ INSERT INTO product_part_conditions (part_id, dependant_part_id, price_adjustmen
 (8,10, 0, true),
 (4,1, 15, false);
 
+INSERT INTO app_order (app_user_id, final_price) VALUES
+(1, 500),
+(2, 450);
+
+INSERT INTO order_line (app_order_id, product_id, quantity) VALUES
+(1, 1, 1),
+(1, 2, 2),
+(2, 1, 1);
+
+INSERT INTO order_line_product_part (order_line_id, product_part_id, quantity, final_price) VALUES
+(1, 1, 1, 130),
+(1, 5, 1, 15),
+(1, 6, 1, 15),
+(2, 2, 2, 200),
+(2, 7, 2, 30),
+(3, 3, 1, 80),
+(3, 8, 1, 15);
