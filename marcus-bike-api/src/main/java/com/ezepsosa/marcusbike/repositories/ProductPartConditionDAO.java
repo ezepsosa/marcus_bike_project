@@ -52,7 +52,7 @@ public class ProductPartConditionDAO {
 
     }
 
-    public Long insert(ProductPartCondition productPartCondition) {
+    public Boolean insert(ProductPartCondition productPartCondition) {
 
         String SQL_INSERT_QUERY = "INSERT INTO product_part_condition (part_id, dependant_part_id, price_adjustment, is_restriction) VALUES (?, ?, ?, ?) RETURNING part_id";
 
@@ -67,18 +67,12 @@ public class ProductPartConditionDAO {
 
             Integer affectedRows = pst.executeUpdate();
 
-            if (affectedRows > 0) {
-                try (ResultSet generatedValues = pst.getGeneratedKeys()) {
-                    if (generatedValues.next()) {
-                        return generatedValues.getLong(1);
-                    }
-                }
-            }
+            return affectedRows > 0;
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return false;
 
     }
 
