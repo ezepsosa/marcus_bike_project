@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ezepsosa.marcusbike.config.HikariDatabaseConfig;
-import com.ezepsosa.marcusbike.models.OrderLine;
 import com.ezepsosa.marcusbike.models.OrderLineProductPart;
 import com.ezepsosa.marcusbike.models.Product;
 import com.ezepsosa.marcusbike.models.ProductPart;
