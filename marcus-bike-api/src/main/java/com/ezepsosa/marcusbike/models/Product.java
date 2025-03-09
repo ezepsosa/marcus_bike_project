@@ -1,9 +1,12 @@
 package com.ezepsosa.marcusbike.models;
 
+import java.time.LocalDateTime;
+
 public class Product {
 
     private Long id;
     private String productName;
+    private LocalDateTime createdAt;
 
     public Long getId() {
         return id;
@@ -13,6 +16,10 @@ public class Product {
         return productName;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
     public void setProductName(String productName) {
         this.productName = productName;
     }
@@ -20,9 +27,10 @@ public class Product {
     public Product() {
     }
 
-    public Product(Long id, String productName) {
+    public Product(Long id, String productName, LocalDateTime createdAt) {
         this.id = id;
         this.productName = productName;
+        this.createdAt = createdAt;
     }
 
     public Product(String productName) {

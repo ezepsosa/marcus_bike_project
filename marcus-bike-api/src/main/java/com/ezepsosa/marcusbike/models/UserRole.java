@@ -1,6 +1,6 @@
 package com.ezepsosa.marcusbike.models;
 
-public enum UserRol {
+public enum UserRole {
 
     ADMIN, USER
 
