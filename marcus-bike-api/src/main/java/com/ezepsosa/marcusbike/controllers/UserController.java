@@ -82,7 +82,7 @@ public class UserController implements RouteRegistrar {
                 }
                 logger.info("User created with ID {}", userId);
                 userToInsert.setId(userId);
-                JsonResponseUtil.sendJsonResponse(exchange, userId);
+                JsonResponseUtil.sendJsonResponse(exchange, userId, 201);
 
             } catch (Exception e) {
                 logger.error("Error processing request", e);
@@ -108,7 +108,7 @@ public class UserController implements RouteRegistrar {
                 Boolean updated = userService.update(userToUpdate);
                 if (!updated) {
                     logger.error("Error updating user");
-                    JsonResponseUtil.sendErrorResponse(exchange, 500, "User not updated");
+                    JsonResponseUtil.sendErrorResponse(exchange, 204, "User not updated");
                     return;
                 }
                 logger.info("User updated with ID {}", userToUpdate.getId());
@@ -138,6 +138,6 @@ public class UserController implements RouteRegistrar {
             JsonResponseUtil.sendErrorResponse(exchange, 404, "User not deleted or not found");
         }
         logger.info("User with ID {} found", userId);
-        JsonResponseUtil.sendJsonResponse(exchange, deleted);
+        JsonResponseUtil.sendJsonResponse(exchange, "Succesfully deleted");
     }
 }

@@ -16,7 +16,7 @@ public class UserDAO {
     private final String SQL_GET_ALL_QUERY = "SELECT * FROM app_user";
     private final String SQL_GET_ID_QUERY = "SELECT * FROM app_user WHERE id = (?)";
     private final String SQL_INSERT_QUERY = "INSERT INTO app_user (username, email, password_hash, user_role) VALUES (?, ?, ?, ?::user_role) RETURNING id";
-    private final String SQL_UPDATE_QUERY = "UPDATE app_user SET username = ?, email = ?, password_hash = ?, user_role = ?::user_role WHERE id = ?";
+    private final String SQL_UPDATE_QUERY = "UPDATE app_user  SET username = ?, email = ?, password_hash = ?, user_role = ?::user_role   WHERE id = ?  AND NOT (username = ? AND email = ? AND password_hash = ? AND user_role = ?::user_role)";
     private final String SQL_DELETE_QUERY = "DELETE FROM app_user WHERE id = (?)";
 
     public List<User> getAll() {
