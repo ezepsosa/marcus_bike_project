@@ -1,4 +1,4 @@
-package com.ezepsosa.marcusbike.config;
+package com.ezepsosa.marcusbike.routes;
 
 import java.util.HashMap;
 import java.util.Map;
