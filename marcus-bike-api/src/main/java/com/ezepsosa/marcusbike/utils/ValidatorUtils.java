@@ -16,4 +16,11 @@ public class ValidatorUtils {
 
     }
 
+    public Boolean sameUser(User user, User userToCompare) {
+        return user.getEmail().equals(userToCompare.getEmail())
+                && user.getPasswordHash().equals(userToCompare.getPasswordHash())
+                && user.getRole().equals(userToCompare.getRole())
+                && user.getUsername().equals(userToCompare.getUsername());
+    }
+
 }
