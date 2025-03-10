@@ -1,5 +1,6 @@
 package com.ezepsosa.marcusbike.utils;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
@@ -7,6 +8,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ezepsosa.marcusbike.models.User;
+import com.fasterxml.jackson.core.exc.StreamReadException;
+import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -55,6 +59,11 @@ public class JsonResponseUtil {
             logger.error("Critical error serializing error response", e);
         }
 
+    }
+
+    public static <T> T parseJson(byte[] message, Class<T> classToParse)
+            throws IOException {
+        return objectMapper.readValue(message, classToParse);
     }
 
 }
