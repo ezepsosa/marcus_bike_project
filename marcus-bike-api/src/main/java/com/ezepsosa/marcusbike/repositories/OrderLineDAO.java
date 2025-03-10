@@ -13,15 +13,18 @@ import com.ezepsosa.marcusbike.models.Product;
 
 public class OrderLineDAO {
 
+    private final String SQL_GET_ALL_QUERY = "SELECT ol.*, p.id, p.product_name, p.created_at AS product_created_at FROM order_line ol JOIN product p ON ol.product_id = p.id";
+    private final String SQL_GET_ID_QUERY = "SELECT ol.*, p.id, p.product_name, p.created_at AS product_created_at FROM order_line ol JOIN product p ON ol.product_id = p.id WHERE ol.id = (?)";
+    private final String SQL_INSERT_QUERY = "INSERT INTO order_line(app_order_id, product_id, quantity) VALUES (?, ?, ?) RETURNING id";
+    private final String SQL_UPDATE_QUERY = "UPDATE order_line SET app_order_id = ?, product_id = ?, quantity = ? WHERE id = ?";
+    private final String SQL_DETELE_QUERY = "DELETE FROM order_line WHERE id = (?)";
+
     public List<OrderLine> getAll() {
         List<OrderLine> OrderLines = new ArrayList<OrderLine>();
-        String SQL_GET_QUERY = "SELECT ol.*, p.id, p.product_name, p.created_at AS product_created_at FROM order_line ol JOIN product p ON ol.product_id = p.id";
-
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
-            PreparedStatement pst = connection.prepareStatement(SQL_GET_QUERY);
+            PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
             ResultSet rs = pst.executeQuery();
             while (rs.next()) {
-                ;
                 OrderLines.add(createOrderLine(rs));
             }
         } catch (SQLException e) {
@@ -31,14 +34,12 @@ public class OrderLineDAO {
     }
 
     public OrderLine getById(Long id) {
-        String SQL_GET_ID_QUERY = "SELECT ol.*, p.id, p.product_name, p.created_at AS product_created_at FROM order_line ol JOIN product p ON ol.product_id = p.id WHERE ol.id = (?)";
-
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_GET_ID_QUERY);
 
             pst.setLong(1, id);
-            ResultSet rs = pst.executeQuery();
 
+            ResultSet rs = pst.executeQuery();
             while (rs.next()) {
                 return createOrderLine(rs);
             }
@@ -49,7 +50,6 @@ public class OrderLineDAO {
     }
 
     public Long insert(OrderLine orderLine) {
-        String SQL_INSERT_QUERY = "INSERT INTO order_line(app_order_id, product_id, quantity) VALUES (?, ?, ?) RETURNING id";
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY,
                     PreparedStatement.RETURN_GENERATED_KEYS);
@@ -75,7 +75,6 @@ public class OrderLineDAO {
     }
 
     public Boolean update(OrderLine order) {
-        String SQL_UPDATE_QUERY = "UPDATE order_line SET app_order_id = ?, product_id = ?, quantity = ? WHERE id = ?";
 
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY);
@@ -84,6 +83,7 @@ public class OrderLineDAO {
             pst.setLong(2, order.getProduct().getId());
             pst.setInt(3, order.getQuantity());
             pst.setLong(4, order.getId());
+
             Integer affectedRows = pst.executeUpdate();
             return affectedRows > 0;
 
@@ -95,10 +95,11 @@ public class OrderLineDAO {
     }
 
     public Boolean delete(Long id) {
-        String SQL_DETELE_QUERY = "DELETE FROM order_line WHERE id = (?)";
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_DETELE_QUERY);
+
             pst.setLong(1, id);
+
             Integer affectedRows = pst.executeUpdate();
             return affectedRows > 0;
 

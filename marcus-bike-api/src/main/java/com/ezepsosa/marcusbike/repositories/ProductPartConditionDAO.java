@@ -13,8 +13,13 @@ import com.ezepsosa.marcusbike.models.ProductPartCondition;
 
 public class ProductPartConditionDAO {
 
+    private final String SQL_GET_ALL_QUERY = "SELECT * FROM product_part_condition";
+    private final String SQL_GET_ID_QUERY = "SELECT * FROM product_part_condition WHERE part_id = ? AND dependant_part_id = ?";
+    private final String SQL_INSERT_QUERY = "INSERT INTO product_part_condition (part_id, dependant_part_id, price_adjustment, is_restriction) VALUES (?, ?, ?, ?) RETURNING part_id";
+    private final String SQL_UPDATE_QUERY = "UPDATE product_part_condition SET price_adjustment = ?, is_restriction = ? WHERE part_id = ? AND dependant_part_id = ?";
+    private final String SQL_DELETE_QUERY = "DELETE FROM product_part_condition WHERE part_id = ? AND dependant_part_id = ?";
+
     public List<ProductPartCondition> getAll() {
-        String SQL_GET_ALL_QUERY = "SELECT * FROM product_part_condition";
         List<ProductPartCondition> orders = new ArrayList<ProductPartCondition>();
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
@@ -32,15 +37,14 @@ public class ProductPartConditionDAO {
     }
 
     public ProductPartCondition getById(Long part_id, Long dependant_part_id) {
-        String SQL_GET_ID_QUERY = "SELECT * FROM product_part_condition WHERE part_id = ? AND dependant_part_id = ?";
 
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_GET_ID_QUERY);
 
             pst.setLong(1, part_id);
             pst.setLong(2, dependant_part_id);
-            ResultSet rs = pst.executeQuery();
 
+            ResultSet rs = pst.executeQuery();
             while (rs.next()) {
                 return createProductPartConditions(rs);
 
@@ -54,8 +58,6 @@ public class ProductPartConditionDAO {
 
     public Boolean insert(ProductPartCondition productPartCondition) {
 
-        String SQL_INSERT_QUERY = "INSERT INTO product_part_condition (part_id, dependant_part_id, price_adjustment, is_restriction) VALUES (?, ?, ?, ?) RETURNING part_id";
-
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY,
                     PreparedStatement.RETURN_GENERATED_KEYS);
@@ -66,7 +68,6 @@ public class ProductPartConditionDAO {
             pst.setBoolean(4, productPartCondition.getIsRestriction());
 
             Integer affectedRows = pst.executeUpdate();
-
             return affectedRows > 0;
 
         } catch (SQLException e) {
@@ -77,7 +78,6 @@ public class ProductPartConditionDAO {
     }
 
     public Boolean update(ProductPartCondition productPartCondition) {
-        String SQL_UPDATE_QUERY = "UPDATE product_part_condition SET price_adjustment = ?, is_restriction = ? WHERE part_id = ? AND dependant_part_id = ?";
 
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY);
@@ -99,16 +99,14 @@ public class ProductPartConditionDAO {
 
     public Boolean delete(Long part_id, Long dependat_part_id) {
 
-        String SQL_DELETE_QUERY = "DELETE FROM product_part_condition WHERE part_id = ? AND dependant_part_id = ?";
-
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_DELETE_QUERY,
                     PreparedStatement.RETURN_GENERATED_KEYS);
 
             pst.setLong(1, part_id);
             pst.setLong(2, dependat_part_id);
-            Integer affectedRows = pst.executeUpdate();
 
+            Integer affectedRows = pst.executeUpdate();
             return affectedRows > 0;
 
         } catch (SQLException e) {

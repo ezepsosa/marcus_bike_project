@@ -14,9 +14,14 @@ import com.ezepsosa.marcusbike.models.ProductPartCategory;
 
 public class ProductPartDAO {
 
+    private final String SQL_GET_ALL_QUERY = "SELECT pp.*, p.id AS product_id, p.product_name, p.created_at AS created_at_product FROM product_part pp JOIN product p ON pp.product_id = p.id";
+    private final String SQL_GET_ID_QUERY = "SELECT pp.*, p.id AS product_id, p.product_name, p.created_at AS created_at_product FROM product_part pp JOIN product p ON pp.product_id = p.id WHERE pp.id = (?)";
+    private final String SQL_INSERT_QUERY = "INSERT INTO product_part(product_id, part_option, is_available, base_price, category) VALUES (?, ?, ?, ?, ?::product_part_category) RETURNING id";
+    private final String SQL_UPDATE_QUERY = "UPDATE product_part SET part_option = ?, is_available = ?, base_price = ?, category = ?::product_part_category WHERE id = ?";
+    private final String SQL_DETELE_QUERY = "DELETE FROM product_part WHERE id = (?)";
+
     public List<ProductPart> getAll() {
         List<ProductPart> productParts = new ArrayList<ProductPart>();
-        String SQL_GET_ALL_QUERY = "SELECT pp.*, p.id AS product_id, p.product_name, p.created_at AS created_at_product FROM product_part pp JOIN product p ON pp.product_id = p.id";
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
             ResultSet rs = pst.executeQuery();
@@ -30,13 +35,12 @@ public class ProductPartDAO {
     }
 
     public ProductPart getById(Long id) {
-        String SQL_GET_ID_QUERY = "SELECT pp.*, p.id AS product_id, p.product_name, p.created_at AS created_at_product FROM product_part pp JOIN product p ON pp.product_id = p.id WHERE pp.id = (?)";
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_GET_ID_QUERY);
 
             pst.setLong(1, id);
-            ResultSet rs = pst.executeQuery();
 
+            ResultSet rs = pst.executeQuery();
             while (rs.next()) {
                 return createProductPart(rs);
             }
@@ -48,10 +52,11 @@ public class ProductPartDAO {
     }
 
     public Long insert(ProductPart productPart) {
-        String SQL_INSERT_QUERY = "INSERT INTO product_part(product_id, part_option, is_available, base_price, category) VALUES (?, ?, ?, ?, ?::product_part_category) RETURNING id";
+
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY,
                     PreparedStatement.RETURN_GENERATED_KEYS);
+
             pst.setLong(1, productPart.getProduct().getId());
             pst.setString(2, productPart.getPartOption());
             pst.setBoolean(3, productPart.getIsAvailable());
@@ -74,22 +79,7 @@ public class ProductPartDAO {
 
     }
 
-    public Boolean delete(Long id) {
-        String SQL_DETELE_QUERY = "DELETE FROM product_part WHERE id = (?)";
-        try (Connection connection = HikariDatabaseConfig.getConnection()) {
-            PreparedStatement pst = connection.prepareStatement(SQL_DETELE_QUERY);
-            pst.setLong(1, id);
-            Integer affectedRows = pst.executeUpdate();
-            return affectedRows > 0;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
     public Boolean update(ProductPart productPart) {
-        String SQL_UPDATE_QUERY = "UPDATE product_part SET part_option = ?, is_available = ?, base_price = ?, category = ?::product_part_category WHERE id = ?";
 
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY);
@@ -108,6 +98,22 @@ public class ProductPartDAO {
         }
         return false;
 
+    }
+
+    public Boolean delete(Long id) {
+
+        try (Connection connection = HikariDatabaseConfig.getConnection()) {
+            PreparedStatement pst = connection.prepareStatement(SQL_DETELE_QUERY);
+
+            pst.setLong(1, id);
+
+            Integer affectedRows = pst.executeUpdate();
+            return affectedRows > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     private ProductPart createProductPart(ResultSet rs) throws SQLException {

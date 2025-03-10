@@ -15,8 +15,13 @@ import com.ezepsosa.marcusbike.models.UserRole;
 
 public class OrderDAO {
 
+    private final String SQL_GET_ALL_QUERY = "SELECT appor.*, u.id AS user_id, u.username, u.email, u.password_hash, u.user_role, u.created_at as user_created_at FROM app_order appor JOIN app_user u ON appor.app_user_id = u.id ";
+    private final String SQL_GET_ID_QUERY = "SELECT appor.*, u.id AS user_id, u.username, u.email, u.password_hash, u.user_role, u.created_at as user_created_at FROM app_order appor JOIN app_user u ON appor.app_user_id = u.id WHERE appor.id = (?)";
+    private final String SQL_INSERT_QUERY = "INSERT INTO app_order (app_user_id, final_price) VALUES (?, ?) RETURNING id";
+    private final String SQL_UPDATE_QUERY = "UPDATE app_order SET app_user_id = ?, final_price = ? WHERE id = ?";
+    private final String SQL_DELETE_QUERY = "DELETE FROM app_order WHERE id = ?";
+
     public List<Order> getAll() {
-        String SQL_GET_ALL_QUERY = "SELECT appor.*, u.id AS user_id, u.username, u.email, u.password_hash, u.user_role, u.created_at as user_created_at FROM app_order appor JOIN app_user u ON appor.app_user_id = u.id ";
         List<Order> orders = new ArrayList<Order>();
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
@@ -34,12 +39,11 @@ public class OrderDAO {
     }
 
     public Order getById(Long id) {
-        String SQL_GET_ID_QUERY = "SELECT appor.*, u.id AS user_id, u.username, u.email, u.password_hash, u.user_role, u.created_at as user_created_at FROM app_order appor JOIN app_user u ON appor.app_user_id = u.id WHERE appor.id = (?)";
-
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_GET_ID_QUERY);
 
             pst.setLong(1, id);
+
             ResultSet rs = pst.executeQuery();
 
             while (rs.next()) {
@@ -54,9 +58,6 @@ public class OrderDAO {
     }
 
     public Long insert(Order order) {
-
-        String SQL_INSERT_QUERY = "INSERT INTO app_order (app_user_id, final_price) VALUES (?, ?) RETURNING id";
-
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY,
                     PreparedStatement.RETURN_GENERATED_KEYS);
@@ -65,7 +66,6 @@ public class OrderDAO {
             pst.setDouble(2, order.getFinalPrice());
 
             Integer affectedRows = pst.executeUpdate();
-
             if (affectedRows > 0) {
                 try (ResultSet generatedValues = pst.getGeneratedKeys()) {
                     if (generatedValues.next()) {
@@ -82,8 +82,6 @@ public class OrderDAO {
     }
 
     public Boolean update(Order order) {
-        String SQL_UPDATE_QUERY = "UPDATE app_order SET app_user_id = ?, final_price = ? WHERE id = ?";
-
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY);
 
@@ -102,14 +100,12 @@ public class OrderDAO {
     }
 
     public Boolean delete(Long id) {
-
-        String SQL_DELETE_QUERY = "DELETE FROM app_order WHERE id = ?";
-
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_DELETE_QUERY,
                     PreparedStatement.RETURN_GENERATED_KEYS);
 
             pst.setLong(1, id);
+
             Integer affectedRows = pst.executeUpdate();
 
             return affectedRows > 0;

@@ -13,19 +13,37 @@ import com.ezepsosa.marcusbike.models.UserRole;
 
 public class UserDAO {
 
-    public User getById(Long id) {
-        String SQL_GET_ID_QUERY = "SELECT * FROM app_user WHERE id = (?)";
+    private final String SQL_GET_ALL_QUERY = "SELECT * FROM app_user";
+    private final String SQL_GET_ID_QUERY = "SELECT * FROM app_user WHERE id = (?)";
+    private final String SQL_INSERT_QUERY = "INSERT INTO app_user (username, email, password_hash, user_role) VALUES (?, ?, ?, ?::user_role) RETURNING id";
+    private final String SQL_UPDATE_QUERY = "UPDATE app_user SET username = ?, email = ?, password_hash = ?, user_role = ?::user_role WHERE id = ?";
+    private final String SQL_DELETE_QUERY = "DELETE FROM app_user WHERE id = (?)";
 
+    public List<User> getAll() {
+        List<User> users = new ArrayList<User>();
+
+        try (Connection connection = HikariDatabaseConfig.getConnection()) {
+            PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                User userResult = createUser(rs);
+                users.add(userResult);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return users;
+    }
+
+    public User getById(Long id) {
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_GET_ID_QUERY);
 
             pst.setLong(1, id);
-            ResultSet rs = pst.executeQuery();
 
+            ResultSet rs = pst.executeQuery();
             while (rs.next()) {
-                return new User(rs.getLong("id"), rs.getString("username"), rs.getString("email"),
-                        rs.getString("password_hash"), UserRole.valueOf(rs.getString("user_role").toUpperCase()),
-                        rs.getTimestamp("created_at").toLocalDateTime());
+                return createUser(rs);
 
             }
         } catch (SQLException e) {
@@ -35,28 +53,7 @@ public class UserDAO {
 
     }
 
-    public List<User> getAll() {
-        List<User> users = new ArrayList<User>();
-        String SQL_GET_ALL_QUERY = "SELECT * FROM app_user";
-
-        try (Connection connection = HikariDatabaseConfig.getConnection()) {
-            PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
-            ResultSet rs = pst.executeQuery();
-            while (rs.next()) {
-                User userResult = new User(rs.getLong("id"), rs.getString("username"), rs.getString("email"),
-                        rs.getString("password_hash"), UserRole.valueOf(rs.getString("user_role").toUpperCase()),
-                        rs.getTimestamp("created_at").toLocalDateTime());
-                users.add(userResult);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return users;
-    }
-
     public Long insert(User user) {
-
-        String SQL_INSERT_QUERY = "INSERT INTO app_user (username, email, password_hash, user_role) VALUES (?, ?, ?, ?::user_role) RETURNING id";
 
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY,
@@ -68,7 +65,6 @@ public class UserDAO {
             pst.setString(4, user.getRole().name().toLowerCase());
 
             Integer affectedRows = pst.executeUpdate();
-
             if (affectedRows > 0) {
                 try (ResultSet generatedValues = pst.getGeneratedKeys()) {
                     if (generatedValues.next()) {
@@ -85,7 +81,6 @@ public class UserDAO {
     }
 
     public Boolean update(User user) {
-        String SQL_UPDATE_QUERY = "UPDATE app_user SET username = ?, email = ?, password_hash = ?, user_role = ?::user_role WHERE id = ?";
 
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY);
@@ -108,15 +103,13 @@ public class UserDAO {
 
     public Boolean delete(Long id) {
 
-        String SQL_DELETE_QUERY = "DELETE FROM app_user WHERE id = (?)";
-
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_DELETE_QUERY,
                     PreparedStatement.RETURN_GENERATED_KEYS);
 
             pst.setLong(1, id);
-            Integer affectedRows = pst.executeUpdate();
 
+            Integer affectedRows = pst.executeUpdate();
             return affectedRows > 0;
 
         } catch (SQLException e) {
@@ -124,6 +117,12 @@ public class UserDAO {
         }
         return false;
 
+    }
+
+    private User createUser(ResultSet rs) throws SQLException {
+        return new User(rs.getLong("id"), rs.getString("username"), rs.getString("email"),
+                rs.getString("password_hash"), UserRole.valueOf(rs.getString("user_role").toUpperCase()),
+                rs.getTimestamp("created_at").toLocalDateTime());
     }
 
 }

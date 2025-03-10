@@ -14,13 +14,16 @@ import com.ezepsosa.marcusbike.models.ProductPart;
 import com.ezepsosa.marcusbike.models.ProductPartCategory;
 
 public class OrderLineProductPartDAO {
+    private final String SQL_GET_ALL_QUERY = "SELECT olpp.*, pp.id AS product_part_id, pp.part_option, pp.is_available, pp.base_price, pp.category, pp.created_at AS product_part_created_at, p.id AS product_id, p.product_name, p.created_at AS product_created_at FROM order_line_product_part olpp JOIN product_part pp ON olpp.product_part_id = pp.id JOIN product p ON pp.product_id = p.id";
+    private final String SQL_GET_ID_QUERY = "SELECT olpp.*, pp.id AS product_part_id, pp.part_option, pp.is_available, pp.base_price, pp.category, pp.created_at AS product_part_created_at, p.id AS product_id, p.product_name, p.created_at AS product_created_at FROM order_line_product_part olpp JOIN product_part pp ON olpp.product_part_id = pp.id JOIN product p ON pp.product_id = p.id WHERE olpp.order_line_id = ? AND olpp.product_part_id = ?";
+    private final String SQL_INSERT_QUERY = "INSERT INTO order_line_product_part(order_line_id, product_part_id, quantity, final_price) VALUES (?, ?, ?, ?) RETURNING order_line_id AND";
+    private final String SQL_UPDATE_QUERY = "UPDATE order_line_product_part SET quantity = ?, final_price = ? WHERE order_line_id = ? AND product_part_id = ?";
+    private final String SQL_DETELE_QUERY = "DELETE FROM order_line_product_part WHERE order_line_id = ? AND product_part_id = ?";
 
     public List<OrderLineProductPart> getAll() {
         List<OrderLineProductPart> OrderLines = new ArrayList<OrderLineProductPart>();
-        String SQL_GET_QUERY = "SELECT olpp.*, pp.id AS product_part_id, pp.part_option, pp.is_available, pp.base_price, pp.category, pp.created_at AS product_part_created_at, p.id AS product_id, p.product_name, p.created_at AS product_created_at FROM order_line_product_part olpp JOIN product_part pp ON olpp.product_part_id = pp.id JOIN product p ON pp.product_id = p.id";
-
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
-            PreparedStatement pst = connection.prepareStatement(SQL_GET_QUERY);
+            PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
             ResultSet rs = pst.executeQuery();
             while (rs.next()) {
                 OrderLines.add(createOrderLineProductPart(rs));
@@ -32,8 +35,6 @@ public class OrderLineProductPartDAO {
     }
 
     public OrderLineProductPart getById(Long order_line_id, Long product_part_id) {
-        String SQL_GET_ID_QUERY = "SELECT olpp.*, pp.id AS product_part_id, pp.part_option, pp.is_available, pp.base_price, pp.category, pp.created_at AS product_part_created_at, p.id AS product_id, p.product_name, p.created_at AS product_created_at FROM order_line_product_part olpp JOIN product_part pp ON olpp.product_part_id = pp.id JOIN product p ON pp.product_id = p.id WHERE olpp.order_line_id = ? AND olpp.product_part_id = ?";
-
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_GET_ID_QUERY);
             pst.setLong(1, order_line_id);
@@ -49,7 +50,6 @@ public class OrderLineProductPartDAO {
     }
 
     public Boolean insert(OrderLineProductPart orderLineProductPart) {
-        String SQL_INSERT_QUERY = "INSERT INTO order_line_product_part(order_line_id, product_part_id, quantity, final_price) VALUES (?, ?, ?, ?) RETURNING order_line_id AND";
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY,
                     PreparedStatement.RETURN_GENERATED_KEYS);
@@ -70,8 +70,6 @@ public class OrderLineProductPartDAO {
     }
 
     public Boolean update(OrderLineProductPart orderLineProductPart) {
-        String SQL_UPDATE_QUERY = "UPDATE order_line_product_part SET quantity = ?, final_price = ? WHERE order_line_id = ? AND product_part_id = ?";
-
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY);
 
@@ -91,11 +89,12 @@ public class OrderLineProductPartDAO {
     }
 
     public Boolean delete(Long order_line_id, Long product_part_id) {
-        String SQL_DETELE_QUERY = "DELETE FROM order_line_product_part WHERE order_line_id = ? AND product_part_id = ?";
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_DETELE_QUERY);
+
             pst.setLong(1, order_line_id);
             pst.setLong(2, product_part_id);
+
             Integer affectedRows = pst.executeUpdate();
             return affectedRows > 0;
 
