@@ -28,6 +28,8 @@ public class OrderController implements RouteRegistrar {
     public void registerRoutes(RoutingHandler router) {
         router.add(Methods.GET, "/orders", this::getAll);
         router.add(Methods.GET, "/orders/{id}", this::getById);
+        router.add(Methods.GET, "users/{userId}/orders", this::getByUserId);
+        router.add(Methods.POST, "/orders", this::insert);
 
     }
 
@@ -36,6 +38,20 @@ public class OrderController implements RouteRegistrar {
         List<OrderDTO> orders = orderService.getAll();
         JsonResponseUtil.sendJsonResponse(exchange, orders);
         logger.info("Responded with {} orders", orders.size());
+
+    }
+
+    public void getByUserId(HttpServerExchange exchange) {
+        logger.info("Received request: GET /orders/{userId}/orders");
+        Long userId = RequestUtils.getRequestParam(exchange, "userId");
+        if (userId == null) {
+            logger.warn("Invalid or missing user ID");
+            JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing order ID");
+            return;
+        }
+        List<OrderDTO> orders = orderService.getByUserId(userId);
+        JsonResponseUtil.sendJsonResponse(exchange, orders);
+        logger.info("Responded with {} orders", userId);
 
     }
 
@@ -52,4 +68,33 @@ public class OrderController implements RouteRegistrar {
         logger.info("Responded with {} orders", orderId);
 
     }
+
+    public void getOrderLineProductPartsById(HttpServerExchange exchange) {
+        logger.info("Received request: GET /orders/{id}");
+        Long orderId = RequestUtils.getRequestParam(exchange, "id");
+        if (orderId == null) {
+            logger.warn("Invalid or missing order ID");
+            JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing order ID");
+            return;
+        }
+        OrderDTO orders = orderService.getById(orderId);
+        JsonResponseUtil.sendJsonResponse(exchange, orders);
+        logger.info("Responded with {} orders", orderId);
+
+    }
+
+    public void insert(HttpServerExchange exchange) {
+        logger.info("Received request: POST /order");
+        Long orderId = RequestUtils.getRequestParam(exchange, "id");
+        if (orderId == null) {
+            logger.warn("Invalid or missing order ID");
+            JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing order ID");
+            return;
+        }
+        OrderDTO orders = orderService.getById(orderId);
+        JsonResponseUtil.sendJsonResponse(exchange, orders);
+        logger.info("Responded with {} orders", orderId);
+
+    }
+
 }

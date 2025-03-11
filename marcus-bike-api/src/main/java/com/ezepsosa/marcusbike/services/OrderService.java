@@ -32,7 +32,6 @@ public class OrderService {
 
     public OrderDTO getById(Long id) {
         List<OrderLine> orderLines = orderLineDAO.getByOrderId(id);
-        System.out.println(orderLines);
         return OrderMapper.toDTO(orderDAO.getById(id), orderLines);
     }
 
@@ -46,6 +45,13 @@ public class OrderService {
 
     public Boolean delete(Long id) {
         return orderDAO.delete(id);
+    }
+
+    public List<OrderDTO> getByUserId(Long userId) {
+        Map<Long, List<OrderLine>> orderLinesMap = orderLineDAO.getAllGroupedByOrder();
+        return orderDAO.getAllByUser(userId).stream()
+                .map(order -> OrderMapper.toDTO(order, orderLinesMap.getOrDefault(order.getId(), new ArrayList<>())))
+                .collect(Collectors.toList());
     }
 
 }
