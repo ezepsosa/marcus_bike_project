@@ -113,7 +113,6 @@ public class UserController implements RouteRegistrar {
                 }
                 logger.info("User updated with ID {}", userToUpdate.getId());
                 userToUpdate = userService.getById(userToUpdate.getId());
-                System.out.println(userToUpdate);
                 JsonResponseUtil.sendJsonResponse(exchange, userToUpdate);
             } catch (Exception e) {
                 logger.error("Error processing request", e);
