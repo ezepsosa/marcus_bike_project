@@ -37,7 +37,7 @@ public class DependencyInjection {
 
     // Order
     private final OrderDAO orderdao = new OrderDAO();
-    private final OrderService orderservice = new OrderService(orderdao);
+    private final OrderService orderservice = new OrderService(orderdao, orderlinedao);
     private final OrderController orderController = new OrderController(orderservice);
 
     public OrderController getOrderController() {
