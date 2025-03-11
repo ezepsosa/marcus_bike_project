@@ -63,6 +63,24 @@ public class OrderDAO {
         return orders;
     }
 
+    public List<Order> getAllByUser(Long id) {
+        List<Order> orders = new ArrayList<>();
+        try (Connection connection = HikariDatabaseConfig.getConnection()) {
+            PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_BY_USER_QUERY);
+            pst.setLong(1, id);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                Order order = createOrder(rs);
+                orders.add(order);
+
+            }
+            return orders;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return orders;
+    }
+
     public Order getById(Long id) {
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_GET_ID_QUERY);
