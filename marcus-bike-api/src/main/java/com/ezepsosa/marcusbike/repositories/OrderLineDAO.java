@@ -5,7 +5,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.ezepsosa.marcusbike.config.HikariDatabaseConfig;
 import com.ezepsosa.marcusbike.models.OrderLine;
@@ -13,24 +18,51 @@ import com.ezepsosa.marcusbike.models.Product;
 
 public class OrderLineDAO {
 
+    private static final Logger logger = LoggerFactory.getLogger(OrderLineDAO.class);
+
     private final String SQL_GET_ALL_QUERY = "SELECT ol.*, p.id, p.product_name, p.created_at AS product_created_at FROM order_line ol JOIN product p ON ol.product_id = p.id";
     private final String SQL_GET_ID_QUERY = "SELECT ol.*, p.id, p.product_name, p.created_at AS product_created_at FROM order_line ol JOIN product p ON ol.product_id = p.id WHERE ol.id = (?)";
     private final String SQL_INSERT_QUERY = "INSERT INTO order_line(app_order_id, product_id, quantity) VALUES (?, ?, ?) RETURNING id";
     private final String SQL_UPDATE_QUERY = "UPDATE order_line SET app_order_id = ?, product_id = ?, quantity = ? WHERE id = ?";
     private final String SQL_DETELE_QUERY = "DELETE FROM order_line WHERE id = (?)";
+    private final String SQL_GET_BY_ORDER_ID = "SELECT ol.id AS order_line_id, ol.product_id, ol.quantity, ol.created_at, p.id AS product_id, p.product_name FROM order_line ol JOIN product p ON ol.product_id = p.id WHERE ol.app_order_id = ?";
 
+    @SuppressWarnings("CallToPrintStackTrace")
     public List<OrderLine> getAll() {
-        List<OrderLine> OrderLines = new ArrayList<OrderLine>();
+        List<OrderLine> orderLines = new ArrayList<>();
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
             ResultSet rs = pst.executeQuery();
             while (rs.next()) {
-                OrderLines.add(createOrderLine(rs));
+                orderLines.add(createOrderLine(rs));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return OrderLines;
+        return orderLines;
+    }
+
+    public Map<Long, List<OrderLine>> getAllGroupedByOrder() {
+        Map<Long, List<OrderLine>> orderLines = new HashMap<>();
+        try (Connection connection = HikariDatabaseConfig.getConnection()) {
+            PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                Long orderId = rs.getLong("app_order_id");
+                if (orderLines.keySet().contains(orderId)) {
+                    orderLines.get(orderId).add(createOrderLine(rs));
+
+                } else {
+                    orderLines.put(orderId, new ArrayList<>());
+                    orderLines.get(orderId).add(createOrderLine(rs));
+                }
+            }
+        } catch (SQLException e) {
+            logger.warn("Error fetching order lines grouped by order. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
+
+        }
+        return orderLines;
     }
 
     public OrderLine getById(Long id) {
@@ -44,7 +76,8 @@ public class OrderLineDAO {
                 return createOrderLine(rs);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("Error fetching order line by id. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
         }
         return null;
     }
@@ -68,7 +101,8 @@ public class OrderLineDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("Error inserting order line. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
         }
         return null;
 
@@ -88,7 +122,8 @@ public class OrderLineDAO {
             return affectedRows > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("Error updating order line. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
         }
         return false;
 
@@ -104,9 +139,28 @@ public class OrderLineDAO {
             return affectedRows > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("Error deleting order line. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
         }
         return false;
+    }
+
+    public List<OrderLine> getByOrderId(Long orderId) {
+        List<OrderLine> ordersLines = new ArrayList<>();
+
+        try (Connection connection = HikariDatabaseConfig.getConnection()) {
+            PreparedStatement pst = connection.prepareStatement(SQL_GET_BY_ORDER_ID);
+            pst.setLong(1, orderId);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                ordersLines.add(createOrderLine(rs));
+            }
+            return ordersLines;
+        } catch (SQLException e) {
+            logger.warn("Error fetching order line by order Id. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
+        }
+        return ordersLines;
     }
 
     private OrderLine createOrderLine(ResultSet rs) throws SQLException {
