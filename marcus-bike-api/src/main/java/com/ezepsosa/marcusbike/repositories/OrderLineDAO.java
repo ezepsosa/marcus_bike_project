@@ -49,12 +49,12 @@ public class OrderLineDAO {
         return null;
     }
 
-    public Long insert(OrderLine orderLine) {
+    public Long insert(OrderLine orderLine, Long orderId) {
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY,
                     PreparedStatement.RETURN_GENERATED_KEYS);
 
-            pst.setLong(1, orderLine.getOrder().getId());
+            pst.setLong(1, orderId);
             pst.setLong(2, orderLine.getProduct().getId());
             pst.setInt(3, orderLine.getQuantity());
 
@@ -74,12 +74,12 @@ public class OrderLineDAO {
 
     }
 
-    public Boolean update(OrderLine order) {
+    public Boolean update(OrderLine order, Long orderId) {
 
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY);
 
-            pst.setLong(1, order.getOrder().getId());
+            pst.setLong(1, orderId);
             pst.setLong(2, order.getProduct().getId());
             pst.setInt(3, order.getQuantity());
             pst.setLong(4, order.getId());
@@ -118,7 +118,6 @@ public class OrderLineDAO {
 
         return new OrderLine(
                 rs.getLong("id"),
-                null,
                 product,
                 rs.getInt("quantity"),
                 rs.getTimestamp("created_at").toLocalDateTime());
