@@ -25,7 +25,7 @@ public class OrderLineDAO {
     private final String SQL_INSERT_QUERY = "INSERT INTO order_line(app_order_id, product_id, quantity) VALUES (?, ?, ?) RETURNING id";
     private final String SQL_UPDATE_QUERY = "UPDATE order_line SET app_order_id = ?, product_id = ?, quantity = ? WHERE id = ?";
     private final String SQL_DETELE_QUERY = "DELETE FROM order_line WHERE id = (?)";
-    private final String SQL_GET_BY_ORDER_ID = "SELECT ol.id AS order_line_id, ol.product_id, ol.quantity, ol.created_at, p.id AS product_id, p.product_name FROM order_line ol JOIN product p ON ol.product_id = p.id WHERE ol.app_order_id = ?";
+    private final String SQL_GET_BY_ORDER_ID = "SELECT ol.*, p.id, p.product_name, p.created_at AS product_created_at FROM order_line ol JOIN product p ON ol.product_id = p.id WHERE ol.app_order_id = ?";
 
     @SuppressWarnings("CallToPrintStackTrace")
     public List<OrderLine> getAll() {

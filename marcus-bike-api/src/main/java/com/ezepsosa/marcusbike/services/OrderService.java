@@ -1,27 +1,39 @@
 package com.ezepsosa.marcusbike.services;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.ezepsosa.marcusbike.dto.OrderDTO;
 import com.ezepsosa.marcusbike.mappers.OrderMapper;
 import com.ezepsosa.marcusbike.models.Order;
+import com.ezepsosa.marcusbike.models.OrderLine;
 import com.ezepsosa.marcusbike.repositories.OrderDAO;
+import com.ezepsosa.marcusbike.repositories.OrderLineDAO;
 
 public class OrderService {
 
-    private OrderDAO orderDAO;
+    private final OrderDAO orderDAO;
+    private final OrderLineDAO orderLineDAO;
 
-    public OrderService(OrderDAO orderDAO) {
+    public OrderService(OrderDAO orderDAO, OrderLineDAO orderLineDAO) {
         this.orderDAO = orderDAO;
+        this.orderLineDAO = orderLineDAO;
     }
 
     public List<OrderDTO> getAll() {
-        return orderDAO.getAll().stream().map(order -> OrderMapper.toDTO(order)).collect(Collectors.toList());
+        Map<Long, List<OrderLine>> orderLinesMap = orderLineDAO.getAllGroupedByOrder();
+        return orderDAO.getAll().stream()
+                .map(order -> OrderMapper.toDTO(order, orderLinesMap.getOrDefault(order.getId(), new ArrayList<>())))
+                .collect(Collectors.toList());
+
     }
 
-    public Order getById(Long id) {
-        return orderDAO.getById(id);
+    public OrderDTO getById(Long id) {
+        List<OrderLine> orderLines = orderLineDAO.getByOrderId(id);
+        System.out.println(orderLines);
+        return OrderMapper.toDTO(orderDAO.getById(id), orderLines);
     }
 
     public Long insert(Order orderLine) {
