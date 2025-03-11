@@ -76,7 +76,8 @@ public class OrderDAO {
             }
             return orders;
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("Error fetching orders by user. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
         }
         return orders;
     }
