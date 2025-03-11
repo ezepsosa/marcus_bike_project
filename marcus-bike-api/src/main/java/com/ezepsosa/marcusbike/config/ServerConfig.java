@@ -3,6 +3,8 @@ package com.ezepsosa.marcusbike.config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ezepsosa.marcusbike.routes.RouterConfig;
+
 import io.undertow.Undertow;
 
 public class ServerConfig {
