@@ -20,7 +20,8 @@ public class RouterConfig {
 
         RoutingHandler router = new RoutingHandler();
 
-        List<RouteRegistrar> controllers = List.of(dependencyInjection.getUserController());
+        List<RouteRegistrar> controllers = List.of(dependencyInjection.getUserController(),
+                dependencyInjection.getProductController());
 
         controllers.forEach(controller -> controller.registerRoutes(router));
 
