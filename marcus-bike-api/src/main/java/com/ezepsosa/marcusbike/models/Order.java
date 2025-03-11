@@ -2,6 +2,7 @@ package com.ezepsosa.marcusbike.models;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Order {
 
@@ -9,7 +10,7 @@ public class Order {
     private User user;
     private Double finalPrice;
     private LocalDateTime createdAt;
-    private ArrayList<OrderLine> orderLines;
+    private List<OrderLine> orderLines;
 
     public Long getId() {
         return id;
@@ -27,8 +28,16 @@ public class Order {
         return finalPrice;
     }
 
-    public ArrayList<OrderLine> getOrderLines() {
+    public List<OrderLine> getOrderLines() {
         return orderLines;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public void setUser(User user) {
