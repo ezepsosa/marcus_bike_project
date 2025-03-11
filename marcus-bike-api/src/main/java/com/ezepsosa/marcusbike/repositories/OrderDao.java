@@ -7,12 +7,17 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.ezepsosa.marcusbike.config.HikariDatabaseConfig;
 import com.ezepsosa.marcusbike.models.Order;
 import com.ezepsosa.marcusbike.models.User;
 import com.ezepsosa.marcusbike.models.UserRole;
 
 public class OrderDAO {
+
+    private static final Logger logger = LoggerFactory.getLogger(OrderDAO.class);
 
     private final String SQL_GET_ALL_QUERY = "SELECT appor.*, u.id AS user_id, u.username, u.email, u.password_hash, u.user_role, u.created_at as user_created_at FROM app_order appor JOIN app_user u ON appor.app_user_id = u.id ";
     private final String SQL_GET_ID_QUERY = "SELECT appor.*, u.id AS user_id, u.username, u.email, u.password_hash, u.user_role, u.created_at as user_created_at FROM app_order appor JOIN app_user u ON appor.app_user_id = u.id WHERE appor.id = (?)";
@@ -33,7 +38,8 @@ public class OrderDAO {
             }
             return orders;
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("Error fetching orders. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
         }
         return orders;
     }
@@ -51,7 +57,8 @@ public class OrderDAO {
             }
             return orders;
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("Error fetching orders by user. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
         }
         return orders;
     }
@@ -69,7 +76,8 @@ public class OrderDAO {
 
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("Error fetching orders by Id. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
         }
         return null;
 
@@ -93,7 +101,8 @@ public class OrderDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("Error inserting order. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
         }
         return null;
 
@@ -111,7 +120,8 @@ public class OrderDAO {
             return affectedRows > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("Error updating order. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
         }
         return false;
 
@@ -129,7 +139,8 @@ public class OrderDAO {
             return affectedRows > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("Error deleting order. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
         }
         return false;
 
