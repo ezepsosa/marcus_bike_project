@@ -27,21 +27,6 @@ public class OrderLineDAO {
     private final String SQL_DETELE_QUERY = "DELETE FROM order_line WHERE id = (?)";
     private final String SQL_GET_BY_ORDER_ID = "SELECT ol.*, p.id, p.product_name, p.created_at AS product_created_at FROM order_line ol JOIN product p ON ol.product_id = p.id WHERE ol.app_order_id = ?";
 
-    @SuppressWarnings("CallToPrintStackTrace")
-    public List<OrderLine> getAll() {
-        List<OrderLine> orderLines = new ArrayList<>();
-        try (Connection connection = HikariDatabaseConfig.getConnection()) {
-            PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
-            ResultSet rs = pst.executeQuery();
-            while (rs.next()) {
-                orderLines.add(createOrderLine(rs));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return orderLines;
-    }
-
     public Map<Long, List<OrderLine>> getAllGroupedByOrder() {
         Map<Long, List<OrderLine>> orderLines = new HashMap<>();
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
