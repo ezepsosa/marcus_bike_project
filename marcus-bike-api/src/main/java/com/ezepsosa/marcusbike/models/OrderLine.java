@@ -30,6 +30,10 @@ public class OrderLine {
         return createdAt;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public void setOrder(Order order) {
         this.order = order;
     }
