@@ -1,7 +1,10 @@
 package com.ezepsosa.marcusbike.services;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.ezepsosa.marcusbike.dto.OrderDTO;
+import com.ezepsosa.marcusbike.mappers.OrderMapper;
 import com.ezepsosa.marcusbike.models.Order;
 import com.ezepsosa.marcusbike.repositories.OrderDAO;
 
@@ -13,8 +16,8 @@ public class OrderService {
         this.orderDAO = orderDAO;
     }
 
-    public List<Order> getAll() {
-        return orderDAO.getAll();
+    public List<OrderDTO> getAll() {
+        return orderDAO.getAll().stream().map(order -> OrderMapper.toDTO(order)).collect(Collectors.toList());
     }
 
     public Order getById(Long id) {
