@@ -20,6 +20,10 @@ public class Product {
         return createdAt;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public void setProductName(String productName) {
         this.productName = productName;
     }
