@@ -12,7 +12,7 @@ public class RequestUtils {
             return null;
         }
         try {
-            return Long.parseLong(idParam.getFirst());
+            return Long.valueOf(idParam.getFirst());
         } catch (NumberFormatException e) {
             return null;
         }

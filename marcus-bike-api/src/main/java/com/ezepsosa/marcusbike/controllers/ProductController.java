@@ -18,7 +18,7 @@ import io.undertow.util.Methods;
 
 public class ProductController implements RouteRegistrar {
 
-    private ProductService productService;
+    private final ProductService productService;
     private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
     public ProductController(ProductService productService) {

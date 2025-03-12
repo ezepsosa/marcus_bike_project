@@ -7,11 +7,16 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.ezepsosa.marcusbike.config.HikariDatabaseConfig;
 import com.ezepsosa.marcusbike.models.ProductPart;
 import com.ezepsosa.marcusbike.models.ProductPartCondition;
 
 public class ProductPartConditionDAO {
+
+    private static final Logger logger = LoggerFactory.getLogger(ProductPartConditionDAO.class);
 
     private final String SQL_GET_ALL_QUERY = "SELECT * FROM product_part_condition";
     private final String SQL_GET_ID_QUERY = "SELECT * FROM product_part_condition WHERE part_id = ? AND dependant_part_id = ?";
@@ -20,7 +25,7 @@ public class ProductPartConditionDAO {
     private final String SQL_DELETE_QUERY = "DELETE FROM product_part_condition WHERE part_id = ? AND dependant_part_id = ?";
 
     public List<ProductPartCondition> getAll() {
-        List<ProductPartCondition> orders = new ArrayList<ProductPartCondition>();
+        List<ProductPartCondition> orders = new ArrayList<>();
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
             ResultSet rs = pst.executeQuery();
@@ -31,7 +36,8 @@ public class ProductPartConditionDAO {
             }
             return orders;
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("Error fetching product part conditions. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
         }
         return orders;
     }
@@ -50,7 +56,8 @@ public class ProductPartConditionDAO {
 
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("Error fetching product part conditions by id. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
         }
         return null;
 
@@ -71,7 +78,8 @@ public class ProductPartConditionDAO {
             return affectedRows > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("Error inserting product part conditions. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
         }
         return false;
 
@@ -91,7 +99,8 @@ public class ProductPartConditionDAO {
             return affectedRows > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("Error updating product part conditions. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
         }
         return false;
 
@@ -110,7 +119,8 @@ public class ProductPartConditionDAO {
             return affectedRows > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("Error deleting product part conditions. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
         }
         return false;
 
