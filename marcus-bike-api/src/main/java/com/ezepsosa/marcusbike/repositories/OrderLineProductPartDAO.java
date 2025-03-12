@@ -25,6 +25,7 @@ public class OrderLineProductPartDAO {
     private final String SQL_INSERT_QUERY = "INSERT INTO order_line_product_part(order_line_id, product_part_id, quantity, final_price) VALUES (?, ?, ?, ?) RETURNING order_line_id AND";
     private final String SQL_UPDATE_QUERY = "UPDATE order_line_product_part SET quantity = ?, final_price = ? WHERE order_line_id = ? AND product_part_id = ?";
     private final String SQL_DETELE_QUERY = "DELETE FROM order_line_product_part WHERE order_line_id = ? AND product_part_id = ?";
+    private final String SQL_GET_ALL_BY_ORDERLINE_QUERY = "SELECT olpp.*, pp.id AS product_part_id, pp.part_option, pp.is_available, pp.base_price, pp.category, pp.created_at AS product_part_created_at, p.id AS product_id, p.product_name, p.created_at AS product_created_at FROM order_line_product_part olpp JOIN product_part pp ON olpp.product_part_id = pp.id JOIN product p ON pp.product_id = p.id where olpp.order_line_id = ?";
 
     public List<OrderLineProductPart> getAll() {
         List<OrderLineProductPart> OrderLines = new ArrayList<>();
@@ -113,6 +114,22 @@ public class OrderLineProductPartDAO {
                     e.getSQLState(), e.getErrorCode());
         }
         return false;
+    }
+
+    public List<OrderLineProductPart> getByOrderLineId(Long orderLineId) {
+        List<OrderLineProductPart> OrderLines = new ArrayList<>();
+        try (Connection connection = HikariDatabaseConfig.getConnection()) {
+            PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_BY_ORDERLINE_QUERY);
+            pst.setLong(1, orderLineId);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                OrderLines.add(createOrderLineProductPart(rs));
+            }
+        } catch (SQLException e) {
+            logger.warn("Error deleting order line product parts by orderLineId. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
+        }
+        return OrderLines;
     }
 
     private OrderLineProductPart createOrderLineProductPart(ResultSet rs) throws SQLException {
