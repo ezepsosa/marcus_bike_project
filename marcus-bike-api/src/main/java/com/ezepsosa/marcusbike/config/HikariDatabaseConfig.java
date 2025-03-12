@@ -8,8 +8,8 @@ import com.zaxxer.hikari.HikariDataSource;
 
 public class HikariDatabaseConfig {
 
-    private static HikariConfig config = new HikariConfig();
-    private static HikariDataSource ds;
+    private static final HikariConfig config = new HikariConfig();
+    private static final HikariDataSource ds;
 
     static {
         config.setJdbcUrl("jdbc:postgresql://localhost:5432/marcusbike");
@@ -17,6 +17,7 @@ public class HikariDatabaseConfig {
         config.setPassword("admin");
         config.setMinimumIdle(2);
         config.setMaximumPoolSize(4);
+        config.setAutoCommit(false);
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
