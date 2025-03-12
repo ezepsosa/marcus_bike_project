@@ -40,6 +40,10 @@ public class ProductPart {
         return createdAt;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public void setProduct(Product product) {
         this.product = product;
     }
