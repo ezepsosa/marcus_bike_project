@@ -23,7 +23,8 @@ public class RouterConfig {
         List<RouteRegistrar> controllers = List.of(
                 dependencyInjection.getUserController(),
                 dependencyInjection.getProductController(),
-                dependencyInjection.getOrderController());
+                dependencyInjection.getOrderController(),
+                dependencyInjection.getOrderLineController());
 
         controllers.forEach(controller -> controller.registerRoutes(router));
 

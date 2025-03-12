@@ -27,8 +27,8 @@ public class OrderController implements RouteRegistrar {
     @Override
     public void registerRoutes(RoutingHandler router) {
         router.add(Methods.GET, "/orders", this::getAll);
+        router.add(Methods.GET, "/users/{userId}/orders", this::getByUserId);
         router.add(Methods.GET, "/orders/{id}", this::getById);
-        router.add(Methods.GET, "users/{userId}/orders", this::getByUserId);
         router.add(Methods.POST, "/orders", this::insert);
 
     }
