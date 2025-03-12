@@ -3,11 +3,10 @@ package com.ezepsosa.marcusbike.services;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.ezepsosa.marcusbike.dto.OrderLineDTO;<<<<<<<HEAD
+import com.ezepsosa.marcusbike.dto.OrderLineDTO;
 import com.ezepsosa.marcusbike.dto.OrderLineProductPartDTO;
 import com.ezepsosa.marcusbike.mappers.OrderLineMapper;
-import com.ezepsosa.marcusbike.mappers.OrderLineProductPartMapper;=======
-import com.ezepsosa.marcusbike.mappers.OrderLineMapper;>>>>>>>7d 4ea dd(Add order controller and removed OrderLine controller.Add service and routes for Order)
+import com.ezepsosa.marcusbike.mappers.OrderLineProductPartMapper;
 import com.ezepsosa.marcusbike.models.OrderLine;
 import com.ezepsosa.marcusbike.repositories.OrderLineDAO;
 import com.ezepsosa.marcusbike.repositories.OrderLineProductPartDAO;
