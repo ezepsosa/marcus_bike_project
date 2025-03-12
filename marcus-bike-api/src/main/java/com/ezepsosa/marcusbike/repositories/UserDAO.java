@@ -7,11 +7,16 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.ezepsosa.marcusbike.config.HikariDatabaseConfig;
 import com.ezepsosa.marcusbike.models.User;
 import com.ezepsosa.marcusbike.models.UserRole;
 
 public class UserDAO {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserDAO.class);
 
     private final String SQL_GET_ALL_QUERY = "SELECT * FROM app_user";
     private final String SQL_GET_ID_QUERY = "SELECT * FROM app_user WHERE id = (?)";
@@ -20,7 +25,7 @@ public class UserDAO {
     private final String SQL_DELETE_QUERY = "DELETE FROM app_user WHERE id = (?)";
 
     public List<User> getAll() {
-        List<User> users = new ArrayList<User>();
+        List<User> users = new ArrayList<>();
 
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
@@ -30,7 +35,8 @@ public class UserDAO {
                 users.add(userResult);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("Error fetching users. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
         }
         return users;
     }
@@ -47,7 +53,8 @@ public class UserDAO {
 
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("Error fetching users by id. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
         }
         return null;
 
@@ -74,7 +81,8 @@ public class UserDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("Error inserting users. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
         }
         return null;
 
@@ -95,7 +103,8 @@ public class UserDAO {
             return affectedRows > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("Error updating users. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
         }
         return false;
 
@@ -113,7 +122,8 @@ public class UserDAO {
             return affectedRows > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("Error deleting users. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
         }
         return false;
 

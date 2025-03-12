@@ -7,10 +7,16 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.ezepsosa.marcusbike.config.HikariDatabaseConfig;
 import com.ezepsosa.marcusbike.models.Product;
 
 public class ProductDAO {
+
+    private static final Logger logger = LoggerFactory.getLogger(ProductDAO.class);
+
     private final String SQL_GET_ALL_QUERY = "SELECT * FROM product";
     private final String SQL_GET_ID_QUERY = "SELECT * FROM product WHERE id = (?)";
     private final String SQL_INSERT_QUERY = "INSERT INTO product(product_name) VALUES (?) RETURNING id";
@@ -18,7 +24,7 @@ public class ProductDAO {
     private final String SQL_DETELE_QUERY = "DELETE FROM product WHERE id = (?)";
 
     public List<Product> getAll() {
-        List<Product> products = new ArrayList<Product>();
+        List<Product> products = new ArrayList<>();
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
             ResultSet rs = pst.executeQuery();
@@ -27,7 +33,8 @@ public class ProductDAO {
                 products.add(product);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("Error fetching products. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
         }
         return products;
     }
@@ -43,7 +50,8 @@ public class ProductDAO {
                 return createProduct(rs);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("Error fetching products by Id. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
         }
         return null;
 
@@ -66,7 +74,8 @@ public class ProductDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("Error inserting products. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
         }
         return null;
 
@@ -84,7 +93,8 @@ public class ProductDAO {
             return affectedRows > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("Error updating products. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
         }
         return false;
 
@@ -100,7 +110,8 @@ public class ProductDAO {
             return affectedRows > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("Error deleting products by Id. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
         }
         return false;
     }
