@@ -29,6 +29,7 @@ public class OrderController implements RouteRegistrar {
         router.add(Methods.GET, "/orders", this::getAll);
         router.add(Methods.GET, "/users/{userId}/orders", this::getByUserId);
         router.add(Methods.GET, "/orders/{id}", this::getById);
+        router.add(Methods.DELETE, "orders/{id}", this::delete);
         router.add(Methods.POST, "/orders", this::insert);
 
     }
@@ -78,6 +79,20 @@ public class OrderController implements RouteRegistrar {
             return;
         }
         OrderDTO orders = orderService.getById(orderId);
+        JsonResponseUtil.sendJsonResponse(exchange, orders);
+        logger.info("Responded with {} orders", orderId);
+
+    }
+
+    public void delete(HttpServerExchange exchange) {
+        logger.info("Received request: DELETE /order/{id}");
+        Long orderId = RequestUtils.getRequestParam(exchange, "id");
+        if (orderId == null) {
+            logger.warn("Invalid or missing order ID");
+            JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing order ID");
+            return;
+        }
+        Boolean orders = orderService.delete(orderId);
         JsonResponseUtil.sendJsonResponse(exchange, orders);
         logger.info("Responded with {} orders", orderId);
 
