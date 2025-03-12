@@ -35,11 +35,11 @@ public class TransactionHandler {
         Connection connection = null;
         try {
             connection = HikariDatabaseConfig.getConnection();
-            connection.setAutoCommit(false); // Iniciar transacción
+            connection.setAutoCommit(false);
 
             task.run();
 
-            connection.commit(); // Confirmar transacción
+            connection.commit();
             connection.close();
         } catch (Exception e) {
             rollbackTransaction(connection);
