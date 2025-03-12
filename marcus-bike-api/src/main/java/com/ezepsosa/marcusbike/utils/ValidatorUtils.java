@@ -1,22 +1,22 @@
 package com.ezepsosa.marcusbike.utils;
 
+import com.ezepsosa.marcusbike.dto.UserDTO;
+import com.ezepsosa.marcusbike.dto.UserInsertDTO;
 import com.ezepsosa.marcusbike.models.Product;
-import com.ezepsosa.marcusbike.models.User;
 
 public class ValidatorUtils {
 
     // User validations
-    public static Boolean validateUser(User user) {
-        return checkStringField(user.getEmail()) && checkStringField(user.getPasswordHash())
-                && checkStringField(user.getUsername()) && user.getRole() != null;
+    public static Boolean validateUser(UserInsertDTO user) {
+        return checkStringField(user.email()) && checkStringField(user.password())
+                && checkStringField(user.username());
 
     }
 
-    public Boolean sameUser(User user, User userToCompare) {
-        return user.getEmail().equals(userToCompare.getEmail())
-                && user.getPasswordHash().equals(userToCompare.getPasswordHash())
-                && user.getRole().equals(userToCompare.getRole())
-                && user.getUsername().equals(userToCompare.getUsername());
+    public Boolean sameUser(UserDTO user, UserDTO userToCompare) {
+        return user.email().equals(userToCompare.email())
+                && user.role().equals(userToCompare.role())
+                && user.username().equals(userToCompare.username());
     }
 
     public static boolean validateProduct(Product product) {
