@@ -7,6 +7,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.ezepsosa.marcusbike.config.HikariDatabaseConfig;
 import com.ezepsosa.marcusbike.models.OrderLineProductPart;
 import com.ezepsosa.marcusbike.models.Product;
@@ -14,6 +17,9 @@ import com.ezepsosa.marcusbike.models.ProductPart;
 import com.ezepsosa.marcusbike.models.ProductPartCategory;
 
 public class OrderLineProductPartDAO {
+
+    private static final Logger logger = LoggerFactory.getLogger(OrderLineProductPartDAO.class);
+
     private final String SQL_GET_ALL_QUERY = "SELECT olpp.*, pp.id AS product_part_id, pp.part_option, pp.is_available, pp.base_price, pp.category, pp.created_at AS product_part_created_at, p.id AS product_id, p.product_name, p.created_at AS product_created_at FROM order_line_product_part olpp JOIN product_part pp ON olpp.product_part_id = pp.id JOIN product p ON pp.product_id = p.id";
     private final String SQL_GET_ID_QUERY = "SELECT olpp.*, pp.id AS product_part_id, pp.part_option, pp.is_available, pp.base_price, pp.category, pp.created_at AS product_part_created_at, p.id AS product_id, p.product_name, p.created_at AS product_created_at FROM order_line_product_part olpp JOIN product_part pp ON olpp.product_part_id = pp.id JOIN product p ON pp.product_id = p.id WHERE olpp.order_line_id = ? AND olpp.product_part_id = ?";
     private final String SQL_INSERT_QUERY = "INSERT INTO order_line_product_part(order_line_id, product_part_id, quantity, final_price) VALUES (?, ?, ?, ?) RETURNING order_line_id AND";
@@ -29,7 +35,8 @@ public class OrderLineProductPartDAO {
                 OrderLines.add(createOrderLineProductPart(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("Error fetching order line product parts. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
         }
         return OrderLines;
     }
@@ -44,7 +51,8 @@ public class OrderLineProductPartDAO {
                 return createOrderLineProductPart(rs);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("Error fetching order line product parts by Ids. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
         }
         return null;
     }
@@ -63,7 +71,8 @@ public class OrderLineProductPartDAO {
             return affectedRows > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("Error inserting order line product parts by Ids. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
         }
         return false;
 
@@ -82,7 +91,8 @@ public class OrderLineProductPartDAO {
             return affectedRows > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("Error updating order line product parts by Ids. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
         }
         return false;
 
@@ -99,7 +109,8 @@ public class OrderLineProductPartDAO {
             return affectedRows > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("Error deleting order line product parts by Ids. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
         }
         return false;
     }
