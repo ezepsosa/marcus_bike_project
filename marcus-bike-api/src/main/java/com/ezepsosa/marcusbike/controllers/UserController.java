@@ -50,6 +50,7 @@ public class UserController implements RouteRegistrar {
         if (userId == null) {
             logger.warn("Invalid or missing user ID");
             JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing user ID");
+            return;
         }
         logger.info("Fetching user with ID {}", userId);
 
@@ -57,6 +58,7 @@ public class UserController implements RouteRegistrar {
         if (user == null) {
             logger.warn("User with ID {} not found", userId);
             JsonResponseUtil.sendErrorResponse(exchange, 404, "User not found");
+            return;
         }
         logger.info("User with ID {} found", userId);
         JsonResponseUtil.sendJsonResponse(exchange, user);
@@ -128,6 +130,7 @@ public class UserController implements RouteRegistrar {
         if (userId == null) {
             logger.warn("Invalid or missing user ID");
             JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing user ID");
+            return;
         }
         logger.info("Deleting user with ID {}", userId);
 
@@ -135,6 +138,7 @@ public class UserController implements RouteRegistrar {
         if (deleted == false) {
             logger.warn("User with ID {} not deleted or not found", userId);
             JsonResponseUtil.sendErrorResponse(exchange, 404, "User not deleted or not found");
+            return;
         }
         logger.info("User with ID {} found", userId);
         JsonResponseUtil.sendJsonResponse(exchange, "Succesfully deleted");

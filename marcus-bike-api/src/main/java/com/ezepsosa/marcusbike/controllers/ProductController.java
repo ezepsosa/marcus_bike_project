@@ -50,6 +50,7 @@ public class ProductController implements RouteRegistrar {
         if (productId == null) {
             logger.warn("Invalid or missing product ID");
             JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing product ID");
+            return;
         }
         logger.info("Fetching product with ID {}", productId);
 
@@ -57,6 +58,7 @@ public class ProductController implements RouteRegistrar {
         if (product == null) {
             logger.warn("Product with ID {} not found", productId);
             JsonResponseUtil.sendErrorResponse(exchange, 404, "Product not found");
+            return;
         }
         logger.info("Product with ID {} found", productId);
         JsonResponseUtil.sendJsonResponse(exchange, product);
