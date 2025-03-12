@@ -10,7 +10,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ezepsosa.marcusbike.config.TransactionManager;
+import com.ezepsosa.marcusbike.config.HikariDatabaseConfig;
 import com.ezepsosa.marcusbike.models.ProductPart;
 import com.ezepsosa.marcusbike.models.ProductPartCondition;
 
@@ -26,7 +26,7 @@ public class ProductPartConditionDAO {
 
     public List<ProductPartCondition> getAll() {
         List<ProductPartCondition> conditions = new ArrayList<>();
-        try (Connection connection = TransactionManager.getConnection();
+        try (Connection connection = HikariDatabaseConfig.getConnection();
                 PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
                 ResultSet rs = pst.executeQuery()) {
             while (rs.next()) {
@@ -40,7 +40,7 @@ public class ProductPartConditionDAO {
     }
 
     public ProductPartCondition getById(Long partId, Long dependantPartId) {
-        try (Connection connection = TransactionManager.getConnection();
+        try (Connection connection = HikariDatabaseConfig.getConnection();
                 PreparedStatement pst = connection.prepareStatement(SQL_GET_ID_QUERY)) {
             pst.setLong(1, partId);
             pst.setLong(2, dependantPartId);
@@ -57,7 +57,7 @@ public class ProductPartConditionDAO {
     }
 
     public Boolean insert(ProductPartCondition productPartCondition) {
-        try (Connection connection = TransactionManager.getConnection();
+        try (Connection connection = HikariDatabaseConfig.getConnection();
                 PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY)) {
             pst.setLong(1, productPartCondition.getPartId().getId());
             pst.setLong(2, productPartCondition.getDependantPartId().getId());
@@ -73,7 +73,7 @@ public class ProductPartConditionDAO {
     }
 
     public Boolean update(ProductPartCondition productPartCondition) {
-        try (Connection connection = TransactionManager.getConnection();
+        try (Connection connection = HikariDatabaseConfig.getConnection();
                 PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY)) {
             pst.setDouble(1, productPartCondition.getPriceAdjustment());
             pst.setBoolean(2, productPartCondition.getIsRestriction());
@@ -89,7 +89,7 @@ public class ProductPartConditionDAO {
     }
 
     public Boolean delete(Long partId, Long dependantPartId) {
-        try (Connection connection = TransactionManager.getConnection();
+        try (Connection connection = HikariDatabaseConfig.getConnection();
                 PreparedStatement pst = connection.prepareStatement(SQL_DELETE_QUERY)) {
             pst.setLong(1, partId);
             pst.setLong(2, dependantPartId);

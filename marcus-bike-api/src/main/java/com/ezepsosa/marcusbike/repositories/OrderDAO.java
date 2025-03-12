@@ -10,7 +10,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ezepsosa.marcusbike.config.TransactionManager;
+import com.ezepsosa.marcusbike.config.HikariDatabaseConfig;
 import com.ezepsosa.marcusbike.models.Order;
 import com.ezepsosa.marcusbike.models.User;
 import com.ezepsosa.marcusbike.models.UserRole;
@@ -28,7 +28,7 @@ public class OrderDAO {
 
     public List<Order> getAll() {
         List<Order> orders = new ArrayList<>();
-        try (Connection connection = TransactionManager.getConnection();
+        try (Connection connection = HikariDatabaseConfig.getConnection();
                 PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
                 ResultSet rs = pst.executeQuery()) {
             while (rs.next()) {
@@ -43,7 +43,7 @@ public class OrderDAO {
 
     public List<Order> getAllByUser(Long id) {
         List<Order> orders = new ArrayList<>();
-        try (Connection connection = TransactionManager.getConnection();
+        try (Connection connection = HikariDatabaseConfig.getConnection();
                 PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_BY_USER_QUERY)) {
             pst.setLong(1, id);
             try (ResultSet rs = pst.executeQuery()) {
@@ -59,7 +59,7 @@ public class OrderDAO {
     }
 
     public Order getById(Long id) {
-        try (Connection connection = TransactionManager.getConnection();
+        try (Connection connection = HikariDatabaseConfig.getConnection();
                 PreparedStatement pst = connection.prepareStatement(SQL_GET_ID_QUERY)) {
             pst.setLong(1, id);
             try (ResultSet rs = pst.executeQuery()) {
@@ -75,7 +75,7 @@ public class OrderDAO {
     }
 
     public Long insert(Order order) {
-        try (Connection connection = TransactionManager.getConnection();
+        try (Connection connection = HikariDatabaseConfig.getConnection();
                 PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY,
                         PreparedStatement.RETURN_GENERATED_KEYS)) {
             pst.setLong(1, order.getUser().getId());
@@ -97,7 +97,7 @@ public class OrderDAO {
     }
 
     public Boolean update(Order order) {
-        try (Connection connection = TransactionManager.getConnection();
+        try (Connection connection = HikariDatabaseConfig.getConnection();
                 PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY)) {
             pst.setLong(1, order.getUser().getId());
             pst.setDouble(2, order.getFinalPrice());
@@ -112,7 +112,7 @@ public class OrderDAO {
     }
 
     public Boolean delete(Long id) {
-        try (Connection connection = TransactionManager.getConnection();
+        try (Connection connection = HikariDatabaseConfig.getConnection();
                 PreparedStatement pst = connection.prepareStatement(SQL_DELETE_QUERY)) {
             pst.setLong(1, id);
             return pst.executeUpdate() > 0;

@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 public class TransactionManager {
 
-    private static final ThreadLocal<Connection> connectionThread = new ThreadLocal<>();
+    private static final ThreadLocal<Connection> connectionThread = ThreadLocal.withInitial(() -> null);
 
     public static void beginTransaction() throws SQLException {
         if (connectionThread.get() == null) {
@@ -18,38 +18,53 @@ public class TransactionManager {
     public static void commitTransaction() throws SQLException {
         Connection connection = connectionThread.get();
         if (connection != null) {
-            connection.commit();
-            connection.close();
-            connectionThread.remove();
+            try {
+                connection.commit();
+            } finally {
+                try {
+                    connection.close();
+                } finally {
+                    connectionThread.remove();
+                }
+            }
         }
     }
 
-    public static void rollbackTransaction() {
-        Connection conn = connectionThread.get();
-        if (conn != null) {
+    public static void rollbackTransaction() throws SQLException {
+        Connection connection = connectionThread.get();
+        if (connection != null) {
             try {
-                conn.rollback();
-                conn.close();
+                connection.rollback();
             } catch (SQLException e) {
                 throw new RuntimeException("Rollback error", e);
             } finally {
-                connectionThread.remove();
+                try {
+                    connection.close();
+                } finally {
+                    connectionThread.remove();
+                }
             }
         }
     }
 
     public static Connection getConnection() throws SQLException {
-        Connection conn = connectionThread.get();
-        return (conn != null) ? conn : HikariDatabaseConfig.getConnection();
+        Connection connection = connectionThread.get();
+        if (connection == null || connection.isClosed()) {
+            connection = HikariDatabaseConfig.getConnection();
+            connectionThread.set(connection);
+        }
+        return connection;
     }
 
     public static void closeConnection(Connection connection) {
+        if (connection != null && connectionThread.get() == connection) {
+            connectionThread.remove();
+        }
         try {
-            if (connection != null && connectionThread.get() == null) {
+            if (connection != null) {
                 connection.close();
             }
-        } catch (SQLException e) {
-            throw new RuntimeException("Error when closing the active connection", e);
+        } catch (SQLException ignored) {
         }
     }
 }

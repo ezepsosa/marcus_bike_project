@@ -12,7 +12,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ezepsosa.marcusbike.config.TransactionManager;
+import com.ezepsosa.marcusbike.config.HikariDatabaseConfig;
 import com.ezepsosa.marcusbike.models.OrderLine;
 import com.ezepsosa.marcusbike.models.Product;
 
@@ -29,7 +29,7 @@ public class OrderLineDAO {
 
     public Map<Long, List<OrderLine>> getAllGroupedByOrder() {
         Map<Long, List<OrderLine>> orderLines = new HashMap<>();
-        try (Connection connection = TransactionManager.getConnection();
+        try (Connection connection = HikariDatabaseConfig.getConnection();
                 PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
                 ResultSet rs = pst.executeQuery()) {
             while (rs.next()) {
@@ -44,7 +44,7 @@ public class OrderLineDAO {
     }
 
     public OrderLine getById(Long id) {
-        try (Connection connection = TransactionManager.getConnection();
+        try (Connection connection = HikariDatabaseConfig.getConnection();
                 PreparedStatement pst = connection.prepareStatement(SQL_GET_ID_QUERY)) {
             pst.setLong(1, id);
             try (ResultSet rs = pst.executeQuery()) {
@@ -60,7 +60,7 @@ public class OrderLineDAO {
     }
 
     public Long insert(OrderLine orderLine, Long orderId) {
-        try (Connection connection = TransactionManager.getConnection();
+        try (Connection connection = HikariDatabaseConfig.getConnection();
                 PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY,
                         PreparedStatement.RETURN_GENERATED_KEYS)) {
             pst.setLong(1, orderId);
@@ -83,7 +83,7 @@ public class OrderLineDAO {
     }
 
     public Boolean update(OrderLine order, Long orderId) {
-        try (Connection connection = TransactionManager.getConnection();
+        try (Connection connection = HikariDatabaseConfig.getConnection();
                 PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY)) {
             pst.setLong(1, orderId);
             pst.setLong(2, order.getProduct().getId());
@@ -99,7 +99,7 @@ public class OrderLineDAO {
     }
 
     public Boolean delete(Long id) {
-        try (Connection connection = TransactionManager.getConnection();
+        try (Connection connection = HikariDatabaseConfig.getConnection();
                 PreparedStatement pst = connection.prepareStatement(SQL_DELETE_QUERY)) {
             pst.setLong(1, id);
             return pst.executeUpdate() > 0;
@@ -112,7 +112,7 @@ public class OrderLineDAO {
 
     public List<OrderLine> getByOrderId(Long orderId) {
         List<OrderLine> ordersLines = new ArrayList<>();
-        try (Connection connection = TransactionManager.getConnection();
+        try (Connection connection = HikariDatabaseConfig.getConnection();
                 PreparedStatement pst = connection.prepareStatement(SQL_GET_BY_ORDER_ID)) {
             pst.setLong(1, orderId);
             try (ResultSet rs = pst.executeQuery()) {

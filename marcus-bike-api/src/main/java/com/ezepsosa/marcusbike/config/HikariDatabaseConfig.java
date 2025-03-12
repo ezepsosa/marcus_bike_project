@@ -17,7 +17,6 @@ public class HikariDatabaseConfig {
         config.setPassword("admin");
         config.setMinimumIdle(2);
         config.setMaximumPoolSize(4);
-        config.setAutoCommit(false);
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");

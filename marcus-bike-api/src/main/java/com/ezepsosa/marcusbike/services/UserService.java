@@ -8,6 +8,7 @@ import com.ezepsosa.marcusbike.dto.UserInsertDTO;
 import com.ezepsosa.marcusbike.mappers.UserMapper;
 import com.ezepsosa.marcusbike.models.User;
 import com.ezepsosa.marcusbike.repositories.UserDAO;
+import com.ezepsosa.marcusbike.utils.TransactionHandler;
 
 public class UserService {
 
@@ -26,17 +27,21 @@ public class UserService {
     }
 
     public Long insert(UserInsertDTO userToInsert) {
-        return userDAO.insert(UserMapper.toModel(userToInsert));
+        return TransactionHandler.startTransaction(() -> userDAO.insert(UserMapper.toModel(userToInsert)));
     }
 
     public boolean update(UserInsertDTO userToUpdate, long id) {
         User user = UserMapper.toModel(userToUpdate);
         user.setId(id);
         return userDAO.update(user);
+
     }
 
     public boolean delete(Long id) {
-        return userDAO.delete(id);
+        return TransactionHandler.startTransaction(() -> {
+            return userDAO.delete(id);
+        });
+
     }
 
 }

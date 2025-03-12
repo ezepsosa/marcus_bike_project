@@ -10,7 +10,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ezepsosa.marcusbike.config.TransactionManager;
+import com.ezepsosa.marcusbike.config.HikariDatabaseConfig;
 import com.ezepsosa.marcusbike.models.OrderLineProductPart;
 import com.ezepsosa.marcusbike.models.Product;
 import com.ezepsosa.marcusbike.models.ProductPart;
@@ -29,7 +29,7 @@ public class OrderLineProductPartDAO {
 
     public List<OrderLineProductPart> getAll() {
         List<OrderLineProductPart> orderLines = new ArrayList<>();
-        try (Connection connection = TransactionManager.getConnection();
+        try (Connection connection = HikariDatabaseConfig.getConnection();
                 PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
                 ResultSet rs = pst.executeQuery()) {
             while (rs.next()) {
@@ -43,7 +43,7 @@ public class OrderLineProductPartDAO {
     }
 
     public OrderLineProductPart getById(Long orderLineId, Long productPartId) {
-        try (Connection connection = TransactionManager.getConnection();
+        try (Connection connection = HikariDatabaseConfig.getConnection();
                 PreparedStatement pst = connection.prepareStatement(SQL_GET_ID_QUERY)) {
             pst.setLong(1, orderLineId);
             pst.setLong(2, productPartId);
@@ -60,7 +60,7 @@ public class OrderLineProductPartDAO {
     }
 
     public Boolean insert(OrderLineProductPart orderLineProductPart) {
-        try (Connection connection = TransactionManager.getConnection();
+        try (Connection connection = HikariDatabaseConfig.getConnection();
                 PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY)) {
             pst.setLong(1, orderLineProductPart.getOrderLine().getId());
             pst.setLong(2, orderLineProductPart.getProductPart().getId());
@@ -76,7 +76,7 @@ public class OrderLineProductPartDAO {
     }
 
     public Boolean update(OrderLineProductPart orderLineProductPart) {
-        try (Connection connection = TransactionManager.getConnection();
+        try (Connection connection = HikariDatabaseConfig.getConnection();
                 PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY)) {
             pst.setInt(1, orderLineProductPart.getQuantity());
             pst.setDouble(2, orderLineProductPart.getFinalPrice());
@@ -92,7 +92,7 @@ public class OrderLineProductPartDAO {
     }
 
     public Boolean delete(Long orderLineId, Long productPartId) {
-        try (Connection connection = TransactionManager.getConnection();
+        try (Connection connection = HikariDatabaseConfig.getConnection();
                 PreparedStatement pst = connection.prepareStatement(SQL_DETELE_QUERY)) {
             pst.setLong(1, orderLineId);
             pst.setLong(2, productPartId);
@@ -106,7 +106,7 @@ public class OrderLineProductPartDAO {
 
     public List<OrderLineProductPart> getByOrderLineId(Long orderLineId) {
         List<OrderLineProductPart> orderLines = new ArrayList<>();
-        try (Connection connection = TransactionManager.getConnection();
+        try (Connection connection = HikariDatabaseConfig.getConnection();
                 PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_BY_ORDERLINE_QUERY)) {
             pst.setLong(1, orderLineId);
             try (ResultSet rs = pst.executeQuery()) {
