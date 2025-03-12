@@ -27,7 +27,7 @@ public class OrderLineProductPartDAO {
     private final String SQL_DETELE_QUERY = "DELETE FROM order_line_product_part WHERE order_line_id = ? AND product_part_id = ?";
 
     public List<OrderLineProductPart> getAll() {
-        List<OrderLineProductPart> OrderLines = new ArrayList<OrderLineProductPart>();
+        List<OrderLineProductPart> OrderLines = new ArrayList<>();
         try (Connection connection = HikariDatabaseConfig.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
             ResultSet rs = pst.executeQuery();
