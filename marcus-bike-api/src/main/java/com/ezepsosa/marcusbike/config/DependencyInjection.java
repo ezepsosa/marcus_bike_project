@@ -1,10 +1,12 @@
 package com.ezepsosa.marcusbike.config;
 
 import com.ezepsosa.marcusbike.controllers.OrderController;
+import com.ezepsosa.marcusbike.controllers.OrderLineController;
 import com.ezepsosa.marcusbike.controllers.ProductController;
 import com.ezepsosa.marcusbike.controllers.UserController;
 import com.ezepsosa.marcusbike.repositories.OrderDAO;
 import com.ezepsosa.marcusbike.repositories.OrderLineDAO;
+import com.ezepsosa.marcusbike.repositories.OrderLineProductPartDAO;
 import com.ezepsosa.marcusbike.repositories.ProductDAO;
 import com.ezepsosa.marcusbike.repositories.UserDAO;
 import com.ezepsosa.marcusbike.services.OrderLineService;
@@ -14,8 +16,8 @@ import com.ezepsosa.marcusbike.services.UserService;
 
 public class DependencyInjection {
     // User
-    private final UserDAO userdao = new UserDAO();
-    private final UserService userService = new UserService(userdao);
+    private final UserDAO userDAO = new UserDAO();
+    private final UserService userService = new UserService(userDAO);
     private final UserController userController = new UserController(userService);
 
     public UserController getUserController() {
@@ -23,21 +25,29 @@ public class DependencyInjection {
     }
 
     // Product
-    private final ProductDAO productdao = new ProductDAO();
-    private final ProductService productService = new ProductService(productdao);
+    private final ProductDAO productDAO = new ProductDAO();
+    private final ProductService productService = new ProductService(productDAO);
     private final ProductController productContoller = new ProductController(productService);
 
     public ProductController getProductController() {
         return productContoller;
     }
 
+    // OrderLineProductParts
+    private final OrderLineProductPartDAO orderLineProductPartDAO = new OrderLineProductPartDAO();
+
     // OrderLine
-    private final OrderLineDAO orderlinedao = new OrderLineDAO();
-    private final OrderLineService orderlineservice = new OrderLineService(orderlinedao);
+    private final OrderLineDAO orderLineDAO = new OrderLineDAO();
+    private final OrderLineService orderlineService = new OrderLineService(orderLineDAO, orderLineProductPartDAO);
+    private final OrderLineController orderLineController = new OrderLineController(orderlineService);
+
+    public OrderLineController getOrderLineController() {
+        return orderLineController;
+    }
 
     // Order
-    private final OrderDAO orderdao = new OrderDAO();
-    private final OrderService orderservice = new OrderService(orderdao, orderlinedao);
+    private final OrderDAO orderDAO = new OrderDAO();
+    private final OrderService orderservice = new OrderService(orderDAO, orderLineDAO);
     private final OrderController orderController = new OrderController(orderservice);
 
     public OrderController getOrderController() {
