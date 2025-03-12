@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.ezepsosa.marcusbike.dto.OrderLineDTO;
 import com.ezepsosa.marcusbike.dto.OrderLineProductPartDTO;
 import com.ezepsosa.marcusbike.routes.RouteRegistrar;
+import com.ezepsosa.marcusbike.services.OrderLineProductPartService;
 import com.ezepsosa.marcusbike.services.OrderLineService;
 import com.ezepsosa.marcusbike.utils.JsonResponseUtil;
 import com.ezepsosa.marcusbike.utils.RequestUtils;
@@ -19,9 +20,12 @@ import io.undertow.util.Methods;
 public class OrderLineController implements RouteRegistrar {
     private static final Logger logger = LoggerFactory.getLogger(OrderLineController.class);
     private final OrderLineService orderLineService;
+    private final OrderLineProductPartService orderLineProductPartService;
 
-    public OrderLineController(OrderLineService orderLineService) {
+    public OrderLineController(OrderLineService orderLineService,
+            OrderLineProductPartService orderLineProductPartService) {
         this.orderLineService = orderLineService;
+        this.orderLineProductPartService = orderLineProductPartService;
     }
 
     @Override
@@ -53,7 +57,7 @@ public class OrderLineController implements RouteRegistrar {
             return;
         }
 
-        List<OrderLineProductPartDTO> productParts = orderLineService.getByOrderLineId(orderLineId);
+        List<OrderLineProductPartDTO> productParts = orderLineProductPartService.getByOrderLineId(orderLineId);
         if (productParts.isEmpty()) {
             logger.warn("No product parts found for OrderLine ID {}", orderLineId);
             JsonResponseUtil.sendErrorResponse(exchange, 404, "No product parts found");

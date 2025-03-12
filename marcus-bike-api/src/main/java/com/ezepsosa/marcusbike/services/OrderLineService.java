@@ -4,26 +4,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.ezepsosa.marcusbike.dto.OrderLineDTO;
-import com.ezepsosa.marcusbike.dto.OrderLineProductPartDTO;
 import com.ezepsosa.marcusbike.mappers.OrderLineMapper;
-import com.ezepsosa.marcusbike.mappers.OrderLineProductPartMapper;
 import com.ezepsosa.marcusbike.models.OrderLine;
 import com.ezepsosa.marcusbike.repositories.OrderLineDAO;
-import com.ezepsosa.marcusbike.repositories.OrderLineProductPartDAO;
 
 public class OrderLineService {
 
     private final OrderLineDAO orderLineDAO;
-    private final OrderLineProductPartDAO orderLineProductPartDAO;
 
-    public OrderLineService(OrderLineDAO orderLineDAO, OrderLineProductPartDAO orderLineProductPartDAO) {
+    public OrderLineService(OrderLineDAO orderLineDAO) {
         this.orderLineDAO = orderLineDAO;
-        this.orderLineProductPartDAO = orderLineProductPartDAO;
-    }
-
-    public List<OrderLineProductPartDTO> getByOrderLineId(Long orderLineId) {
-        return orderLineProductPartDAO.getByOrderLineId(orderLineId).stream().map(OrderLineProductPartMapper::toDTO)
-                .collect(Collectors.toList());
     }
 
     public List<OrderLineDTO> getByOrderId(Long orderId) {

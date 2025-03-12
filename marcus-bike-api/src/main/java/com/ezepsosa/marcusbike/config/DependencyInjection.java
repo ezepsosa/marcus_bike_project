@@ -9,6 +9,7 @@ import com.ezepsosa.marcusbike.repositories.OrderLineDAO;
 import com.ezepsosa.marcusbike.repositories.OrderLineProductPartDAO;
 import com.ezepsosa.marcusbike.repositories.ProductDAO;
 import com.ezepsosa.marcusbike.repositories.UserDAO;
+import com.ezepsosa.marcusbike.services.OrderLineProductPartService;
 import com.ezepsosa.marcusbike.services.OrderLineService;
 import com.ezepsosa.marcusbike.services.OrderService;
 import com.ezepsosa.marcusbike.services.ProductService;
@@ -35,11 +36,14 @@ public class DependencyInjection {
 
     // OrderLineProductParts
     private final OrderLineProductPartDAO orderLineProductPartDAO = new OrderLineProductPartDAO();
+    private final OrderLineProductPartService orderLineProductPartService = new OrderLineProductPartService(
+            orderLineProductPartDAO);
 
     // OrderLine
     private final OrderLineDAO orderLineDAO = new OrderLineDAO();
-    private final OrderLineService orderlineService = new OrderLineService(orderLineDAO, orderLineProductPartDAO);
-    private final OrderLineController orderLineController = new OrderLineController(orderlineService);
+    private final OrderLineService orderlineService = new OrderLineService(orderLineDAO);
+    private final OrderLineController orderLineController = new OrderLineController(orderlineService,
+            orderLineProductPartService);
 
     public OrderLineController getOrderLineController() {
         return orderLineController;
