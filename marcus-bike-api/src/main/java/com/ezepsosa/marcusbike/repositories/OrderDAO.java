@@ -10,7 +10,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ezepsosa.marcusbike.config.HikariDatabaseConfig;
+import com.ezepsosa.marcusbike.config.TransactionManager;
 import com.ezepsosa.marcusbike.models.Order;
 import com.ezepsosa.marcusbike.models.User;
 import com.ezepsosa.marcusbike.models.UserRole;
@@ -28,15 +28,12 @@ public class OrderDAO {
 
     public List<Order> getAll() {
         List<Order> orders = new ArrayList<>();
-        try (Connection connection = HikariDatabaseConfig.getConnection()) {
-            PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
-            ResultSet rs = pst.executeQuery();
+        try (Connection connection = TransactionManager.getConnection();
+                PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
+                ResultSet rs = pst.executeQuery()) {
             while (rs.next()) {
-                Order order = createOrder(rs);
-                orders.add(order);
-
+                orders.add(createOrder(rs));
             }
-            return orders;
         } catch (SQLException e) {
             logger.warn("Error fetching orders. SQL returned error {}, Error Code: {}",
                     e.getSQLState(), e.getErrorCode());
@@ -46,16 +43,14 @@ public class OrderDAO {
 
     public List<Order> getAllByUser(Long id) {
         List<Order> orders = new ArrayList<>();
-        try (Connection connection = HikariDatabaseConfig.getConnection()) {
-            PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_BY_USER_QUERY);
+        try (Connection connection = TransactionManager.getConnection();
+                PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_BY_USER_QUERY)) {
             pst.setLong(1, id);
-            ResultSet rs = pst.executeQuery();
-            while (rs.next()) {
-                Order order = createOrder(rs);
-                orders.add(order);
-
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    orders.add(createOrder(rs));
+                }
             }
-            return orders;
         } catch (SQLException e) {
             logger.warn("Error fetching orders by user. SQL returned error {}, Error Code: {}",
                     e.getSQLState(), e.getErrorCode());
@@ -64,34 +59,29 @@ public class OrderDAO {
     }
 
     public Order getById(Long id) {
-        try (Connection connection = HikariDatabaseConfig.getConnection()) {
-            PreparedStatement pst = connection.prepareStatement(SQL_GET_ID_QUERY);
-
+        try (Connection connection = TransactionManager.getConnection();
+                PreparedStatement pst = connection.prepareStatement(SQL_GET_ID_QUERY)) {
             pst.setLong(1, id);
-
-            ResultSet rs = pst.executeQuery();
-
-            while (rs.next()) {
-                return createOrder(rs);
-
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    return createOrder(rs);
+                }
             }
         } catch (SQLException e) {
             logger.warn("Error fetching orders by Id. SQL returned error {}, Error Code: {}",
                     e.getSQLState(), e.getErrorCode());
         }
         return null;
-
     }
 
     public Long insert(Order order) {
-        try (Connection connection = HikariDatabaseConfig.getConnection()) {
-            PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY,
-                    PreparedStatement.RETURN_GENERATED_KEYS);
-
+        try (Connection connection = TransactionManager.getConnection();
+                PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY,
+                        PreparedStatement.RETURN_GENERATED_KEYS)) {
             pst.setLong(1, order.getUser().getId());
             pst.setDouble(2, order.getFinalPrice());
 
-            Integer affectedRows = pst.executeUpdate();
+            int affectedRows = pst.executeUpdate();
             if (affectedRows > 0) {
                 try (ResultSet generatedValues = pst.getGeneratedKeys()) {
                     if (generatedValues.next()) {
@@ -99,60 +89,52 @@ public class OrderDAO {
                     }
                 }
             }
-
         } catch (SQLException e) {
             logger.warn("Error inserting order. SQL returned error {}, Error Code: {}",
                     e.getSQLState(), e.getErrorCode());
         }
         return null;
-
     }
 
     public Boolean update(Order order) {
-        try (Connection connection = HikariDatabaseConfig.getConnection()) {
-            PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY);
-
+        try (Connection connection = TransactionManager.getConnection();
+                PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY)) {
             pst.setLong(1, order.getUser().getId());
             pst.setDouble(2, order.getFinalPrice());
             pst.setLong(3, order.getId());
 
-            Integer affectedRows = pst.executeUpdate();
-            return affectedRows > 0;
-
+            return pst.executeUpdate() > 0;
         } catch (SQLException e) {
             logger.warn("Error updating order. SQL returned error {}, Error Code: {}",
                     e.getSQLState(), e.getErrorCode());
         }
         return false;
-
     }
 
     public Boolean delete(Long id) {
-        try (Connection connection = HikariDatabaseConfig.getConnection()) {
-            PreparedStatement pst = connection.prepareStatement(SQL_DELETE_QUERY,
-                    PreparedStatement.RETURN_GENERATED_KEYS);
-
+        try (Connection connection = TransactionManager.getConnection();
+                PreparedStatement pst = connection.prepareStatement(SQL_DELETE_QUERY)) {
             pst.setLong(1, id);
-
-            Integer affectedRows = pst.executeUpdate();
-
-            return affectedRows > 0;
-
+            return pst.executeUpdate() > 0;
         } catch (SQLException e) {
             logger.warn("Error deleting order. SQL returned error {}, Error Code: {}",
                     e.getSQLState(), e.getErrorCode());
         }
         return false;
-
     }
 
     private Order createOrder(ResultSet rs) throws SQLException {
-        return new Order(rs.getLong("id"),
-                new User(rs.getLong("user_id"), rs.getString("username"), rs.getString("email"),
+        return new Order(
+                rs.getLong("id"),
+                new User(
+                        rs.getLong("user_id"),
+                        rs.getString("username"),
+                        rs.getString("email"),
                         rs.getString("password_hash"),
                         UserRole.valueOf(rs.getString("user_role").toUpperCase()),
                         rs.getTimestamp("user_created_at").toLocalDateTime()),
-                rs.getDouble("final_price"), new ArrayList<>(),
+                rs.getDouble("final_price"),
+                new ArrayList<>(),
                 rs.getTimestamp("created_at").toLocalDateTime());
     }
 }

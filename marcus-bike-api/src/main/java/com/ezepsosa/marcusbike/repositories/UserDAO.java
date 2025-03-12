@@ -10,7 +10,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ezepsosa.marcusbike.config.HikariDatabaseConfig;
+import com.ezepsosa.marcusbike.config.TransactionManager;
 import com.ezepsosa.marcusbike.models.User;
 import com.ezepsosa.marcusbike.models.UserRole;
 
@@ -26,52 +26,45 @@ public class UserDAO {
 
     public List<User> getAll() {
         List<User> users = new ArrayList<>();
-
-        try (Connection connection = HikariDatabaseConfig.getConnection()) {
-            PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
-            ResultSet rs = pst.executeQuery();
+        try (Connection connection = TransactionManager.getConnection();
+                PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
+                ResultSet rs = pst.executeQuery()) {
             while (rs.next()) {
-                User userResult = createUser(rs);
-                users.add(userResult);
+                users.add(createUser(rs));
             }
         } catch (SQLException e) {
-            logger.warn("Error fetching users. SQL returned error {}, Error Code: {}",
-                    e.getSQLState(), e.getErrorCode());
+            logger.warn("Error fetching users. SQL returned error {}, Error Code: {}", e.getSQLState(),
+                    e.getErrorCode());
         }
         return users;
     }
 
     public User getById(Long id) {
-        try (Connection connection = HikariDatabaseConfig.getConnection()) {
-            PreparedStatement pst = connection.prepareStatement(SQL_GET_ID_QUERY);
-
+        try (Connection connection = TransactionManager.getConnection();
+                PreparedStatement pst = connection.prepareStatement(SQL_GET_ID_QUERY)) {
             pst.setLong(1, id);
-
-            ResultSet rs = pst.executeQuery();
-            while (rs.next()) {
-                return createUser(rs);
-
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    return createUser(rs);
+                }
             }
         } catch (SQLException e) {
-            logger.warn("Error fetching users by id. SQL returned error {}, Error Code: {}",
-                    e.getSQLState(), e.getErrorCode());
+            logger.warn("Error fetching user by ID. SQL returned error {}, Error Code: {}", e.getSQLState(),
+                    e.getErrorCode());
         }
         return null;
-
     }
 
     public Long insert(User user) {
-
-        try (Connection connection = HikariDatabaseConfig.getConnection()) {
-            PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY,
-                    PreparedStatement.RETURN_GENERATED_KEYS);
-
+        try (Connection connection = TransactionManager.getConnection();
+                PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY,
+                        PreparedStatement.RETURN_GENERATED_KEYS)) {
             pst.setString(1, user.getUsername());
             pst.setString(2, user.getEmail());
             pst.setString(3, user.getPasswordHash());
             pst.setString(4, user.getRole().name().toLowerCase());
 
-            Integer affectedRows = pst.executeUpdate();
+            int affectedRows = pst.executeUpdate();
             if (affectedRows > 0) {
                 try (ResultSet generatedValues = pst.getGeneratedKeys()) {
                     if (generatedValues.next()) {
@@ -79,60 +72,49 @@ public class UserDAO {
                     }
                 }
             }
-
         } catch (SQLException e) {
-            logger.warn("Error inserting users. SQL returned error {}, Error Code: {}",
-                    e.getSQLState(), e.getErrorCode());
+            logger.warn("Error inserting user. SQL returned error {}, Error Code: {}", e.getSQLState(),
+                    e.getErrorCode());
         }
         return null;
-
     }
 
     public Boolean update(User user) {
-
-        try (Connection connection = HikariDatabaseConfig.getConnection()) {
-            PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY);
-
+        try (Connection connection = TransactionManager.getConnection();
+                PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY)) {
             pst.setString(1, user.getUsername());
             pst.setString(2, user.getEmail());
             pst.setString(3, user.getPasswordHash());
             pst.setString(4, user.getRole().name().toLowerCase());
             pst.setLong(5, user.getId());
 
-            Integer affectedRows = pst.executeUpdate();
-            return affectedRows > 0;
-
+            return pst.executeUpdate() > 0;
         } catch (SQLException e) {
-            logger.warn("Error updating users. SQL returned error {}, Error Code: {}",
-                    e.getSQLState(), e.getErrorCode());
+            logger.warn("Error updating user. SQL returned error {}, Error Code: {}", e.getSQLState(),
+                    e.getErrorCode());
         }
         return false;
-
     }
 
     public Boolean delete(Long id) {
-
-        try (Connection connection = HikariDatabaseConfig.getConnection()) {
-            PreparedStatement pst = connection.prepareStatement(SQL_DELETE_QUERY,
-                    PreparedStatement.RETURN_GENERATED_KEYS);
-
+        try (Connection connection = TransactionManager.getConnection();
+                PreparedStatement pst = connection.prepareStatement(SQL_DELETE_QUERY)) {
             pst.setLong(1, id);
-
-            Integer affectedRows = pst.executeUpdate();
-            return affectedRows > 0;
-
+            return pst.executeUpdate() > 0;
         } catch (SQLException e) {
-            logger.warn("Error deleting users. SQL returned error {}, Error Code: {}",
-                    e.getSQLState(), e.getErrorCode());
+            logger.warn("Error deleting user. SQL returned error {}, Error Code: {}", e.getSQLState(),
+                    e.getErrorCode());
         }
         return false;
-
     }
 
     private User createUser(ResultSet rs) throws SQLException {
-        return new User(rs.getLong("id"), rs.getString("username"), rs.getString("email"),
-                rs.getString("password_hash"), UserRole.valueOf(rs.getString("user_role").toUpperCase()),
+        return new User(
+                rs.getLong("id"),
+                rs.getString("username"),
+                rs.getString("email"),
+                rs.getString("password_hash"),
+                UserRole.valueOf(rs.getString("user_role").toUpperCase()),
                 rs.getTimestamp("created_at").toLocalDateTime());
     }
-
 }

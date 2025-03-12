@@ -10,7 +10,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ezepsosa.marcusbike.config.HikariDatabaseConfig;
+import com.ezepsosa.marcusbike.config.TransactionManager;
 import com.ezepsosa.marcusbike.models.OrderLineProductPart;
 import com.ezepsosa.marcusbike.models.Product;
 import com.ezepsosa.marcusbike.models.ProductPart;
@@ -28,112 +28,101 @@ public class OrderLineProductPartDAO {
     private final String SQL_GET_ALL_BY_ORDERLINE_QUERY = "SELECT olpp.*, pp.id AS product_part_id, pp.part_option, pp.is_available, pp.base_price, pp.category, pp.created_at AS product_part_created_at, p.id AS product_id, p.product_name, p.created_at AS product_created_at FROM order_line_product_part olpp JOIN product_part pp ON olpp.product_part_id = pp.id JOIN product p ON pp.product_id = p.id where olpp.order_line_id = ?";
 
     public List<OrderLineProductPart> getAll() {
-        List<OrderLineProductPart> OrderLines = new ArrayList<>();
-        try (Connection connection = HikariDatabaseConfig.getConnection()) {
-            PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
-            ResultSet rs = pst.executeQuery();
+        List<OrderLineProductPart> orderLines = new ArrayList<>();
+        try (Connection connection = TransactionManager.getConnection();
+                PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
+                ResultSet rs = pst.executeQuery()) {
             while (rs.next()) {
-                OrderLines.add(createOrderLineProductPart(rs));
+                orderLines.add(createOrderLineProductPart(rs));
             }
         } catch (SQLException e) {
             logger.warn("Error fetching order line product parts. SQL returned error {}, Error Code: {}",
                     e.getSQLState(), e.getErrorCode());
         }
-        return OrderLines;
+        return orderLines;
     }
 
-    public OrderLineProductPart getById(Long order_line_id, Long product_part_id) {
-        try (Connection connection = HikariDatabaseConfig.getConnection()) {
-            PreparedStatement pst = connection.prepareStatement(SQL_GET_ID_QUERY);
-            pst.setLong(1, order_line_id);
-            pst.setLong(2, product_part_id);
-            ResultSet rs = pst.executeQuery();
-            while (rs.next()) {
-                return createOrderLineProductPart(rs);
+    public OrderLineProductPart getById(Long orderLineId, Long productPartId) {
+        try (Connection connection = TransactionManager.getConnection();
+                PreparedStatement pst = connection.prepareStatement(SQL_GET_ID_QUERY)) {
+            pst.setLong(1, orderLineId);
+            pst.setLong(2, productPartId);
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    return createOrderLineProductPart(rs);
+                }
             }
         } catch (SQLException e) {
-            logger.warn("Error fetching order line product parts by Ids. SQL returned error {}, Error Code: {}",
+            logger.warn("Error fetching order line product part by IDs. SQL returned error {}, Error Code: {}",
                     e.getSQLState(), e.getErrorCode());
         }
         return null;
     }
 
     public Boolean insert(OrderLineProductPart orderLineProductPart) {
-        try (Connection connection = HikariDatabaseConfig.getConnection()) {
-            PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY,
-                    PreparedStatement.RETURN_GENERATED_KEYS);
-
+        try (Connection connection = TransactionManager.getConnection();
+                PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY)) {
             pst.setLong(1, orderLineProductPart.getOrderLine().getId());
             pst.setLong(2, orderLineProductPart.getProductPart().getId());
             pst.setInt(3, orderLineProductPart.getQuantity());
             pst.setDouble(4, orderLineProductPart.getFinalPrice());
 
-            Integer affectedRows = pst.executeUpdate();
-            return affectedRows > 0;
-
+            return pst.executeUpdate() > 0;
         } catch (SQLException e) {
-            logger.warn("Error inserting order line product parts by Ids. SQL returned error {}, Error Code: {}",
+            logger.warn("Error inserting order line product part. SQL returned error {}, Error Code: {}",
                     e.getSQLState(), e.getErrorCode());
         }
         return false;
-
     }
 
     public Boolean update(OrderLineProductPart orderLineProductPart) {
-        try (Connection connection = HikariDatabaseConfig.getConnection()) {
-            PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY);
-
+        try (Connection connection = TransactionManager.getConnection();
+                PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY)) {
             pst.setInt(1, orderLineProductPart.getQuantity());
             pst.setDouble(2, orderLineProductPart.getFinalPrice());
             pst.setLong(3, orderLineProductPart.getOrderLine().getId());
             pst.setLong(4, orderLineProductPart.getProductPart().getId());
 
-            Integer affectedRows = pst.executeUpdate();
-            return affectedRows > 0;
-
+            return pst.executeUpdate() > 0;
         } catch (SQLException e) {
-            logger.warn("Error updating order line product parts by Ids. SQL returned error {}, Error Code: {}",
+            logger.warn("Error updating order line product part. SQL returned error {}, Error Code: {}",
                     e.getSQLState(), e.getErrorCode());
         }
         return false;
-
     }
 
-    public Boolean delete(Long order_line_id, Long product_part_id) {
-        try (Connection connection = HikariDatabaseConfig.getConnection()) {
-            PreparedStatement pst = connection.prepareStatement(SQL_DETELE_QUERY);
-
-            pst.setLong(1, order_line_id);
-            pst.setLong(2, product_part_id);
-
-            Integer affectedRows = pst.executeUpdate();
-            return affectedRows > 0;
-
+    public Boolean delete(Long orderLineId, Long productPartId) {
+        try (Connection connection = TransactionManager.getConnection();
+                PreparedStatement pst = connection.prepareStatement(SQL_DETELE_QUERY)) {
+            pst.setLong(1, orderLineId);
+            pst.setLong(2, productPartId);
+            return pst.executeUpdate() > 0;
         } catch (SQLException e) {
-            logger.warn("Error deleting order line product parts by Ids. SQL returned error {}, Error Code: {}",
+            logger.warn("Error deleting order line product part. SQL returned error {}, Error Code: {}",
                     e.getSQLState(), e.getErrorCode());
         }
         return false;
     }
 
     public List<OrderLineProductPart> getByOrderLineId(Long orderLineId) {
-        List<OrderLineProductPart> OrderLines = new ArrayList<>();
-        try (Connection connection = HikariDatabaseConfig.getConnection()) {
-            PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_BY_ORDERLINE_QUERY);
+        List<OrderLineProductPart> orderLines = new ArrayList<>();
+        try (Connection connection = TransactionManager.getConnection();
+                PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_BY_ORDERLINE_QUERY)) {
             pst.setLong(1, orderLineId);
-            ResultSet rs = pst.executeQuery();
-            while (rs.next()) {
-                OrderLines.add(createOrderLineProductPart(rs));
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    orderLines.add(createOrderLineProductPart(rs));
+                }
             }
         } catch (SQLException e) {
-            logger.warn("Error deleting order line product parts by orderLineId. SQL returned error {}, Error Code: {}",
+            logger.warn(
+                    "Error fetching order line product parts by order line ID. SQL returned error {}, Error Code: {}",
                     e.getSQLState(), e.getErrorCode());
         }
-        return OrderLines;
+        return orderLines;
     }
 
     private OrderLineProductPart createOrderLineProductPart(ResultSet rs) throws SQLException {
-
         Product product = new Product(
                 rs.getLong("product_id"),
                 rs.getString("product_name"),
@@ -155,5 +144,4 @@ public class OrderLineProductPartDAO {
                 rs.getDouble("final_price"),
                 rs.getTimestamp("created_at").toLocalDateTime());
     }
-
 }
