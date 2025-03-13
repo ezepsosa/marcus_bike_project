@@ -60,7 +60,6 @@ create table product_part_condition(
 CREATE TABLE order_line_product_part(
     order_line_id INTEGER NOT NULL,
     product_part_id INTEGER NOT NULL,
-    quantity INTEGER DEFAULT 1 NOT NULL,
     final_price DECIMAL (10,2) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (order_line_id, product_part_id),

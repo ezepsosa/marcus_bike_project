@@ -50,11 +50,11 @@ INSERT INTO order_line (app_order_id, product_id, quantity) VALUES
 (1, 2, 2),
 (2, 1, 1);
 
-INSERT INTO order_line_product_part (order_line_id, product_part_id, quantity, final_price) VALUES
-(1, 1, 1, 130),
-(1, 5, 1, 15),
-(1, 6, 1, 15),
-(2, 2, 2, 200),
-(2, 7, 2, 30),
-(3, 3, 1, 80),
-(3, 8, 1, 15);
+INSERT INTO order_line_product_part (order_line_id, product_part_id, final_price) VALUES
+(1, 1, 130),
+(1, 5, 15),
+(1, 6, 15),
+(2, 2, 100),
+(2, 7, 15),
+(3, 3, 80),
+(3, 8, 15);
