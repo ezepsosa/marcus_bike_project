@@ -1,5 +1,6 @@
 package com.ezepsosa.marcusbike.utils;
 
+import com.ezepsosa.marcusbike.dto.OrderInsertDTO;
 import com.ezepsosa.marcusbike.dto.UserDTO;
 import com.ezepsosa.marcusbike.dto.UserInsertDTO;
 import com.ezepsosa.marcusbike.models.Product;
@@ -21,6 +22,12 @@ public class ValidatorUtils {
 
     public static boolean validateProduct(Product product) {
         return checkStringField(product.getProductName());
+    }
+
+    public static boolean validateOrderToInsert(OrderInsertDTO orderToInsert) {
+        Boolean res;
+        res = orderToInsert.userId() != null && orderToInsert.userId() > 0;
+        return res;
     }
 
     // AUX methods
