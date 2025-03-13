@@ -64,8 +64,13 @@ public class OrderController implements RouteRegistrar {
             JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing order ID");
             return;
         }
-        OrderDTO orders = orderService.getById(orderId);
-        JsonResponseUtil.sendJsonResponse(exchange, orders);
+        OrderDTO order = orderService.getById(orderId);
+        if (order == null) {
+            logger.warn("No orders found with ID {}", orderId);
+            JsonResponseUtil.sendErrorResponse(exchange, 400, "No orders found");
+            return;
+        }
+        JsonResponseUtil.sendJsonResponse(exchange, order);
         logger.info("Responded with {} orders", orderId);
 
     }
@@ -100,15 +105,23 @@ public class OrderController implements RouteRegistrar {
 
     public void insert(HttpServerExchange exchange) {
         logger.info("Received request: POST /order");
-        Long orderId = RequestUtils.getRequestParam(exchange, "id");
-        if (orderId == null) {
-            logger.warn("Invalid or missing order ID");
-            JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing order ID");
-            return;
-        }
-        OrderDTO orders = orderService.getById(orderId);
-        JsonResponseUtil.sendJsonResponse(exchange, orders);
-        logger.info("Responded with {} orders", orderId);
+        /*
+         * exchange.getRequestReceiver().receiveFullBytes((ex, message) -> {
+         * try {
+         * OrderInsertDTO orderToInsert = JsonResponseUtil.parseJson(message,
+         * OrderInsertDTO.class);
+         * Long orderId = orderService.insert(orderToInsert);
+         * if (orderId == null) {
+         * logger.error("Error inserting order");
+         * JsonResponseUtil.sendErrorResponse(exchange, 500, "Failed to insert order");
+         * return null;
+         * }
+         * } catch (Exception e) {
+         * logger.error("Error processing request", e);
+         * JsonResponseUtil.sendErrorResponse(exchange, 500, "Invalid request body");
+         * }
+         * });
+         */
 
     }
 

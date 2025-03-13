@@ -1,6 +1,7 @@
 package com.ezepsosa.marcusbike.services;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.ezepsosa.marcusbike.dto.ProductPartDTO;
@@ -23,6 +24,18 @@ class ProductPartService {
 
     public ProductPartDTO getById(Long id) {
         return ProductPartMapper.toDTO(productPartDAO.getById(id));
+    }
+
+    public Map<Long, Double> getAllPartPrice() {
+        return productPartDAO.getAll().stream().map(productPart -> ProductPartMapper.toDTO(productPart))
+                .collect(Collectors.toMap(ProductPartDTO::id, ProductPartDTO::basePrice));
+
+    }
+
+    Map<Long, Double> getAllPartPriceById(List<Long> productIds) {
+        return productPartDAO.getAllPartPriceById(productIds).stream()
+                .map(productPart -> ProductPartMapper.toDTO(productPart))
+                .collect(Collectors.toMap(ProductPartDTO::id, ProductPartDTO::basePrice));
     }
 
 }

@@ -5,7 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +25,7 @@ public class ProductPartConditionDAO {
     private final String SQL_INSERT_QUERY = "INSERT INTO product_part_condition (part_id, dependant_part_id, price_adjustment, is_restriction) VALUES (?, ?, ?, ?) RETURNING part_id";
     private final String SQL_UPDATE_QUERY = "UPDATE product_part_condition SET price_adjustment = ?, is_restriction = ? WHERE part_id = ? AND dependant_part_id = ?";
     private final String SQL_DELETE_QUERY = "DELETE FROM product_part_condition WHERE part_id = ? AND dependant_part_id = ?";
+    private final String SQL_GET_ALL_BY_PRODUCT_ID_QUERY = "SELECT * FROM product_part_condition WHERE id IN (?)";
 
     public List<ProductPartCondition> getAll() {
         List<ProductPartCondition> conditions = new ArrayList<>();
@@ -108,5 +111,25 @@ public class ProductPartConditionDAO {
                 null);
         return new ProductPartCondition(part, dependantPart, rs.getDouble("price_adjustment"),
                 rs.getBoolean("is_restriction"), rs.getTimestamp("created_at").toLocalDateTime());
+    }
+
+    public List<ProductPartCondition> getAllById(List<Long> productIds) {
+        if (productIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<ProductPartCondition> conditions = new ArrayList<>();
+        String placeholders = productIds.stream().map(id -> "?").collect(Collectors.joining(","));
+        String query = String.format(SQL_GET_ALL_BY_PRODUCT_ID_QUERY, placeholders);
+        try (Connection connection = HikariDatabaseConfig.getConnection();
+                PreparedStatement pst = connection.prepareStatement(query);
+                ResultSet rs = pst.executeQuery()) {
+            while (rs.next()) {
+                conditions.add(createProductPartConditions(rs));
+            }
+        } catch (SQLException e) {
+            logger.warn("Error fetching product part conditions. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
+        }
+        return conditions;
     }
 }

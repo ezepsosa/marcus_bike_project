@@ -41,7 +41,7 @@ public class DependencyInjection {
 
     // OrderLine
     private final OrderLineDAO orderLineDAO = new OrderLineDAO();
-    private final OrderLineService orderlineService = new OrderLineService(orderLineDAO);
+    private final OrderLineService orderlineService = new OrderLineService(orderLineDAO, productService);
     private final OrderLineController orderLineController = new OrderLineController(orderlineService,
             orderLineProductPartService);
 
@@ -51,7 +51,7 @@ public class DependencyInjection {
 
     // Order
     private final OrderDAO orderDAO = new OrderDAO();
-    private final OrderService orderservice = new OrderService(orderDAO, orderLineDAO);
+    private final OrderService orderservice = new OrderService(orderDAO, orderlineService);
     private final OrderController orderController = new OrderController(orderservice);
 
     public OrderController getOrderController() {

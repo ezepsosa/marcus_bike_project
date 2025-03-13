@@ -1,5 +1,5 @@
 package com.ezepsosa.marcusbike.dto;
 
-public record OrderLineProductPartInsertDTO(Long orderLine, Long productPartId, Integer quantity) {
+public record OrderLineProductPartInsertDTO(Long productPart, double finalPrice) {
 
 }

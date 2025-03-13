@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.ezepsosa.marcusbike.dto.OrderLineProductPartDTO;
+import com.ezepsosa.marcusbike.dto.OrderLineProductPartInsertDTO;
 import com.ezepsosa.marcusbike.mappers.OrderLineProductPartMapper;
 import com.ezepsosa.marcusbike.repositories.OrderLineProductPartDAO;
 
@@ -26,6 +27,10 @@ public class OrderLineProductPartService {
 
     public Boolean delete(Long orderLine, Long dependantPart) {
         return orderLineProductPartDAO.delete(orderLine, dependantPart);
+    }
+
+    void insertAll(List<OrderLineProductPartInsertDTO> orderLineProductParts, Long orderLineId) {
+
     }
 
 }

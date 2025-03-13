@@ -5,7 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,11 +20,12 @@ public class ProductPartDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(ProductPartDAO.class);
 
-    private final String SQL_GET_ALL_QUERY = "SELECT pp.*, p.id AS product_id, p.product_name, p.created_at AS created_at_product FROM product_part pp JOIN product p ON pp.product_id = p.id";
+    private final String SQL_GET_ALL_QUERY = "SELECT pp.*, p.id AS product_id, p.product_name, p.created_at AS created_at_product FROM product_part pp JOIN product p ON pp.product_id = p.id WHERE pp.id IN (%s)";
     private final String SQL_GET_ID_QUERY = "SELECT pp.*, p.id AS product_id, p.product_name, p.created_at AS created_at_product FROM product_part pp JOIN product p ON pp.product_id = p.id WHERE pp.id = (?)";
     private final String SQL_INSERT_QUERY = "INSERT INTO product_part(part_option, is_available, base_price, category) VALUES (?, ?, ?, ?::product_part_category) RETURNING id";
     private final String SQL_UPDATE_QUERY = "UPDATE product_part SET part_option = ?, is_available = ?, base_price = ?, category = ?::product_part_category WHERE id = ?";
     private final String SQL_DETELE_QUERY = "DELETE FROM product_part WHERE id = (?)";
+    private final String SQL_GET_ALL_BY_QUERY = "SELECT * FROM product_part WHERE id IN (%s)";
 
     public List<ProductPart> getAll() {
         List<ProductPart> productParts = new ArrayList<>();
@@ -36,6 +39,31 @@ public class ProductPartDAO {
             logger.warn("Error fetching product parts. SQL returned error {}, Error Code: {}", e.getSQLState(),
                     e.getErrorCode());
         }
+        return productParts;
+    }
+
+    public List<ProductPart> getAllPartPriceById(List<Long> productIds) {
+        if (productIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+        String placeholders = productIds.stream().map(id -> "?").collect(Collectors.joining(","));
+        String query = String.format(SQL_GET_ALL_BY_QUERY, placeholders);
+        List<ProductPart> productParts = new ArrayList<>();
+        try (Connection connection = HikariDatabaseConfig.getConnection();
+                PreparedStatement pst = connection.prepareStatement(query)) {
+            for (int i = 0; i < productIds.size(); i++) {
+                pst.setLong(i + 1, productIds.get(i));
+            }
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    productParts.add(createProductPart(rs));
+                }
+            }
+        } catch (SQLException e) {
+            logger.warn("Error fetching product parts. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
+        }
+
         return productParts;
     }
 
@@ -116,4 +144,5 @@ public class ProductPartDAO {
                 ProductPartCategory.valueOf(rs.getString("category").toUpperCase()),
                 rs.getTimestamp("created_at").toLocalDateTime());
     }
+
 }
