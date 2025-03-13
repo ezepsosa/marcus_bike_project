@@ -7,6 +7,10 @@ public class OrderLineProductPartMapper {
 
         public static OrderLineProductPartDTO toDTO(OrderLineProductPart orderLineProductPart) {
                 return new OrderLineProductPartDTO(ProductPartMapper.toDTO(orderLineProductPart.getProductPart()),
-                                orderLineProductPart.getQuantity(), orderLineProductPart.getFinalPrice());
+                                orderLineProductPart.getFinalPrice());
+        }
+
+        public static OrderLineProductPart toDTO(OrderLineProductPartDTO orderLineProductPart) {
+                return new OrderLineProductPart();
         }
 }
