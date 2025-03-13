@@ -102,7 +102,7 @@ public class ProductDAO {
     }
 
     private Product createProduct(ResultSet rs) throws SQLException {
-        return new Product(rs.getLong("id"), rs.getString("product_name"),
+        return new Product(rs.getLong("id"), rs.getString("product_name"), new ArrayList<>(),
                 rs.getTimestamp("created_at").toLocalDateTime());
     }
 }

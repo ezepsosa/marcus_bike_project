@@ -36,14 +36,21 @@ create table order_line(
 
 create table product_part(
     id SERIAL PRIMARY KEY,
-    product_id INTEGER NOT NULL,
     part_option VARCHAR(100) NOT NULL,
     is_available BOOLEAN NOT NULL DEFAULT TRUE,
     base_price DECIMAL(10,2) NOT NULL,
     category product_part_category NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_product_part_product FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE CASCADE
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
+
+CREATE TABLE product_product_part (
+    product_id INTEGER NOT NULL,
+    product_part_id INTEGER NOT NULL,
+    PRIMARY KEY (product_id, product_part_id),
+    FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_part_id) REFERENCES product_part(id) ON DELETE CASCADE
+);
+
 
 create table product_part_condition(
     part_id INTEGER NOT NULL,

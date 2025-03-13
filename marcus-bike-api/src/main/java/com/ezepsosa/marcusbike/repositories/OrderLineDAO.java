@@ -130,7 +130,7 @@ public class OrderLineDAO {
     private OrderLine createOrderLine(ResultSet rs) throws SQLException {
         Product product = new Product(
                 rs.getLong("product_id"),
-                rs.getString("product_name"),
+                rs.getString("product_name"), new ArrayList<>(),
                 rs.getTimestamp("product_created_at").toLocalDateTime());
 
         return new OrderLine(

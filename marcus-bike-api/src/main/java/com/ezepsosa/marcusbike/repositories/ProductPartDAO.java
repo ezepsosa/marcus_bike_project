@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ezepsosa.marcusbike.config.HikariDatabaseConfig;
-import com.ezepsosa.marcusbike.models.Product;
 import com.ezepsosa.marcusbike.models.ProductPart;
 import com.ezepsosa.marcusbike.models.ProductPartCategory;
 
@@ -21,7 +20,7 @@ public class ProductPartDAO {
 
     private final String SQL_GET_ALL_QUERY = "SELECT pp.*, p.id AS product_id, p.product_name, p.created_at AS created_at_product FROM product_part pp JOIN product p ON pp.product_id = p.id";
     private final String SQL_GET_ID_QUERY = "SELECT pp.*, p.id AS product_id, p.product_name, p.created_at AS created_at_product FROM product_part pp JOIN product p ON pp.product_id = p.id WHERE pp.id = (?)";
-    private final String SQL_INSERT_QUERY = "INSERT INTO product_part(product_id, part_option, is_available, base_price, category) VALUES (?, ?, ?, ?, ?::product_part_category) RETURNING id";
+    private final String SQL_INSERT_QUERY = "INSERT INTO product_part(part_option, is_available, base_price, category) VALUES (?, ?, ?, ?::product_part_category) RETURNING id";
     private final String SQL_UPDATE_QUERY = "UPDATE product_part SET part_option = ?, is_available = ?, base_price = ?, category = ?::product_part_category WHERE id = ?";
     private final String SQL_DETELE_QUERY = "DELETE FROM product_part WHERE id = (?)";
 
@@ -60,11 +59,10 @@ public class ProductPartDAO {
         try (Connection connection = HikariDatabaseConfig.getConnection();
                 PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY,
                         PreparedStatement.RETURN_GENERATED_KEYS)) {
-            pst.setLong(1, productPart.getProduct().getId());
-            pst.setString(2, productPart.getPartOption());
-            pst.setBoolean(3, productPart.getIsAvailable());
-            pst.setDouble(4, productPart.getBasePrice());
-            pst.setString(5, productPart.getCategory().name().toLowerCase());
+            pst.setString(1, productPart.getPartOption());
+            pst.setBoolean(2, productPart.getIsAvailable());
+            pst.setDouble(3, productPart.getBasePrice());
+            pst.setString(4, productPart.getCategory().name().toLowerCase());
 
             int affectedRows = pst.executeUpdate();
             if (affectedRows > 0) {
@@ -112,8 +110,6 @@ public class ProductPartDAO {
 
     private ProductPart createProductPart(ResultSet rs) throws SQLException {
         return new ProductPart(rs.getLong("id"),
-                new Product(rs.getLong("product_id"), rs.getString("product_name"),
-                        rs.getTimestamp("created_at_product").toLocalDateTime()),
                 rs.getString("part_option"),
                 rs.getBoolean("is_available"),
                 rs.getDouble("base_price"),

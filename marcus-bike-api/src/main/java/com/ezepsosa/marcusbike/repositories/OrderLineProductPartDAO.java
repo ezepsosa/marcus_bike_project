@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import com.ezepsosa.marcusbike.config.HikariDatabaseConfig;
 import com.ezepsosa.marcusbike.models.OrderLineProductPart;
-import com.ezepsosa.marcusbike.models.Product;
 import com.ezepsosa.marcusbike.models.ProductPart;
 import com.ezepsosa.marcusbike.models.ProductPartCategory;
 
@@ -121,14 +120,8 @@ public class OrderLineProductPartDAO {
     }
 
     private OrderLineProductPart createOrderLineProductPart(ResultSet rs) throws SQLException {
-        Product product = new Product(
-                rs.getLong("product_id"),
-                rs.getString("product_name"),
-                rs.getTimestamp("product_created_at").toLocalDateTime());
-
         ProductPart productPart = new ProductPart(
                 rs.getLong("product_part_id"),
-                product,
                 rs.getString("part_option"),
                 rs.getBoolean("is_available"),
                 rs.getDouble("base_price"),

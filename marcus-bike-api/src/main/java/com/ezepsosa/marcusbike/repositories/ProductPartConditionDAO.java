@@ -103,8 +103,8 @@ public class ProductPartConditionDAO {
     }
 
     private ProductPartCondition createProductPartConditions(ResultSet rs) throws SQLException {
-        ProductPart part = new ProductPart(rs.getLong("part_id"), null, null, null, null, null, null);
-        ProductPart dependantPart = new ProductPart(rs.getLong("dependant_part_id"), null, null, null, null, null,
+        ProductPart part = new ProductPart(rs.getLong("part_id"), null, null, null, null, null);
+        ProductPart dependantPart = new ProductPart(rs.getLong("dependant_part_id"), null, null, null, null,
                 null);
         return new ProductPartCondition(part, dependantPart, rs.getDouble("price_adjustment"),
                 rs.getBoolean("is_restriction"), rs.getTimestamp("created_at").toLocalDateTime());
