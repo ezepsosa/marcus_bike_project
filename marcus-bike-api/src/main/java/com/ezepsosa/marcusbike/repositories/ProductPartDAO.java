@@ -19,12 +19,15 @@ public class ProductPartDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(ProductPartDAO.class);
 
-    private final String SQL_GET_ALL_QUERY = "SELECT pp.*, p.id AS product_id, p.product_name, p.created_at AS created_at_product FROM product_part pp JOIN product p ON pp.product_id = p.id WHERE pp.id IN (%s)";
-    private final String SQL_GET_ID_QUERY = "SELECT pp.*, p.id AS product_id, p.product_name, p.created_at AS created_at_product FROM product_part pp JOIN product p ON pp.product_id = p.id WHERE pp.id = (?)";
+    private final String SQL_GET_ALL_QUERY = "SELECT * FROM product_part ";
+    private final String SQL_GET_ID_QUERY = "SELECT * FROM product_part WHERE id = ?";
     private final String SQL_INSERT_QUERY = "INSERT INTO product_part(part_option, is_available, base_price, category) VALUES (?, ?, ?, ?::product_part_category) RETURNING id";
     private final String SQL_UPDATE_QUERY = "UPDATE product_part SET part_option = ?, is_available = ?, base_price = ?, category = ?::product_part_category WHERE id = ?";
     private final String SQL_DETELE_QUERY = "DELETE FROM product_part WHERE id = (?)";
+    private final String SQL_DETELE_FROM_PRODUCT_QUERY = "delete from product_product_part where product_id = ? AND product_part_id = ?";
     private final String SQL_GET_ALL_BY_QUERY = "SELECT * FROM product_part WHERE id IN (%s)";
+    private final String SQL_GET_ALL_BY_PRODUCT_QUERY = "select pp.* from product_part pp join product_product_part ppp on ppp.product_part_id = pp.id where ppp.product_id = ?";
+    private final String SQL_INSERT_ALL_BY_PRODUCT_ID_QUERY = "INSERT INTO product_product_part (product_id, product_part_id) VALUES (?, ?) ON CONFLICT DO NOTHING";
 
     public List<ProductPart> getAll(Connection connection) {
         List<ProductPart> productParts = new ArrayList<>();
@@ -40,16 +43,33 @@ public class ProductPartDAO {
         return productParts;
     }
 
-    public List<ProductPart> getAllPartPriceById(Connection connection, List<Long> productIds) {
-        if (productIds.isEmpty()) {
+    public List<ProductPart> getAllByProductId(Connection connection, Long productPartId) {
+        List<ProductPart> productParts = new ArrayList<>();
+        try (PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_BY_PRODUCT_QUERY)) {
+            pst.setLong(1, productPartId);
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    productParts.add(createProductPart(rs));
+                }
+            }
+        } catch (SQLException e) {
+            logger.warn("Error fetching product parts. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
+        }
+
+        return productParts;
+    }
+
+    public List<ProductPart> getAllByProductPartId(Connection connection, List<Long> productPartIds) {
+        if (productPartIds.isEmpty()) {
             return Collections.emptyList();
         }
-        String placeholders = productIds.stream().map(id -> "?").collect(Collectors.joining(","));
+        String placeholders = productPartIds.stream().map(id -> "?").collect(Collectors.joining(","));
         String query = String.format(SQL_GET_ALL_BY_QUERY, placeholders);
         List<ProductPart> productParts = new ArrayList<>();
         try (PreparedStatement pst = connection.prepareStatement(query)) {
-            for (int i = 0; i < productIds.size(); i++) {
-                pst.setLong(i + 1, productIds.get(i));
+            for (int i = 0; i < productPartIds.size(); i++) {
+                pst.setLong(i + 1, productPartIds.get(i));
             }
             try (ResultSet rs = pst.executeQuery()) {
                 while (rs.next()) {
@@ -129,6 +149,18 @@ public class ProductPartDAO {
         return false;
     }
 
+    public Boolean deleteFromProduct(Connection connection, Long productId, Long productPartId) {
+        try (PreparedStatement pst = connection.prepareStatement(SQL_DETELE_FROM_PRODUCT_QUERY)) {
+            pst.setLong(1, productId);
+            pst.setLong(2, productPartId);
+            return pst.executeUpdate() > 0;
+        } catch (SQLException e) {
+            logger.warn("Error deleting product part. SQL returned error {}, Error Code: {}", e.getSQLState(),
+                    e.getErrorCode());
+        }
+        return false;
+    }
+
     private ProductPart createProductPart(ResultSet rs) throws SQLException {
         return new ProductPart(rs.getLong("id"),
                 rs.getString("part_option"),
@@ -138,4 +170,25 @@ public class ProductPartDAO {
                 rs.getTimestamp("created_at").toLocalDateTime());
     }
 
+    public boolean addRelationWithProduct(Connection connection, Long productPart, List<Long> productPartIds) {
+        if (productPartIds.isEmpty()) {
+            return false;
+        }
+
+        try (PreparedStatement pst = connection.prepareStatement(SQL_INSERT_ALL_BY_PRODUCT_ID_QUERY)) {
+            for (Long productPartId : productPartIds) {
+                pst.setLong(1, productPart);
+                pst.setLong(2, productPartId);
+                pst.addBatch();
+            }
+
+            int[] affectedRows = pst.executeBatch();
+            return affectedRows.length > 0;
+
+        } catch (SQLException e) {
+            logger.warn("Error inserting product part relations. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode(), e.getMessage());
+            return false;
+        }
+    }
 }

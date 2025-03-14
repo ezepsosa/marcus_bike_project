@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.ezepsosa.marcusbike.dto.ProductPartDTO;
+import com.ezepsosa.marcusbike.dto.ProductPartInsertDTO;
+import com.ezepsosa.marcusbike.dto.ProductPartInsertProductRelationDTO;
 import com.ezepsosa.marcusbike.mappers.ProductPartMapper;
 import com.ezepsosa.marcusbike.repositories.ProductPartDAO;
 import com.ezepsosa.marcusbike.utils.TransactionHandler;
@@ -25,9 +27,19 @@ public class ProductPartService {
 
     }
 
-    public ProductPartDTO getById(Long id) {
+    public List<ProductPartDTO> getByProductId(Long productId) {
         return TransactionHandler.startTransaction((connection) -> {
-            return ProductPartMapper.toDTO(productPartDAO.getById(connection, id));
+            return productPartDAO.getAllByProductId(connection, productId).stream()
+                    .map(productPart -> ProductPartMapper.toDTO(productPart))
+                    .collect(Collectors.toList());
+        });
+    }
+
+    Map<Long, Double> getAllPartPriceById(List<Long> productIds) {
+        return TransactionHandler.startTransaction((connection) -> {
+            return productPartDAO.getAllByProductPartId(connection, productIds).stream()
+                    .map(productPart -> ProductPartMapper.toDTO(productPart))
+                    .collect(Collectors.toMap(ProductPartDTO::id, ProductPartDTO::basePrice));
         });
     }
 
@@ -39,11 +51,28 @@ public class ProductPartService {
 
     }
 
-    Map<Long, Double> getAllPartPriceById(List<Long> productIds) {
+    public Long insert(ProductPartInsertDTO productPartInsertDTO) {
         return TransactionHandler.startTransaction((connection) -> {
-            return productPartDAO.getAllPartPriceById(connection, productIds).stream()
-                    .map(productPart -> ProductPartMapper.toDTO(productPart))
-                    .collect(Collectors.toMap(ProductPartDTO::id, ProductPartDTO::basePrice));
+            return productPartDAO.insert(connection, ProductPartMapper.toModel(productPartInsertDTO));
+        });
+    }
+
+    public Boolean addRelationWithProduct(ProductPartInsertProductRelationDTO productPartInsertProductRelationDTO) {
+        return TransactionHandler.startTransaction((connection) -> {
+            return productPartDAO.addRelationWithProduct(connection, productPartInsertProductRelationDTO.productId(),
+                    productPartInsertProductRelationDTO.productPartsId());
+        });
+    }
+
+    public boolean delete(Long productId) {
+        return TransactionHandler.startTransaction((connection) -> {
+            return productPartDAO.delete(connection, productId);
+        });
+    }
+
+    public boolean deleteFromProduct(Long productId, Long productpartId) {
+        return TransactionHandler.startTransaction((connection) -> {
+            return productPartDAO.deleteFromProduct(connection, productId, productpartId);
         });
     }
 
