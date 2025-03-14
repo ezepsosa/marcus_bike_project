@@ -95,12 +95,12 @@ public class UserController implements RouteRegistrar {
     }
 
     public void update(HttpServerExchange exchage) {
-        logger.info("Received request: PUT /users");
+        logger.info("Received request: PUT /users{id}");
 
         exchage.getRequestReceiver().receiveFullBytes((exchange, message) -> {
             try {
                 Long userId = RequestUtils.getRequestParam(exchange, "id");
-                if (userId == null && userId < 1) {
+                if (userId == null || userId < 1) {
                     logger.warn("Invalid or missing user ID");
                     JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing user ID");
                     return;
@@ -119,7 +119,7 @@ public class UserController implements RouteRegistrar {
                     return;
                 }
                 logger.info("User updated with ID {}", userId);
-                UserDTO userUpdated = userService.getById(userId);
+                UserDTO userUpdated = new UserDTO(userId, userToUpdate.username(), userToUpdate.email(), "");
                 JsonResponseUtil.sendJsonResponse(exchange, userUpdated);
             } catch (Exception e) {
                 logger.error("Error processing request", e);
@@ -146,6 +146,6 @@ public class UserController implements RouteRegistrar {
             return;
         }
         logger.info("User with ID {} found", userId);
-        JsonResponseUtil.sendJsonResponse(exchange, "Succesfully deleted");
+        JsonResponseUtil.sendJsonResponse(exchange, "Succesfully deleted", 204);
     }
 }
