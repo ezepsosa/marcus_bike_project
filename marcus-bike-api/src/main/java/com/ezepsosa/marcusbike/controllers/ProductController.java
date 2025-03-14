@@ -5,7 +5,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ezepsosa.marcusbike.models.Product;
+import com.ezepsosa.marcusbike.dto.ProductDTO;
+import com.ezepsosa.marcusbike.dto.ProductInsertDTO;
 import com.ezepsosa.marcusbike.routes.RouteRegistrar;
 import com.ezepsosa.marcusbike.services.ProductService;
 import com.ezepsosa.marcusbike.utils.JsonResponseUtil;
@@ -37,7 +38,7 @@ public class ProductController implements RouteRegistrar {
 
     public void getAll(HttpServerExchange exchange) {
         logger.info("Received request: GET /products");
-        List<Product> product = productService.getAll();
+        List<ProductDTO> product = productService.getAll();
         JsonResponseUtil.sendJsonResponse(exchange, product);
         logger.info("Responded with {} products", product.size());
 
@@ -53,8 +54,7 @@ public class ProductController implements RouteRegistrar {
             return;
         }
         logger.info("Fetching product with ID {}", productId);
-
-        Product product = productService.getById(productId);
+        ProductDTO product = productService.getById(productId);
         if (product == null) {
             logger.warn("Product with ID {} not found", productId);
             JsonResponseUtil.sendErrorResponse(exchange, 404, "Product not found");
@@ -69,22 +69,22 @@ public class ProductController implements RouteRegistrar {
 
         exchange.getRequestReceiver().receiveFullBytes((ex, message) -> {
             try {
-                Product userToInsert = JsonResponseUtil.parseJson(message, Product.class);
+                ProductInsertDTO productToInsert = JsonResponseUtil.parseJson(message, ProductInsertDTO.class);
 
-                if (!ValidatorUtils.validateProduct(userToInsert)) {
+                if (!ValidatorUtils.validateProduct(productToInsert)) {
                     logger.error("Error validating product");
                     JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid product format or missing fields");
                     return;
                 }
-                Long userId = productService.insert(userToInsert);
-                if (userId == null) {
+                Long productId = productService.insert(productToInsert);
+                if (productId == null) {
                     logger.error("Error inserting product");
                     JsonResponseUtil.sendErrorResponse(exchange, 500, "Failed to insert product");
                     return;
                 }
-                logger.info("Product created with ID {}", userId);
-                userToInsert.setId(userId);
-                JsonResponseUtil.sendJsonResponse(exchange, userId, 201);
+                logger.info("Product created with ID {}", productId);
+                ProductDTO productInserted = new ProductDTO(productId, productToInsert.productName());
+                JsonResponseUtil.sendJsonResponse(exchange, productInserted, 201);
 
             } catch (Exception e) {
                 logger.error("Error processing request", e);
@@ -95,26 +95,30 @@ public class ProductController implements RouteRegistrar {
     }
 
     public void update(HttpServerExchange exchage) {
-        logger.info("Received request: PUT /products");
+        logger.info("Received request: PUT /products/{id}");
 
         exchage.getRequestReceiver().receiveFullBytes((exchange, message) -> {
             try {
-                Product productToUpdate = JsonResponseUtil.parseJson(message, Product.class);
-
-                if (!ValidatorUtils.validateProduct(productToUpdate) && productToUpdate.getId() != null
-                        && productToUpdate.getId() > 0) {
+                ProductInsertDTO productToUpdate = JsonResponseUtil.parseJson(message, ProductInsertDTO.class);
+                Long productId = RequestUtils.getRequestParam(exchange, "id");
+                if (productId == null || productId < 0) {
+                    logger.warn("Invalid or missing product ID");
+                    JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing product ID");
+                    return;
+                }
+                if (!ValidatorUtils.validateProduct(productToUpdate)) {
                     logger.error("Error validating product");
                     JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid product format or missing fields");
                     return;
                 }
-                Boolean updated = productService.update(productToUpdate);
+                Boolean updated = productService.update(productToUpdate, productId);
                 if (!updated) {
                     logger.error("Error updating product");
                     JsonResponseUtil.sendErrorResponse(exchange, 204, "Product not updated");
                     return;
                 }
-                logger.info("Product updated with ID {}", productToUpdate.getId());
-                productToUpdate = productService.getById(productToUpdate.getId());
+                logger.info("Product updated with ID {}", productId);
+                ProductDTO product = new ProductDTO(productId, productToUpdate.productName());
                 JsonResponseUtil.sendJsonResponse(exchange, productToUpdate);
             } catch (Exception e) {
                 logger.error("Error processing request", e);
@@ -139,6 +143,6 @@ public class ProductController implements RouteRegistrar {
             JsonResponseUtil.sendErrorResponse(exchange, 404, "Product not deleted or not found");
         }
         logger.info("Product with ID {} found", productId);
-        JsonResponseUtil.sendJsonResponse(exchange, "Succesfully deleted");
+        JsonResponseUtil.sendJsonResponse(exchange, "Succesfully deleted", 204);
     }
 }

@@ -75,11 +75,11 @@ public class ProductDAO {
         return null;
     }
 
-    public Boolean update(Product product) {
+    public Boolean update(Product product, Long id) {
         try (Connection connection = HikariDatabaseConfig.getConnection();
                 PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY)) {
             pst.setString(1, product.getProductName());
-            pst.setLong(2, product.getId());
+            pst.setLong(2, id);
 
             return pst.executeUpdate() > 0;
         } catch (SQLException e) {
