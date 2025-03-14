@@ -32,7 +32,6 @@ public class OrderController implements RouteRegistrar {
         router.add(Methods.GET, "/orders/{id}", this::getById);
         router.add(Methods.DELETE, "orders/{id}", this::delete);
         router.add(Methods.POST, "/orders", this::insert);
-
     }
 
     public void getAll(HttpServerExchange exchange) {
@@ -98,9 +97,14 @@ public class OrderController implements RouteRegistrar {
             JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing order ID");
             return;
         }
-        Boolean orders = orderService.delete(orderId);
-        JsonResponseUtil.sendJsonResponse(exchange, orders);
-        logger.info("Responded with {} orders", orderId);
+        Boolean deleted = orderService.delete(orderId);
+        if (deleted == false) {
+            logger.warn("Order with ID {} not deleted or not found", orderId);
+            JsonResponseUtil.sendErrorResponse(exchange, 404, "User not deleted or not found");
+            return;
+        }
+        logger.info("Order with ID {} found", orderId);
+        JsonResponseUtil.sendJsonResponse(exchange, "Succesfully deleted", 201);
 
     }
 
