@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ezepsosa.marcusbike.dto.OrderDTO;
+import com.ezepsosa.marcusbike.dto.OrderInsertDTO;
 import com.ezepsosa.marcusbike.routes.RouteRegistrar;
 import com.ezepsosa.marcusbike.services.OrderService;
 import com.ezepsosa.marcusbike.utils.JsonResponseUtil;
@@ -105,23 +106,23 @@ public class OrderController implements RouteRegistrar {
 
     public void insert(HttpServerExchange exchange) {
         logger.info("Received request: POST /order");
-        /*
-         * exchange.getRequestReceiver().receiveFullBytes((ex, message) -> {
-         * try {
-         * OrderInsertDTO orderToInsert = JsonResponseUtil.parseJson(message,
-         * OrderInsertDTO.class);
-         * Long orderId = orderService.insert(orderToInsert);
-         * if (orderId == null) {
-         * logger.error("Error inserting order");
-         * JsonResponseUtil.sendErrorResponse(exchange, 500, "Failed to insert order");
-         * return null;
-         * }
-         * } catch (Exception e) {
-         * logger.error("Error processing request", e);
-         * JsonResponseUtil.sendErrorResponse(exchange, 500, "Invalid request body");
-         * }
-         * });
-         */
+        exchange.getRequestReceiver().receiveFullBytes((ex, message) -> {
+            try {
+                OrderInsertDTO orderToInsert = JsonResponseUtil.parseJson(message,
+                        OrderInsertDTO.class);
+                Long orderId = orderService.insert(orderToInsert);
+                if (orderId == null) {
+                    logger.error("Error inserting order");
+                    JsonResponseUtil.sendErrorResponse(exchange, 500, "Failed to insert order");
+                    return;
+                }
+                logger.info("Order created with ID {}", orderId);
+                JsonResponseUtil.sendJsonResponse(exchange, orderId, 201);
+            } catch (Exception e) {
+                logger.error("Error processing request", e);
+                JsonResponseUtil.sendErrorResponse(exchange, 500, "Invalid request body");
+            }
+        });
 
     }
 

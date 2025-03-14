@@ -44,6 +44,8 @@ public class OrderService {
 
     public Long insert(OrderInsertDTO orderDTO) {
         return TransactionHandler.startTransaction(() -> {
+            double epsilon = 0.000001d;
+
             Double finalPriceToCheck = orderDTO.finalPrice();
             Double sumFinalPrice = orderDTO.orderLines().stream()
                     .mapToDouble(orderLine -> orderLine.orderLineProductParts().stream()
@@ -51,15 +53,17 @@ public class OrderService {
                                     orderlineproductpart -> orderlineproductpart.finalPrice() * orderLine.quantity())
                             .sum())
                     .sum();
-            if (finalPriceToCheck.equals(sumFinalPrice)) {
-                Order order = OrderMapper.toModel(orderDTO);
-                Long orderId = orderDAO.insert(order);
-                Boolean res = orderLineService.insertAll(orderDTO.orderLines(),
-                        orderId);
-                return orderId;
-            } else {
-                return Long.valueOf(1);
+            if (Math.abs(finalPriceToCheck - sumFinalPrice) > epsilon) {
+                throw new IllegalArgumentException("Final price doesn't match with the sum of the base prices");
             }
+            Order order = OrderMapper.toModel(orderDTO);
+            Long orderId = orderDAO.insert(order);
+            List<Long> insertedOrderLines = orderLineService.insertAll(orderDTO.orderLines(), orderId);
+            if (insertedOrderLines.isEmpty()) {
+                throw new IllegalArgumentException("Failed to insert order lines");
+            }
+            return orderId;
+
         });
 
     }

@@ -8,6 +8,7 @@ import com.ezepsosa.marcusbike.dto.OrderLineProductPartDTO;
 import com.ezepsosa.marcusbike.dto.OrderLineProductPartInsertDTO;
 import com.ezepsosa.marcusbike.dto.ProductPartPriceCondition;
 import com.ezepsosa.marcusbike.mappers.OrderLineProductPartMapper;
+import com.ezepsosa.marcusbike.models.OrderLineProductPart;
 import com.ezepsosa.marcusbike.repositories.OrderLineProductPartDAO;
 
 public class OrderLineProductPartService {
@@ -37,15 +38,18 @@ public class OrderLineProductPartService {
         return orderLineProductPartDAO.delete(orderLine, dependantPart);
     }
 
-    public Boolean insertAll(List<OrderLineProductPartInsertDTO> orderLineProductParts, Long orderLineId,
+    public List<Long> insertAll(List<OrderLineProductPartInsertDTO> orderLineProductPartsInsert, Long orderLineId,
             List<Long> productIds) {
+
         Map<Long, Double> basePrices = productPartService.getAllPartPriceById(productIds);
         Map<Long, List<ProductPartPriceCondition>> productPartConditions = productPartConditionService
                 .getAllById(productIds);
-        if (!checkOrderLines(orderLineProductParts, basePrices, productPartConditions)) {
-            return false;
+        if (!checkOrderLines(orderLineProductPartsInsert, basePrices, productPartConditions)) {
+            return List.of();
         }
-        return true;
+        List<OrderLineProductPart> orderLineProductPart = orderLineProductPartsInsert.stream()
+                .map(olppdto -> OrderLineProductPartMapper.toModel(olppdto)).collect(Collectors.toList());
+        return orderLineProductPartDAO.insertAll(orderLineProductPart, orderLineId);
     }
 
     /*

@@ -49,20 +49,33 @@ public class OrderLineService {
         return orderLineDAO.delete(id);
     }
 
-    public Boolean insertAll(List<OrderLineInsertDTO> orderLineInsertDTO, Long orderId) {
+    public List<Long> insertAll(List<OrderLineInsertDTO> orderLineInsertDTO, Long orderId) {
         if (orderLineInsertDTO.isEmpty()) {
-            return false;
+            return List.of();
         }
         List<Long> productIds = orderLineInsertDTO.stream()
                 .flatMap(orderline -> orderline.orderLineProductParts().stream()
                         .map(OrderLineProductPartInsertDTO::productPart))
                 .collect(Collectors.toList());
+
         List<OrderLine> orderLines = orderLineInsertDTO.stream()
                 .map(orderlinedto -> OrderLineMapper.toModel(orderlinedto)).collect(Collectors.toList());
-        List<Long> ol = orderLineDAO.insertAll(orderLines, orderId);
-        orderLineProductPartService.insertAll(orderLineInsertDTO.get(0).orderLineProductParts(), orderId, productIds);
+        List<Long> orderLinesInserted = orderLineDAO.insertAll(orderLines, orderId);
 
-        throw new UnsupportedOperationException("Unimplemented method 'insertAllLines'");
+        if (orderLinesInserted.size() != orderLines.size()) {
+            throw new IllegalArgumentException("Some order lines failed to be inserted");
+
+        }
+        for (int index = 0; index < orderLineInsertDTO.size(); index++) {
+            OrderLineInsertDTO dto = orderLineInsertDTO.get(index);
+            List<Long> orderLinesProductPartsInserted = orderLineProductPartService
+                    .insertAll(dto.orderLineProductParts(), orderLinesInserted.get(index), productIds);
+            if (orderLinesProductPartsInserted.isEmpty()) {
+                throw new IllegalArgumentException("Failed inserting order lines product parts");
+            }
+        }
+        return orderLinesInserted;
+
     }
 
 }

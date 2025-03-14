@@ -119,6 +119,33 @@ public class OrderLineProductPartDAO {
         return orderLines;
     }
 
+    public List<Long> insertAll(List<OrderLineProductPart> orderLineProductParts, Long orderLineId) {
+        List<Long> res = new ArrayList<>();
+
+        try (Connection connection = HikariDatabaseConfig.getConnection();
+                PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY,
+                        PreparedStatement.RETURN_GENERATED_KEYS)) {
+
+            for (OrderLineProductPart orderLineProductPart : orderLineProductParts) {
+                pst.setLong(1, orderLineId);
+                pst.setLong(2, orderLineProductPart.getProductPart().getId());
+                pst.setDouble(3, orderLineProductPart.getFinalPrice());
+                pst.addBatch();
+            }
+            pst.executeBatch();
+            try (ResultSet generatedValues = pst.getGeneratedKeys()) {
+                while (generatedValues.next()) {
+                    res.add(generatedValues.getLong(1));
+                }
+            }
+
+        } catch (SQLException e) {
+            logger.warn("Error inserting order line product parts. SQL returned error {}, Error Code: {}",
+                    e.getSQLState(), e.getErrorCode());
+        }
+        return res;
+    }
+
     private OrderLineProductPart createOrderLineProductPart(ResultSet rs) throws SQLException {
         ProductPart productPart = new ProductPart(
                 rs.getLong("product_part_id"),

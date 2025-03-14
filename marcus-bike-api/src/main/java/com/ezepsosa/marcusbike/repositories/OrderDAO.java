@@ -75,9 +75,10 @@ public class OrderDAO {
     }
 
     public Long insert(Order order) {
-        try (Connection connection = HikariDatabaseConfig.getConnection();
+        try {
+        	Connection connection = HikariDatabaseConfig.getConnection();
                 PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY,
-                        PreparedStatement.RETURN_GENERATED_KEYS)) {
+                        PreparedStatement.RETURN_GENERATED_KEYS) ;
             pst.setLong(1, order.getUser().getId());
             pst.setDouble(2, order.getFinalPrice());
 
