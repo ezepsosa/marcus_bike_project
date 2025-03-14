@@ -11,6 +11,7 @@ import com.ezepsosa.marcusbike.dto.OrderLineProductPartInsertDTO;
 import com.ezepsosa.marcusbike.mappers.OrderLineMapper;
 import com.ezepsosa.marcusbike.models.OrderLine;
 import com.ezepsosa.marcusbike.repositories.OrderLineDAO;
+import com.ezepsosa.marcusbike.utils.TransactionHandler;
 
 public class OrderLineService {
 
@@ -23,31 +24,44 @@ public class OrderLineService {
     }
 
     public List<OrderLineDTO> getByOrderId(Long orderId) {
-        return orderLineDAO.getByOrderId(orderId).stream().map(OrderLineMapper::toDTO).collect(Collectors.toList());
+        return TransactionHandler.startTransaction((connection) -> {
+            return orderLineDAO.getByOrderId(connection, orderId).stream().map(OrderLineMapper::toDTO)
+                    .collect(Collectors.toList());
+        });
     }
 
     public OrderLineDTO getById(Long id) {
-        return OrderLineMapper.toDTO(orderLineDAO.getById(id));
+        return TransactionHandler.startTransaction((connection) -> {
+            return OrderLineMapper.toDTO(orderLineDAO.getById(connection, id));
+        });
     }
 
     public Map<Long, List<OrderLineDTO>> getAllGroupedByOrder() {
-        return orderLineDAO.getAllGroupedByOrder().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey,
-                value -> value.getValue().stream().map(OrderLineMapper::toDTO).collect(Collectors.toList())));
+        return TransactionHandler.startTransaction((connection) -> {
+            return orderLineDAO.getAllGroupedByOrder(connection).entrySet().stream().collect(Collectors.toMap(
+                    Map.Entry::getKey,
+                    value -> value.getValue().stream().map(OrderLineMapper::toDTO).collect(Collectors.toList())));
+        });
     }
 
     public Long insert(OrderLineInsertDTO orderLineDTO, Long orderId) {
-
-        OrderLine orderLine = OrderLineMapper.toModel(orderLineDTO);
-        Long orderLineId = orderLineDAO.insert(orderLine, orderId);
-        return orderLineId;
+        return TransactionHandler.startTransaction((connection) -> {
+            OrderLine orderLine = OrderLineMapper.toModel(orderLineDTO);
+            Long orderLineId = orderLineDAO.insert(connection, orderLine, orderId);
+            return orderLineId;
+        });
     }
 
     public Boolean update(OrderLine OrderLine, Long orderId) {
-        return orderLineDAO.update(OrderLine, orderId);
+        return TransactionHandler.startTransaction((connection) -> {
+            return orderLineDAO.update(connection, OrderLine, orderId);
+        });
     }
 
     public Boolean delete(Long id) {
-        return orderLineDAO.delete(id);
+        return TransactionHandler.startTransaction((connection) -> {
+            return orderLineDAO.delete(connection, id);
+        });
     }
 
     public List<Long> insertAll(Connection connection, List<OrderLineInsertDTO> orderLineInsertDTO, Long orderId) {

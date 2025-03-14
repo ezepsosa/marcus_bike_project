@@ -19,27 +19,35 @@ public class UserService {
     }
 
     public List<UserDTO> getAll() {
-        return userDAO.getAll().stream().map(UserMapper::toDTO).collect(Collectors.toList());
+        return TransactionHandler.startTransaction((connection) -> {
+            return userDAO.getAll(connection).stream().map(UserMapper::toDTO).collect(Collectors.toList());
+        });
     }
 
     public UserDTO getById(Long id) {
-        return UserMapper.toDTO(userDAO.getById(id));
+        return TransactionHandler.startTransaction((connection) -> {
+            return UserMapper.toDTO(userDAO.getById(connection, id));
+        });
     }
 
     public Long insert(UserInsertDTO userToInsert) {
-        return TransactionHandler.startTransaction((connection) -> userDAO.insert(UserMapper.toModel(userToInsert)));
+        return TransactionHandler.startTransaction((connection) -> {
+            return userDAO.insert(connection, UserMapper.toModel(userToInsert));
+        });
     }
 
     public boolean update(UserInsertDTO userToUpdate, long id) {
-        User user = UserMapper.toModel(userToUpdate);
-        user.setId(id);
-        return userDAO.update(user);
+        return TransactionHandler.startTransaction((connection) -> {
+            User user = UserMapper.toModel(userToUpdate);
+            user.setId(id);
+            return userDAO.update(connection, user);
+        });
 
     }
 
     public boolean delete(Long id) {
         return TransactionHandler.startTransaction((connection) -> {
-            return userDAO.delete(id);
+            return userDAO.delete(connection, id);
         });
 
     }

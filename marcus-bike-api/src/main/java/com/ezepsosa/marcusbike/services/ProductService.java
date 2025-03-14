@@ -7,6 +7,7 @@ import com.ezepsosa.marcusbike.dto.ProductDTO;
 import com.ezepsosa.marcusbike.dto.ProductInsertDTO;
 import com.ezepsosa.marcusbike.mappers.ProductMapper;
 import com.ezepsosa.marcusbike.repositories.ProductDAO;
+import com.ezepsosa.marcusbike.utils.TransactionHandler;
 
 public class ProductService {
 
@@ -17,24 +18,34 @@ public class ProductService {
     }
 
     public List<ProductDTO> getAll() {
-        return productDAO.getAll().stream().map(product -> ProductMapper.toDTO(product))
-                .collect(Collectors.toList());
+        return TransactionHandler.startTransaction((connection) -> {
+            return productDAO.getAll(connection).stream().map(product -> ProductMapper.toDTO(product))
+                    .collect(Collectors.toList());
+        });
     }
 
     public ProductDTO getById(Long id) {
-        return ProductMapper.toDTO(productDAO.getById(id));
+        return TransactionHandler.startTransaction((connection) -> {
+            return ProductMapper.toDTO(productDAO.getById(connection, id));
+        });
     }
 
     public Long insert(ProductInsertDTO product) {
-        return productDAO.insert(ProductMapper.toModel(product));
+        return TransactionHandler.startTransaction((connection) -> {
+            return productDAO.insert(connection, ProductMapper.toModel(product));
+        });
     }
 
     public boolean update(ProductInsertDTO product, Long id) {
-        return productDAO.update(ProductMapper.toModel(product), id);
+        return TransactionHandler.startTransaction((connection) -> {
+            return productDAO.update(connection, ProductMapper.toModel(product), id);
+        });
     }
 
     public boolean delete(Long id) {
-        return productDAO.delete(id);
+        return TransactionHandler.startTransaction((connection) -> {
+            return productDAO.delete(connection, id);
+        });
     }
 
 }

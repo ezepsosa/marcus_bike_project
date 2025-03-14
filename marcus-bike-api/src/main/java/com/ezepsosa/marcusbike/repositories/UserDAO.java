@@ -10,7 +10,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ezepsosa.marcusbike.config.HikariDatabaseConfig;
 import com.ezepsosa.marcusbike.models.User;
 import com.ezepsosa.marcusbike.models.UserRole;
 
@@ -24,10 +23,9 @@ public class UserDAO {
     private final String SQL_UPDATE_QUERY = "UPDATE app_user  SET username = ?, email = ?, password_hash = ?, user_role = ?::user_role   WHERE id = ?";
     private final String SQL_DELETE_QUERY = "DELETE FROM app_user WHERE id = (?)";
 
-    public List<User> getAll() {
+    public List<User> getAll(Connection connection) {
         List<User> users = new ArrayList<>();
-        try (Connection connection = HikariDatabaseConfig.getConnection();
-                PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
+        try (PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
                 ResultSet rs = pst.executeQuery()) {
             while (rs.next()) {
                 users.add(createUser(rs));
@@ -39,9 +37,8 @@ public class UserDAO {
         return users;
     }
 
-    public User getById(Long id) {
-        try (Connection connection = HikariDatabaseConfig.getConnection();
-                PreparedStatement pst = connection.prepareStatement(SQL_GET_ID_QUERY)) {
+    public User getById(Connection connection, Long id) {
+        try (PreparedStatement pst = connection.prepareStatement(SQL_GET_ID_QUERY)) {
             pst.setLong(1, id);
             try (ResultSet rs = pst.executeQuery()) {
                 if (rs.next()) {
@@ -55,10 +52,9 @@ public class UserDAO {
         return null;
     }
 
-    public Long insert(User user) {
-        try (Connection connection = HikariDatabaseConfig.getConnection();
-                PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY,
-                        PreparedStatement.RETURN_GENERATED_KEYS)) {
+    public Long insert(Connection connection, User user) {
+        try (PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY,
+                PreparedStatement.RETURN_GENERATED_KEYS)) {
             pst.setString(1, user.getUsername());
             pst.setString(2, user.getEmail());
             pst.setString(3, user.getPasswordHash());
@@ -79,9 +75,8 @@ public class UserDAO {
         return null;
     }
 
-    public Boolean update(User user) {
-        try (Connection connection = HikariDatabaseConfig.getConnection();
-                PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY)) {
+    public Boolean update(Connection connection, User user) {
+        try (PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY)) {
             pst.setString(1, user.getUsername());
             pst.setString(2, user.getEmail());
             pst.setString(3, user.getPasswordHash());
@@ -96,9 +91,8 @@ public class UserDAO {
         return false;
     }
 
-    public Boolean delete(Long id) {
-        try (Connection connection = HikariDatabaseConfig.getConnection();
-                PreparedStatement pst = connection.prepareStatement(SQL_DELETE_QUERY)) {
+    public Boolean delete(Connection connection, Long id) {
+        try (PreparedStatement pst = connection.prepareStatement(SQL_DELETE_QUERY)) {
             pst.setLong(1, id);
             return pst.executeUpdate() > 0;
         } catch (SQLException e) {

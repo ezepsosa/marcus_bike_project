@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ezepsosa.marcusbike.config.HikariDatabaseConfig;
 import com.ezepsosa.marcusbike.models.ProductPart;
 import com.ezepsosa.marcusbike.models.ProductPartCategory;
 
@@ -27,10 +26,9 @@ public class ProductPartDAO {
     private final String SQL_DETELE_QUERY = "DELETE FROM product_part WHERE id = (?)";
     private final String SQL_GET_ALL_BY_QUERY = "SELECT * FROM product_part WHERE id IN (%s)";
 
-    public List<ProductPart> getAll() {
+    public List<ProductPart> getAll(Connection connection) {
         List<ProductPart> productParts = new ArrayList<>();
-        try (Connection connection = HikariDatabaseConfig.getConnection();
-                PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
+        try (PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
                 ResultSet rs = pst.executeQuery()) {
             while (rs.next()) {
                 productParts.add(createProductPart(rs));
@@ -42,15 +40,14 @@ public class ProductPartDAO {
         return productParts;
     }
 
-    public List<ProductPart> getAllPartPriceById(List<Long> productIds) {
+    public List<ProductPart> getAllPartPriceById(Connection connection, List<Long> productIds) {
         if (productIds.isEmpty()) {
             return Collections.emptyList();
         }
         String placeholders = productIds.stream().map(id -> "?").collect(Collectors.joining(","));
         String query = String.format(SQL_GET_ALL_BY_QUERY, placeholders);
         List<ProductPart> productParts = new ArrayList<>();
-        try (Connection connection = HikariDatabaseConfig.getConnection();
-                PreparedStatement pst = connection.prepareStatement(query)) {
+        try (PreparedStatement pst = connection.prepareStatement(query)) {
             for (int i = 0; i < productIds.size(); i++) {
                 pst.setLong(i + 1, productIds.get(i));
             }
@@ -67,9 +64,8 @@ public class ProductPartDAO {
         return productParts;
     }
 
-    public ProductPart getById(Long id) {
-        try (Connection connection = HikariDatabaseConfig.getConnection();
-                PreparedStatement pst = connection.prepareStatement(SQL_GET_ID_QUERY)) {
+    public ProductPart getById(Connection connection, Long id) {
+        try (PreparedStatement pst = connection.prepareStatement(SQL_GET_ID_QUERY)) {
             pst.setLong(1, id);
             try (ResultSet rs = pst.executeQuery()) {
                 if (rs.next()) {
@@ -83,10 +79,9 @@ public class ProductPartDAO {
         return null;
     }
 
-    public Long insert(ProductPart productPart) {
-        try (Connection connection = HikariDatabaseConfig.getConnection();
-                PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY,
-                        PreparedStatement.RETURN_GENERATED_KEYS)) {
+    public Long insert(Connection connection, ProductPart productPart) {
+        try (PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY,
+                PreparedStatement.RETURN_GENERATED_KEYS)) {
             pst.setString(1, productPart.getPartOption());
             pst.setBoolean(2, productPart.getIsAvailable());
             pst.setDouble(3, productPart.getBasePrice());
@@ -107,9 +102,8 @@ public class ProductPartDAO {
         return null;
     }
 
-    public Boolean update(ProductPart productPart) {
-        try (Connection connection = HikariDatabaseConfig.getConnection();
-                PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY)) {
+    public Boolean update(Connection connection, ProductPart productPart) {
+        try (PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY)) {
             pst.setString(1, productPart.getPartOption());
             pst.setBoolean(2, productPart.getIsAvailable());
             pst.setDouble(3, productPart.getBasePrice());
@@ -124,9 +118,8 @@ public class ProductPartDAO {
         return false;
     }
 
-    public Boolean delete(Long id) {
-        try (Connection connection = HikariDatabaseConfig.getConnection();
-                PreparedStatement pst = connection.prepareStatement(SQL_DETELE_QUERY)) {
+    public Boolean delete(Connection connection, Long id) {
+        try (PreparedStatement pst = connection.prepareStatement(SQL_DETELE_QUERY)) {
             pst.setLong(1, id);
             return pst.executeUpdate() > 0;
         } catch (SQLException e) {

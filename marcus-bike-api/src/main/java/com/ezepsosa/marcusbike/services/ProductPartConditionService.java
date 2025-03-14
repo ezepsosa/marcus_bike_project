@@ -8,6 +8,7 @@ import com.ezepsosa.marcusbike.dto.ProductPartConditionDTO;
 import com.ezepsosa.marcusbike.dto.ProductPartPriceCondition;
 import com.ezepsosa.marcusbike.mappers.ProductPartConditionMapper;
 import com.ezepsosa.marcusbike.repositories.ProductPartConditionDAO;
+import com.ezepsosa.marcusbike.utils.TransactionHandler;
 
 public class ProductPartConditionService {
 
@@ -18,20 +19,25 @@ public class ProductPartConditionService {
     }
 
     public List<ProductPartConditionDTO> getAll() {
-        return productPartConditionDAO.getAll().stream()
-                .map(productPartCondition -> ProductPartConditionMapper.toDTO(productPartCondition))
-                .collect(Collectors.toList());
+        return TransactionHandler.startTransaction((connection) -> {
+
+            return productPartConditionDAO.getAll(connection).stream()
+                    .map(productPartCondition -> ProductPartConditionMapper.toDTO(productPartCondition))
+                    .collect(Collectors.toList());
+        });
     }
 
     public Map<Long, List<ProductPartPriceCondition>> getAllById(List<Long> productIds) {
-        return productPartConditionDAO.getAllById(productIds).stream()
-                .collect(Collectors.groupingBy(
-                        condition -> condition.getPartId().getId(),
-                        Collectors.mapping(
-                                condition -> new ProductPartPriceCondition(
-                                        condition.getDependantPartId().getId(),
-                                        condition.getPriceAdjustment(),
-                                        condition.getIsRestriction()),
-                                Collectors.toList())));
+        return TransactionHandler.startTransaction((connection) -> {
+            return productPartConditionDAO.getAllById(connection, productIds).stream()
+                    .collect(Collectors.groupingBy(
+                            condition -> condition.getPartId().getId(),
+                            Collectors.mapping(
+                                    condition -> new ProductPartPriceCondition(
+                                            condition.getDependantPartId().getId(),
+                                            condition.getPriceAdjustment(),
+                                            condition.getIsRestriction()),
+                                    Collectors.toList())));
+        });
     }
 }
