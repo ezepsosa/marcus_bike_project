@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import com.ezepsosa.marcusbike.dto.OrderLineDTO;
 import com.ezepsosa.marcusbike.dto.OrderLineInsertDTO;
 import com.ezepsosa.marcusbike.dto.OrderLineProductPartInsertDTO;
-import com.ezepsosa.marcusbike.dto.ProductPartPriceCondition;
 import com.ezepsosa.marcusbike.mappers.OrderLineMapper;
 import com.ezepsosa.marcusbike.models.OrderLine;
 import com.ezepsosa.marcusbike.repositories.OrderLineDAO;
@@ -16,14 +15,9 @@ public class OrderLineService {
 
     private final OrderLineDAO orderLineDAO;
     private final OrderLineProductPartService orderLineProductPartService;
-    private final ProductPartService productPartService;
-    private final ProductPartConditionService productPartConditionService;
 
-    public OrderLineService(OrderLineDAO orderLineDAO, ProductPartConditionService productPartConditionService,
-            ProductPartService productPartService, OrderLineProductPartService orderLineProductPartService) {
+    public OrderLineService(OrderLineDAO orderLineDAO, OrderLineProductPartService orderLineProductPartService) {
         this.orderLineDAO = orderLineDAO;
-        this.productPartService = productPartService;
-        this.productPartConditionService = productPartConditionService;
         this.orderLineProductPartService = orderLineProductPartService;
     }
 
@@ -61,23 +55,12 @@ public class OrderLineService {
         }
         List<Long> productIds = orderLineInsertDTO.stream()
                 .flatMap(orderline -> orderline.orderLineProductParts().stream()
-                        .map(orderlineproductpart -> orderlineproductpart.productPart()))
+                        .map(OrderLineProductPartInsertDTO::productPart))
                 .collect(Collectors.toList());
-
-        Map<Long, Double> basePrices = productPartService.getAllPartPriceById(productIds);
-        Map<Long, ProductPartPriceCondition> productPartConditions = productPartConditionService.getAllById(productIds);
-
-        for (OrderLineInsertDTO oldto : orderLineInsertDTO) {
-            OrderLine orderline = OrderLineMapper.toModel(oldto);
-            Long orderLineId = insert(oldto, orderId);
-
-            for (OrderLineProductPartInsertDTO ppdto : oldto.orderLineProductParts()) {
-
-            }
-
-            orderLineProductPartService.insertAll(oldto.orderLineProductParts(), orderLineId);
-
-        }
+        List<OrderLine> orderLines = orderLineInsertDTO.stream()
+                .map(orderlinedto -> OrderLineMapper.toModel(orderlinedto)).collect(Collectors.toList());
+        List<Long> ol = orderLineDAO.insertAll(orderLines, orderId);
+        orderLineProductPartService.insertAll(orderLineInsertDTO.get(0).orderLineProductParts(), orderId, productIds);
 
         throw new UnsupportedOperationException("Unimplemented method 'insertAllLines'");
     }

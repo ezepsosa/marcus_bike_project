@@ -8,7 +8,7 @@ import com.ezepsosa.marcusbike.dto.ProductPartDTO;
 import com.ezepsosa.marcusbike.mappers.ProductPartMapper;
 import com.ezepsosa.marcusbike.repositories.ProductPartDAO;
 
-class ProductPartService {
+public class ProductPartService {
 
     private final ProductPartDAO productPartDAO;
 

@@ -8,10 +8,14 @@ import com.ezepsosa.marcusbike.repositories.OrderDAO;
 import com.ezepsosa.marcusbike.repositories.OrderLineDAO;
 import com.ezepsosa.marcusbike.repositories.OrderLineProductPartDAO;
 import com.ezepsosa.marcusbike.repositories.ProductDAO;
+import com.ezepsosa.marcusbike.repositories.ProductPartConditionDAO;
+import com.ezepsosa.marcusbike.repositories.ProductPartDAO;
 import com.ezepsosa.marcusbike.repositories.UserDAO;
 import com.ezepsosa.marcusbike.services.OrderLineProductPartService;
 import com.ezepsosa.marcusbike.services.OrderLineService;
 import com.ezepsosa.marcusbike.services.OrderService;
+import com.ezepsosa.marcusbike.services.ProductPartConditionService;
+import com.ezepsosa.marcusbike.services.ProductPartService;
 import com.ezepsosa.marcusbike.services.ProductService;
 import com.ezepsosa.marcusbike.services.UserService;
 
@@ -34,14 +38,24 @@ public class DependencyInjection {
         return productContoller;
     }
 
+    // ProductPart
+
+    private final ProductPartDAO productPartDAO = new ProductPartDAO();
+    private final ProductPartService productPartService = new ProductPartService(productPartDAO);
+
+    // ProductPartCondition
+    private final ProductPartConditionDAO productPartCondition = new ProductPartConditionDAO();
+    private final ProductPartConditionService productPartConditionService = new ProductPartConditionService(
+            productPartCondition);
+
     // OrderLineProductParts
     private final OrderLineProductPartDAO orderLineProductPartDAO = new OrderLineProductPartDAO();
     private final OrderLineProductPartService orderLineProductPartService = new OrderLineProductPartService(
-            orderLineProductPartDAO);
+            orderLineProductPartDAO, productPartConditionService, productPartService);
 
     // OrderLine
     private final OrderLineDAO orderLineDAO = new OrderLineDAO();
-    private final OrderLineService orderlineService = new OrderLineService(orderLineDAO, productService);
+    private final OrderLineService orderlineService = new OrderLineService(orderLineDAO, orderLineProductPartService);
     private final OrderLineController orderLineController = new OrderLineController(orderlineService,
             orderLineProductPartService);
 

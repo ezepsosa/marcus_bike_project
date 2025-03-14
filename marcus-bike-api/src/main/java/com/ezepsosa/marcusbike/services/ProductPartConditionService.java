@@ -9,7 +9,7 @@ import com.ezepsosa.marcusbike.dto.ProductPartPriceCondition;
 import com.ezepsosa.marcusbike.mappers.ProductPartConditionMapper;
 import com.ezepsosa.marcusbike.repositories.ProductPartConditionDAO;
 
-class ProductPartConditionService {
+public class ProductPartConditionService {
 
     private final ProductPartConditionDAO productPartConditionDAO;
 
@@ -23,12 +23,15 @@ class ProductPartConditionService {
                 .collect(Collectors.toList());
     }
 
-    public Map<Long, ProductPartPriceCondition> getAllById(List<Long> productIds) {
+    public Map<Long, List<ProductPartPriceCondition>> getAllById(List<Long> productIds) {
         return productPartConditionDAO.getAllById(productIds).stream()
-                .collect(Collectors.toMap(
+                .collect(Collectors.groupingBy(
                         condition -> condition.getPartId().getId(),
-                        condition -> new ProductPartPriceCondition(
-                                condition.getPriceAdjustment(),
-                                condition.getIsRestriction())));
+                        Collectors.mapping(
+                                condition -> new ProductPartPriceCondition(
+                                        condition.getDependantPartId().getId(),
+                                        condition.getPriceAdjustment(),
+                                        condition.getIsRestriction()),
+                                Collectors.toList())));
     }
 }

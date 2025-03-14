@@ -13,9 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ezepsosa.marcusbike.config.HikariDatabaseConfig;
-import com.ezepsosa.marcusbike.dto.OrderLineProductPartInsertDTO;
 import com.ezepsosa.marcusbike.models.OrderLine;
-import com.ezepsosa.marcusbike.models.OrderLineProductPart;
 import com.ezepsosa.marcusbike.models.Product;
 
 public class OrderLineDAO {
@@ -142,10 +140,13 @@ public class OrderLineDAO {
                 rs.getTimestamp("created_at").toLocalDateTime());
     }
 
-    public List<OrderLineProductPartInsertDTO> insertAll(List<OrderLine> orderLines, Long orderId) {
+    public List<Long> insertAll(List<OrderLine> orderLines, Long orderId) {
+        List<Long> res = new ArrayList<>();
+
         try (Connection connection = HikariDatabaseConfig.getConnection();
                 PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY,
                         PreparedStatement.RETURN_GENERATED_KEYS)) {
+
             for (OrderLine orderLine : orderLines) {
                 pst.setLong(1, orderId);
                 pst.setLong(2, orderLine.getProduct().getId());
@@ -153,14 +154,15 @@ public class OrderLineDAO {
                 pst.addBatch();
             }
             try (ResultSet generatedValues = pst.getGeneratedKeys()) {
-                if (generatedValues.next()) {
-                    return generatedValues.getLong(1);
+                while (generatedValues.next()) {
+                    res.add(generatedValues.getLong(1));
                 }
             }
+
         } catch (SQLException e) {
-            logger.warn("Error inserting order line. SQL returned error {}, Error Code: {}",
+            logger.warn("Error inserting order lines. SQL returned error {}, Error Code: {}",
                     e.getSQLState(), e.getErrorCode());
         }
-        return null;
+        return res;
     }
 }
