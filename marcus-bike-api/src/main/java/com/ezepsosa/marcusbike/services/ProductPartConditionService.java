@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.ezepsosa.marcusbike.dto.ProductPartConditionDTO;
+import com.ezepsosa.marcusbike.dto.ProductPartConditionInsertDTO;
 import com.ezepsosa.marcusbike.dto.ProductPartPriceCondition;
 import com.ezepsosa.marcusbike.mappers.ProductPartConditionMapper;
 import com.ezepsosa.marcusbike.repositories.ProductPartConditionDAO;
@@ -38,6 +39,18 @@ public class ProductPartConditionService {
                                             condition.getPriceAdjustment(),
                                             condition.getIsRestriction()),
                                     Collectors.toList())));
+        });
+    }
+
+    public boolean delete(Long productpartid, Long dependantproductpartid) {
+        return TransactionHandler.startTransaction((connection) -> {
+            return productPartConditionDAO.delete(connection, productpartid, dependantproductpartid);
+        });
+    }
+
+    public boolean insert(ProductPartConditionInsertDTO productPartInsertDTO) {
+        return TransactionHandler.startTransaction((connection) -> {
+            return productPartConditionDAO.insert(connection, ProductPartConditionMapper.toModel(productPartInsertDTO));
         });
     }
 }

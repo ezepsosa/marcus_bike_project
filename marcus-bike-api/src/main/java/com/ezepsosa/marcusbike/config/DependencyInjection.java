@@ -3,6 +3,7 @@ package com.ezepsosa.marcusbike.config;
 import com.ezepsosa.marcusbike.controllers.OrderController;
 import com.ezepsosa.marcusbike.controllers.OrderLineController;
 import com.ezepsosa.marcusbike.controllers.ProductController;
+import com.ezepsosa.marcusbike.controllers.ProductPartConditionController;
 import com.ezepsosa.marcusbike.controllers.ProductPartController;
 import com.ezepsosa.marcusbike.controllers.UserController;
 import com.ezepsosa.marcusbike.repositories.OrderDAO;
@@ -53,6 +54,13 @@ public class DependencyInjection {
     private final ProductPartConditionDAO productPartCondition = new ProductPartConditionDAO();
     private final ProductPartConditionService productPartConditionService = new ProductPartConditionService(
             productPartCondition);
+
+    public ProductPartConditionController productPartConditionController = new ProductPartConditionController(
+            productPartConditionService);
+
+    public ProductPartConditionController getProductPartConditionController() {
+        return productPartConditionController;
+    }
 
     // OrderLineProductParts
     private final OrderLineProductPartDAO orderLineProductPartDAO = new OrderLineProductPartDAO();
