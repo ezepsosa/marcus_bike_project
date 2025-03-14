@@ -1,5 +1,6 @@
 package com.ezepsosa.marcusbike.services;
 
+import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -38,7 +39,8 @@ public class OrderLineProductPartService {
         return orderLineProductPartDAO.delete(orderLine, dependantPart);
     }
 
-    public List<Long> insertAll(List<OrderLineProductPartInsertDTO> orderLineProductPartsInsert, Long orderLineId,
+    public List<Long> insertAll(Connection connection, List<OrderLineProductPartInsertDTO> orderLineProductPartsInsert,
+            Long orderLineId,
             List<Long> productIds) {
 
         Map<Long, Double> basePrices = productPartService.getAllPartPriceById(productIds);
@@ -49,7 +51,7 @@ public class OrderLineProductPartService {
         }
         List<OrderLineProductPart> orderLineProductPart = orderLineProductPartsInsert.stream()
                 .map(olppdto -> OrderLineProductPartMapper.toModel(olppdto)).collect(Collectors.toList());
-        return orderLineProductPartDAO.insertAll(orderLineProductPart, orderLineId);
+        return orderLineProductPartDAO.insertAll(connection, orderLineProductPart, orderLineId);
     }
 
     /*

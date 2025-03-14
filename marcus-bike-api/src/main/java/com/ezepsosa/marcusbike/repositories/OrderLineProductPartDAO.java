@@ -21,7 +21,7 @@ public class OrderLineProductPartDAO {
 
     private final String SQL_GET_ALL_QUERY = "SELECT olpp.*, pp.id AS product_part_id, pp.part_option, pp.is_available, pp.base_price, pp.category, pp.created_at AS product_part_created_at, p.id AS product_id, p.product_name, p.created_at AS product_created_at FROM order_line_product_part olpp JOIN product_part pp ON olpp.product_part_id = pp.id JOIN product p ON pp.product_id = p.id";
     private final String SQL_GET_ID_QUERY = "SELECT olpp.*, pp.id AS product_part_id, pp.part_option, pp.is_available, pp.base_price, pp.category, pp.created_at AS product_part_created_at, p.id AS product_id, p.product_name, p.created_at AS product_created_at FROM order_line_product_part olpp JOIN product_part pp ON olpp.product_part_id = pp.id JOIN product p ON pp.product_id = p.id WHERE olpp.order_line_id = ? AND olpp.product_part_id = ?";
-    private final String SQL_INSERT_QUERY = "INSERT INTO order_line_product_part(order_line_id, product_part_id, final_price) VALUES (?, ?, ?, ?) RETURNING order_line_id AND";
+    private final String SQL_INSERT_QUERY = "INSERT INTO order_line_product_part(order_line_id, product_part_id, final_price) VALUES (?, ?, ?) RETURNING order_line_id AND";
     private final String SQL_UPDATE_QUERY = "UPDATE order_line_product_part final_price = ? WHERE order_line_id = ? AND product_part_id = ?";
     private final String SQL_DETELE_QUERY = "DELETE FROM order_line_product_part WHERE order_line_id = ? AND product_part_id = ?";
     private final String SQL_GET_ALL_BY_PRODUCT_ID_QUERY = "SELECT olpp.*, pp.id AS product_part_id, pp.part_option, pp.is_available, pp.base_price, pp.category, pp.created_at AS product_part_created_at, p.id AS product_id, p.product_name, p.created_at AS product_created_at FROM order_line_product_part olpp JOIN product_part pp ON olpp.product_part_id = pp.id JOIN product p ON pp.product_id = p.id where olpp.order_line_id = ?";
@@ -119,12 +119,12 @@ public class OrderLineProductPartDAO {
         return orderLines;
     }
 
-    public List<Long> insertAll(List<OrderLineProductPart> orderLineProductParts, Long orderLineId) {
+    public List<Long> insertAll(Connection connection, List<OrderLineProductPart> orderLineProductParts,
+            Long orderLineId) {
         List<Long> res = new ArrayList<>();
 
-        try (Connection connection = HikariDatabaseConfig.getConnection();
-                PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY,
-                        PreparedStatement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY,
+                PreparedStatement.RETURN_GENERATED_KEYS)) {
 
             for (OrderLineProductPart orderLineProductPart : orderLineProductParts) {
                 pst.setLong(1, orderLineId);

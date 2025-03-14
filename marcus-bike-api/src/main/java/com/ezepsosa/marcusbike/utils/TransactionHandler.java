@@ -2,7 +2,8 @@ package com.ezepsosa.marcusbike.utils;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.function.Supplier;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,38 +14,38 @@ public class TransactionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(TransactionHandler.class);
 
-    public static <T> T startTransaction(Supplier<T> task) {
+    public static <T> T startTransaction(Function<Connection, T> task) {
         Connection connection = null;
         try {
             connection = HikariDatabaseConfig.getConnection();
             connection.setAutoCommit(false);
 
-            T result = task.get();
+            T result = task.apply(connection);
 
             connection.commit();
-            connection.close();
             return result;
         } catch (Exception e) {
             rollbackTransaction(connection);
-            logger.error("Error in transaction. Rollback executed: {}", e.getMessage());
-            throw new RuntimeException("Error in transaction. Rollback executed.", e);
+            throw new RuntimeException("Transaction failed, rollback executed.", e);
+        } finally {
+            closeConnection(connection);
         }
     }
 
-    public static void executeWithTransactionStarted(Runnable task) {
+    public static void executeWithTransactionStarted(Consumer<Connection> task) {
         Connection connection = null;
         try {
             connection = HikariDatabaseConfig.getConnection();
             connection.setAutoCommit(false);
 
-            task.run();
+            task.accept(connection);
 
             connection.commit();
-            connection.close();
         } catch (Exception e) {
             rollbackTransaction(connection);
-            logger.error("Error in transaction. Rollback executed: {}", e.getMessage());
-            throw new RuntimeException("Error in transaction. Rollback executed.", e);
+            throw new RuntimeException("Transaction failed, rollback executed.", e);
+        } finally {
+            closeConnection(connection);
         }
     }
 
@@ -52,9 +53,18 @@ public class TransactionHandler {
         if (connection != null) {
             try {
                 connection.rollback();
-                connection.close();
             } catch (SQLException e) {
                 throw new RuntimeException("Rollback error", e);
+            }
+        }
+    }
+
+    private static void closeConnection(Connection connection) {
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                logger.error("Error closing connection: {}", e.getMessage());
             }
         }
     }

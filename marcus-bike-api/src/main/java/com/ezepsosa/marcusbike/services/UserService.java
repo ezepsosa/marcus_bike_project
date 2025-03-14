@@ -27,7 +27,7 @@ public class UserService {
     }
 
     public Long insert(UserInsertDTO userToInsert) {
-        return TransactionHandler.startTransaction(() -> userDAO.insert(UserMapper.toModel(userToInsert)));
+        return TransactionHandler.startTransaction((connection) -> userDAO.insert(UserMapper.toModel(userToInsert)));
     }
 
     public boolean update(UserInsertDTO userToUpdate, long id) {
@@ -38,7 +38,7 @@ public class UserService {
     }
 
     public boolean delete(Long id) {
-        return TransactionHandler.startTransaction(() -> {
+        return TransactionHandler.startTransaction((connection) -> {
             return userDAO.delete(id);
         });
 

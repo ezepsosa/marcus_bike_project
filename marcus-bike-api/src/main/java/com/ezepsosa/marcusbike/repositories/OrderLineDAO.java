@@ -135,11 +135,10 @@ public class OrderLineDAO {
 				rs.getTimestamp("created_at").toLocalDateTime());
 	}
 
-	public List<Long> insertAll(List<OrderLine> orderLines, Long orderId) {
+	public List<Long> insertAll(Connection connection, List<OrderLine> orderLines, Long orderId) {
 	    List<Long> res = new ArrayList<>();
 	    
-	    try (PreparedStatement pst = HikariDatabaseConfig.getConnection()
-	            .prepareStatement(SQL_INSERT_QUERY, PreparedStatement.RETURN_GENERATED_KEYS)) {
+	    try (PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY, PreparedStatement.RETURN_GENERATED_KEYS)) {
 
 	        for (OrderLine orderLine : orderLines) {
 	            pst.setLong(1, orderId);

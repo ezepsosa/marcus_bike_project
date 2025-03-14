@@ -1,5 +1,6 @@
 package com.ezepsosa.marcusbike.services;
 
+import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -49,7 +50,7 @@ public class OrderLineService {
         return orderLineDAO.delete(id);
     }
 
-    public List<Long> insertAll(List<OrderLineInsertDTO> orderLineInsertDTO, Long orderId) {
+    public List<Long> insertAll(Connection connection, List<OrderLineInsertDTO> orderLineInsertDTO, Long orderId) {
         if (orderLineInsertDTO.isEmpty()) {
             return List.of();
         }
@@ -60,7 +61,7 @@ public class OrderLineService {
 
         List<OrderLine> orderLines = orderLineInsertDTO.stream()
                 .map(orderlinedto -> OrderLineMapper.toModel(orderlinedto)).collect(Collectors.toList());
-        List<Long> orderLinesInserted = orderLineDAO.insertAll(orderLines, orderId);
+        List<Long> orderLinesInserted = orderLineDAO.insertAll(connection, orderLines, orderId);
 
         if (orderLinesInserted.size() != orderLines.size()) {
             throw new IllegalArgumentException("Some order lines failed to be inserted");
@@ -69,7 +70,7 @@ public class OrderLineService {
         for (int index = 0; index < orderLineInsertDTO.size(); index++) {
             OrderLineInsertDTO dto = orderLineInsertDTO.get(index);
             List<Long> orderLinesProductPartsInserted = orderLineProductPartService
-                    .insertAll(dto.orderLineProductParts(), orderLinesInserted.get(index), productIds);
+                    .insertAll(connection, dto.orderLineProductParts(), orderLinesInserted.get(index), productIds);
             if (orderLinesProductPartsInserted.isEmpty()) {
                 throw new IllegalArgumentException("Failed inserting order lines product parts");
             }

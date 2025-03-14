@@ -24,26 +24,30 @@ public class OrderService {
     }
 
     public List<OrderDTO> getAll() {
-        Map<Long, List<OrderLineDTO>> orderLinesMap = orderLineService.getAllGroupedByOrder();
-        return orderDAO.getAll().stream()
-                .map(order -> OrderMapper.toDTO(order,
-                        orderLinesMap.getOrDefault(order.getId(), orderLinesMap.get(order.getId()))))
-                .collect(Collectors.toList());
+        return TransactionHandler.startTransaction((connection) -> {
+            Map<Long, List<OrderLineDTO>> orderLinesMap = orderLineService.getAllGroupedByOrder();
+            return orderDAO.getAll(connection).stream()
+                    .map(order -> OrderMapper.toDTO(order,
+                            orderLinesMap.getOrDefault(order.getId(), orderLinesMap.get(order.getId()))))
+                    .collect(Collectors.toList());
+        });
 
     }
 
     public OrderDTO getById(Long id) {
-        List<OrderLineDTO> orderLines = orderLineService.getByOrderId(id);
-        Order order = orderDAO.getById(id);
-        if (order != null) {
-            return OrderMapper.toDTO(order, orderLines);
-        } else {
-            return null;
-        }
+        return TransactionHandler.startTransaction((connection) -> {
+            List<OrderLineDTO> orderLines = orderLineService.getByOrderId(id);
+            Order order = orderDAO.getById(connection, id);
+            if (order != null) {
+                return OrderMapper.toDTO(order, orderLines);
+            } else {
+                return null;
+            }
+        });
     }
 
     public Long insert(OrderInsertDTO orderDTO) {
-        return TransactionHandler.startTransaction(() -> {
+        return TransactionHandler.startTransaction((connection) -> {
             double epsilon = 0.000001d;
 
             Double finalPriceToCheck = orderDTO.finalPrice();
@@ -57,8 +61,8 @@ public class OrderService {
                 throw new IllegalArgumentException("Final price doesn't match with the sum of the base prices");
             }
             Order order = OrderMapper.toModel(orderDTO);
-            Long orderId = orderDAO.insert(order);
-            List<Long> insertedOrderLines = orderLineService.insertAll(orderDTO.orderLines(), orderId);
+            Long orderId = orderDAO.insert(connection, order);
+            List<Long> insertedOrderLines = orderLineService.insertAll(connection, orderDTO.orderLines(), orderId);
             if (insertedOrderLines.isEmpty()) {
                 throw new IllegalArgumentException("Failed to insert order lines");
             }
@@ -69,18 +73,26 @@ public class OrderService {
     }
 
     public Boolean update(Order order) {
-        return orderDAO.update(order);
+        return TransactionHandler.startTransaction((connection) -> {
+            return orderDAO.update(connection, order);
+        });
+
     }
 
     public Boolean delete(Long id) {
-        return orderDAO.delete(id);
+        return TransactionHandler.startTransaction((connection) -> {
+            return orderDAO.delete(connection, id);
+        });
     }
 
     public List<OrderDTO> getByUserId(Long userId) {
-        Map<Long, List<OrderLineDTO>> orderLinesMap = orderLineService.getAllGroupedByOrder();
-        return orderDAO.getAllByUser(userId).stream()
-                .map(order -> OrderMapper.toDTO(order, orderLinesMap.getOrDefault(order.getId(), new ArrayList<>())))
-                .collect(Collectors.toList());
+        return TransactionHandler.startTransaction((connection) -> {
+            Map<Long, List<OrderLineDTO>> orderLinesMap = orderLineService.getAllGroupedByOrder();
+            return orderDAO.getAllByUser(connection, userId).stream()
+                    .map(order -> OrderMapper.toDTO(order,
+                            orderLinesMap.getOrDefault(order.getId(), new ArrayList<>())))
+                    .collect(Collectors.toList());
+        });
     }
 
 }
