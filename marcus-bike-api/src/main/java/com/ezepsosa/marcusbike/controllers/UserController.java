@@ -84,7 +84,6 @@ public class UserController implements RouteRegistrar {
                     return;
                 }
                 logger.info("User created with ID {}", userId);
-                ;
                 JsonResponseUtil.sendJsonResponse(exchange, userId, 201);
 
             } catch (Exception e) {

@@ -5,17 +5,12 @@ import java.time.LocalDateTime;
 public class OrderLine {
 
     private Long id;
-    private Order order;
     private Product product;
     private Integer quantity;
     private LocalDateTime createdAt;
 
     public Long getId() {
         return id;
-    }
-
-    public Order getOrder() {
-        return order;
     }
 
     public Product getProduct() {
@@ -30,8 +25,8 @@ public class OrderLine {
         return createdAt;
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setProduct(Product product) {
@@ -45,16 +40,14 @@ public class OrderLine {
     public OrderLine() {
     }
 
-    public OrderLine(Long id, Order order, Product product, Integer quantity, LocalDateTime createdAt) {
+    public OrderLine(Long id, Product product, Integer quantity, LocalDateTime createdAt) {
         this.id = id;
-        this.order = order;
         this.product = product;
         this.quantity = quantity;
         this.createdAt = createdAt;
     }
 
-    public OrderLine(Order order, Product product, Integer quantity) {
-        this.order = order;
+    public OrderLine(Product product, Integer quantity) {
         this.product = product;
         this.quantity = quantity;
     }
@@ -62,7 +55,7 @@ public class OrderLine {
     // Method for debugging and logs
     @Override
     public String toString() {
-        return "OrderLine [id=" + id + ", order=" + order + ", product=" + product + ", quantity=" + quantity
+        return "OrderLine [id=" + id + ", product=" + product + ", quantity=" + quantity
                 + ", price=" + createdAt + "]";
     }
 

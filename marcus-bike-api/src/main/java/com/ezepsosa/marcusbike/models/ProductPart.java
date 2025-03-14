@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 public class ProductPart {
 
     private Long id;
-    private Product product;
     private String partOption;
     private Boolean isAvailable;
     private Double basePrice;
@@ -14,10 +13,6 @@ public class ProductPart {
 
     public Long getId() {
         return id;
-    }
-
-    public Product getProduct() {
-        return product;
     }
 
     public String getPartOption() {
@@ -40,8 +35,8 @@ public class ProductPart {
         return createdAt;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setPartOption(String partOption) {
@@ -63,10 +58,9 @@ public class ProductPart {
     public ProductPart() {
     }
 
-    public ProductPart(Long id, Product product, String partOption, Boolean isAvailable, Double basePrice,
+    public ProductPart(Long id, String partOption, Boolean isAvailable, Double basePrice,
             ProductPartCategory category, LocalDateTime createdAt) {
         this.id = id;
-        this.product = product;
         this.partOption = partOption;
         this.isAvailable = isAvailable;
         this.basePrice = basePrice;
@@ -74,9 +68,8 @@ public class ProductPart {
         this.createdAt = createdAt;
     }
 
-    public ProductPart(Product product, String partOption, Boolean isAvailable, Double basePrice,
+    public ProductPart(String partOption, Boolean isAvailable, Double basePrice,
             ProductPartCategory category) {
-        this.product = product;
         this.partOption = partOption;
         this.isAvailable = isAvailable;
         this.basePrice = basePrice;
@@ -86,7 +79,7 @@ public class ProductPart {
     // Method for debugging and logs
     @Override
     public String toString() {
-        return "ProductPart [id=" + id + ", product=" + product + ", partOption=" + partOption + ", isAvailable="
+        return "ProductPart [id=" + id + ", product=" + partOption + ", isAvailable="
                 + isAvailable + ", basePrice=" + basePrice + ", category=" + category + ", createdAt=" + createdAt
                 + "]";
     }
