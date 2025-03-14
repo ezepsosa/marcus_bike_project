@@ -24,6 +24,7 @@ public class ProductPartDAO {
     private final String SQL_INSERT_QUERY = "INSERT INTO product_part(part_option, is_available, base_price, category) VALUES (?, ?, ?, ?::product_part_category) RETURNING id";
     private final String SQL_UPDATE_QUERY = "UPDATE product_part SET part_option = ?, is_available = ?, base_price = ?, category = ?::product_part_category WHERE id = ?";
     private final String SQL_DETELE_QUERY = "DELETE FROM product_part WHERE id = (?)";
+    private final String SQL_DETELE_FROM_PRODUCT_QUERY = "delete from product_product_part where product_id = ? AND product_part_id = ?";
     private final String SQL_GET_ALL_BY_QUERY = "SELECT * FROM product_part WHERE id IN (%s)";
     private final String SQL_GET_ALL_BY_PRODUCT_QUERY = "select pp.* from product_part pp join product_product_part ppp on ppp.product_part_id = pp.id where ppp.product_id = ?";
 
@@ -139,6 +140,18 @@ public class ProductPartDAO {
     public Boolean delete(Connection connection, Long id) {
         try (PreparedStatement pst = connection.prepareStatement(SQL_DETELE_QUERY)) {
             pst.setLong(1, id);
+            return pst.executeUpdate() > 0;
+        } catch (SQLException e) {
+            logger.warn("Error deleting product part. SQL returned error {}, Error Code: {}", e.getSQLState(),
+                    e.getErrorCode());
+        }
+        return false;
+    }
+
+    public Boolean deleteFromProduct(Connection connection, Long productId, Long productPartId) {
+        try (PreparedStatement pst = connection.prepareStatement(SQL_DETELE_FROM_PRODUCT_QUERY)) {
+            pst.setLong(1, productId);
+            pst.setLong(2, productPartId);
             return pst.executeUpdate() > 0;
         } catch (SQLException e) {
             logger.warn("Error deleting product part. SQL returned error {}, Error Code: {}", e.getSQLState(),

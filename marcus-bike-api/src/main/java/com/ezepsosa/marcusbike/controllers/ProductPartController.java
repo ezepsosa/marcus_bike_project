@@ -28,10 +28,10 @@ public class ProductPartController implements RouteRegistrar {
     public void registerRoutes(RoutingHandler router) {
         router.add(Methods.GET, "/productparts", this::getAll);
         router.add(Methods.POST, "/productparts", this::toImplement);
-        router.add(Methods.DELETE, "/productparts/{id}", this::toImplement);
+        router.add(Methods.DELETE, "/productparts/{id}", this::delete);
         router.add(Methods.GET, "/products/{id}/productparts", this::getAllByProduct);
         router.add(Methods.POST, "/products/{id}/productparts", this::toImplement);
-        router.add(Methods.DELETE, "/products/{id}/productparts", this::toImplement);
+        router.add(Methods.DELETE, "/products/{productId}/productparts/{id}", this::deleteFromProduct);
 
     }
 
@@ -64,5 +64,50 @@ public class ProductPartController implements RouteRegistrar {
         JsonResponseUtil.sendJsonResponse(exchange, productParts);
         logger.info("Responded with {} product parts", productParts);
 
+    }
+
+    public void delete(HttpServerExchange exchange) {
+        logger.info("Received request: DELETE /productparts/{id}");
+
+        Long productPartId = RequestUtils.getRequestParam(exchange, "id");
+
+        if (productPartId == null) {
+            logger.warn("Invalid or missing product part ID");
+            JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing product ID");
+        }
+        logger.info("Deleting product part with ID {}", productPartId);
+
+        Boolean deleted = productPartService.delete(productPartId);
+        if (deleted == false) {
+            logger.warn("Product part with ID {} not deleted or not found", productPartId);
+            JsonResponseUtil.sendErrorResponse(exchange, 404, "Product part not deleted or not found");
+        }
+        logger.info("Product part with ID {} found", productPartId);
+        JsonResponseUtil.sendJsonResponse(exchange, "Succesfully deleted", 204);
+    }
+
+    public void deleteFromProduct(HttpServerExchange exchange) {
+        logger.info("Received request: DELETE /products/{id}/productparts");
+
+        Long productId = RequestUtils.getRequestParam(exchange, "productId");
+        Long productPartId = RequestUtils.getRequestParam(exchange, "id");
+
+        if (productPartId == null) {
+            logger.warn("Invalid or missing product part ID");
+            JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing product part ID");
+        }
+        logger.info("Deleting product part with ID {}", productPartId);
+        if (productId == null) {
+            logger.warn("Invalid or missing product ID");
+            JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing product ID");
+        }
+        logger.info("Deleting product part with ID {}", productPartId);
+        Boolean deleted = productPartService.deleteFromProduct(productId, productPartId);
+        if (deleted == false) {
+            logger.warn("Product part or product with IDs {},{} not deleted or not found", productPartId, productId);
+            JsonResponseUtil.sendErrorResponse(exchange, 404, "Product part not deleted or not found");
+        }
+        logger.info("Product {} with product part ID {} deleted", productPartId, productPartId);
+        JsonResponseUtil.sendJsonResponse(exchange, "Succesfully deleted", 204);
     }
 }

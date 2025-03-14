@@ -41,19 +41,24 @@ public class ProductPartService {
         });
     }
 
-    ///////////////////
-    public ProductPartDTO getById(Long id) {
-        return TransactionHandler.startTransaction((connection) -> {
-            return ProductPartMapper.toDTO(productPartDAO.getById(connection, id));
-        });
-    }
-
     public Map<Long, Double> getAllPartPrice() {
         return TransactionHandler.startTransaction((connection) -> {
             return productPartDAO.getAll(connection).stream().map(productPart -> ProductPartMapper.toDTO(productPart))
                     .collect(Collectors.toMap(ProductPartDTO::id, ProductPartDTO::basePrice));
         });
 
+    }
+
+    public boolean delete(Long productId) {
+        return TransactionHandler.startTransaction((connection) -> {
+            return productPartDAO.delete(connection, productId);
+        });
+    }
+
+    public boolean deleteFromProduct(Long productId, Long productpartId) {
+        return TransactionHandler.startTransaction((connection) -> {
+            return productPartDAO.deleteFromProduct(connection, productId, productpartId);
+        });
     }
 
 }
