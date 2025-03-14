@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ezepsosa.marcusbike.config.HikariDatabaseConfig;
 import com.ezepsosa.marcusbike.models.ProductPart;
 import com.ezepsosa.marcusbike.models.ProductPartCondition;
 
@@ -27,10 +26,9 @@ public class ProductPartConditionDAO {
     private final String SQL_DELETE_QUERY = "DELETE FROM product_part_condition WHERE part_id = ? AND dependant_part_id = ?";
     private final String SQL_GET_ALL_BY_PRODUCT_ID_QUERY = "SELECT * FROM product_part_condition WHERE id IN (?)";
 
-    public List<ProductPartCondition> getAll() {
+    public List<ProductPartCondition> getAll(Connection connection) {
         List<ProductPartCondition> conditions = new ArrayList<>();
-        try (Connection connection = HikariDatabaseConfig.getConnection();
-                PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
+        try (PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
                 ResultSet rs = pst.executeQuery()) {
             while (rs.next()) {
                 conditions.add(createProductPartConditions(rs));
@@ -42,9 +40,8 @@ public class ProductPartConditionDAO {
         return conditions;
     }
 
-    public ProductPartCondition getById(Long partId, Long dependantPartId) {
-        try (Connection connection = HikariDatabaseConfig.getConnection();
-                PreparedStatement pst = connection.prepareStatement(SQL_GET_ID_QUERY)) {
+    public ProductPartCondition getById(Connection connection, Long partId, Long dependantPartId) {
+        try (PreparedStatement pst = connection.prepareStatement(SQL_GET_ID_QUERY)) {
             pst.setLong(1, partId);
             pst.setLong(2, dependantPartId);
             try (ResultSet rs = pst.executeQuery()) {
@@ -59,9 +56,8 @@ public class ProductPartConditionDAO {
         return null;
     }
 
-    public Boolean insert(ProductPartCondition productPartCondition) {
-        try (Connection connection = HikariDatabaseConfig.getConnection();
-                PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY)) {
+    public Boolean insert(Connection connection, ProductPartCondition productPartCondition) {
+        try (PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY)) {
             pst.setLong(1, productPartCondition.getPartId().getId());
             pst.setLong(2, productPartCondition.getDependantPartId().getId());
             pst.setDouble(3, productPartCondition.getPriceAdjustment());
@@ -75,9 +71,8 @@ public class ProductPartConditionDAO {
         return false;
     }
 
-    public Boolean update(ProductPartCondition productPartCondition) {
-        try (Connection connection = HikariDatabaseConfig.getConnection();
-                PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY)) {
+    public Boolean update(Connection connection, ProductPartCondition productPartCondition) {
+        try (PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY)) {
             pst.setDouble(1, productPartCondition.getPriceAdjustment());
             pst.setBoolean(2, productPartCondition.getIsRestriction());
             pst.setLong(3, productPartCondition.getPartId().getId());
@@ -91,9 +86,8 @@ public class ProductPartConditionDAO {
         return false;
     }
 
-    public Boolean delete(Long partId, Long dependantPartId) {
-        try (Connection connection = HikariDatabaseConfig.getConnection();
-                PreparedStatement pst = connection.prepareStatement(SQL_DELETE_QUERY)) {
+    public Boolean delete(Connection connection, Long partId, Long dependantPartId) {
+        try (PreparedStatement pst = connection.prepareStatement(SQL_DELETE_QUERY)) {
             pst.setLong(1, partId);
             pst.setLong(2, dependantPartId);
 
@@ -105,23 +99,14 @@ public class ProductPartConditionDAO {
         return false;
     }
 
-    private ProductPartCondition createProductPartConditions(ResultSet rs) throws SQLException {
-        ProductPart part = new ProductPart(rs.getLong("part_id"), null, null, null, null, null);
-        ProductPart dependantPart = new ProductPart(rs.getLong("dependant_part_id"), null, null, null, null,
-                null);
-        return new ProductPartCondition(part, dependantPart, rs.getDouble("price_adjustment"),
-                rs.getBoolean("is_restriction"), rs.getTimestamp("created_at").toLocalDateTime());
-    }
-
-    public List<ProductPartCondition> getAllById(List<Long> productIds) {
+    public List<ProductPartCondition> getAllById(Connection connection, List<Long> productIds) {
         if (productIds.isEmpty()) {
             return Collections.emptyList();
         }
         List<ProductPartCondition> conditions = new ArrayList<>();
         String placeholders = productIds.stream().map(id -> "?").collect(Collectors.joining(","));
         String query = String.format(SQL_GET_ALL_BY_PRODUCT_ID_QUERY, placeholders);
-        try (Connection connection = HikariDatabaseConfig.getConnection();
-                PreparedStatement pst = connection.prepareStatement(query);
+        try (PreparedStatement pst = connection.prepareStatement(query);
                 ResultSet rs = pst.executeQuery()) {
             while (rs.next()) {
                 conditions.add(createProductPartConditions(rs));
@@ -131,5 +116,13 @@ public class ProductPartConditionDAO {
                     e.getSQLState(), e.getErrorCode());
         }
         return conditions;
+    }
+
+    private ProductPartCondition createProductPartConditions(ResultSet rs) throws SQLException {
+        ProductPart part = new ProductPart(rs.getLong("part_id"), null, null, null, null, null);
+        ProductPart dependantPart = new ProductPart(rs.getLong("dependant_part_id"), null, null, null, null,
+                null);
+        return new ProductPartCondition(part, dependantPart, rs.getDouble("price_adjustment"),
+                rs.getBoolean("is_restriction"), rs.getTimestamp("created_at").toLocalDateTime());
     }
 }

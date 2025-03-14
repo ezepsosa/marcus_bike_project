@@ -1,9 +1,13 @@
 package com.ezepsosa.marcusbike.services;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-import com.ezepsosa.marcusbike.models.Product;
+import com.ezepsosa.marcusbike.dto.ProductDTO;
+import com.ezepsosa.marcusbike.dto.ProductInsertDTO;
+import com.ezepsosa.marcusbike.mappers.ProductMapper;
 import com.ezepsosa.marcusbike.repositories.ProductDAO;
+import com.ezepsosa.marcusbike.utils.TransactionHandler;
 
 public class ProductService {
 
@@ -13,24 +17,35 @@ public class ProductService {
         this.productDAO = productDAO;
     }
 
-    public List<Product> getAll() {
-        return productDAO.getAll();
+    public List<ProductDTO> getAll() {
+        return TransactionHandler.startTransaction((connection) -> {
+            return productDAO.getAll(connection).stream().map(product -> ProductMapper.toDTO(product))
+                    .collect(Collectors.toList());
+        });
     }
 
-    public Product getById(Long id) {
-        return productDAO.getById(id);
+    public ProductDTO getById(Long id) {
+        return TransactionHandler.startTransaction((connection) -> {
+            return ProductMapper.toDTO(productDAO.getById(connection, id));
+        });
     }
 
-    public Long insert(Product user) {
-        return productDAO.insert(user);
+    public Long insert(ProductInsertDTO product) {
+        return TransactionHandler.startTransaction((connection) -> {
+            return productDAO.insert(connection, ProductMapper.toModel(product));
+        });
     }
 
-    public boolean update(Product user) {
-        return productDAO.update(user);
+    public boolean update(ProductInsertDTO product, Long id) {
+        return TransactionHandler.startTransaction((connection) -> {
+            return productDAO.update(connection, ProductMapper.toModel(product), id);
+        });
     }
 
     public boolean delete(Long id) {
-        return productDAO.delete(id);
+        return TransactionHandler.startTransaction((connection) -> {
+            return productDAO.delete(connection, id);
+        });
     }
 
 }

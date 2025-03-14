@@ -10,7 +10,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ezepsosa.marcusbike.config.HikariDatabaseConfig;
 import com.ezepsosa.marcusbike.models.Product;
 
 public class ProductDAO {
@@ -23,10 +22,9 @@ public class ProductDAO {
     private final String SQL_UPDATE_QUERY = "UPDATE product SET product_name = ? WHERE id = ?";
     private final String SQL_DELETE_QUERY = "DELETE FROM product WHERE id = (?)";
 
-    public List<Product> getAll() {
+    public List<Product> getAll(Connection connection) {
         List<Product> products = new ArrayList<>();
-        try (Connection connection = HikariDatabaseConfig.getConnection();
-                PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
+        try (PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
                 ResultSet rs = pst.executeQuery()) {
             while (rs.next()) {
                 products.add(createProduct(rs));
@@ -38,9 +36,8 @@ public class ProductDAO {
         return products;
     }
 
-    public Product getById(Long id) {
-        try (Connection connection = HikariDatabaseConfig.getConnection();
-                PreparedStatement pst = connection.prepareStatement(SQL_GET_ID_QUERY)) {
+    public Product getById(Connection connection, Long id) {
+        try (PreparedStatement pst = connection.prepareStatement(SQL_GET_ID_QUERY)) {
             pst.setLong(1, id);
             try (ResultSet rs = pst.executeQuery()) {
                 if (rs.next()) {
@@ -54,10 +51,9 @@ public class ProductDAO {
         return null;
     }
 
-    public Long insert(Product product) {
-        try (Connection connection = HikariDatabaseConfig.getConnection();
-                PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY,
-                        PreparedStatement.RETURN_GENERATED_KEYS)) {
+    public Long insert(Connection connection, Product product) {
+        try (PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY,
+                PreparedStatement.RETURN_GENERATED_KEYS)) {
             pst.setString(1, product.getProductName());
 
             int affectedRows = pst.executeUpdate();
@@ -75,11 +71,10 @@ public class ProductDAO {
         return null;
     }
 
-    public Boolean update(Product product) {
-        try (Connection connection = HikariDatabaseConfig.getConnection();
-                PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY)) {
+    public Boolean update(Connection connection, Product product, Long id) {
+        try (PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY)) {
             pst.setString(1, product.getProductName());
-            pst.setLong(2, product.getId());
+            pst.setLong(2, id);
 
             return pst.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -89,9 +84,8 @@ public class ProductDAO {
         return false;
     }
 
-    public Boolean delete(Long id) {
-        try (Connection connection = HikariDatabaseConfig.getConnection();
-                PreparedStatement pst = connection.prepareStatement(SQL_DELETE_QUERY)) {
+    public Boolean delete(Connection connection, Long id) {
+        try (PreparedStatement pst = connection.prepareStatement(SQL_DELETE_QUERY)) {
             pst.setLong(1, id);
             return pst.executeUpdate() > 0;
         } catch (SQLException e) {

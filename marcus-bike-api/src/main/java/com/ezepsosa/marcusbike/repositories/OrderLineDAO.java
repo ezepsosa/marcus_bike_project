@@ -12,7 +12,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ezepsosa.marcusbike.config.HikariDatabaseConfig;
 import com.ezepsosa.marcusbike.models.OrderLine;
 import com.ezepsosa.marcusbike.models.Product;
 
@@ -27,10 +26,9 @@ public class OrderLineDAO {
 	private final String SQL_DELETE_QUERY = "DELETE FROM order_line WHERE id = (?)";
 	private final String SQL_GET_BY_ORDER_ID = "SELECT ol.*, p.id, p.product_name, p.created_at AS product_created_at FROM order_line ol JOIN product p ON ol.product_id = p.id WHERE ol.app_order_id = ?";
 
-	public Map<Long, List<OrderLine>> getAllGroupedByOrder() {
+	public Map<Long, List<OrderLine>> getAllGroupedByOrder(Connection connection) {
 		Map<Long, List<OrderLine>> orderLines = new HashMap<>();
-		try (Connection connection = HikariDatabaseConfig.getConnection();
-				PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
+		try (PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
 				ResultSet rs = pst.executeQuery()) {
 			while (rs.next()) {
 				Long orderId = rs.getLong("app_order_id");
@@ -43,9 +41,8 @@ public class OrderLineDAO {
 		return orderLines;
 	}
 
-	public OrderLine getById(Long id) {
-		try (Connection connection = HikariDatabaseConfig.getConnection();
-				PreparedStatement pst = connection.prepareStatement(SQL_GET_ID_QUERY)) {
+	public OrderLine getById(Connection connection, Long id) {
+		try (PreparedStatement pst = connection.prepareStatement(SQL_GET_ID_QUERY)) {
 			pst.setLong(1, id);
 			try (ResultSet rs = pst.executeQuery()) {
 				if (rs.next()) {
@@ -59,10 +56,9 @@ public class OrderLineDAO {
 		return null;
 	}
 
-	public Long insert(OrderLine orderLine, Long orderId) {
-		try (Connection connection = HikariDatabaseConfig.getConnection();
-				PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY,
-						PreparedStatement.RETURN_GENERATED_KEYS)) {
+	public Long insert(Connection connection, OrderLine orderLine, Long orderId) {
+		try (PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY,
+				PreparedStatement.RETURN_GENERATED_KEYS)) {
 			pst.setLong(1, orderId);
 			pst.setLong(2, orderLine.getProduct().getId());
 			pst.setInt(3, orderLine.getQuantity());
@@ -82,9 +78,8 @@ public class OrderLineDAO {
 		return null;
 	}
 
-	public Boolean update(OrderLine order, Long orderId) {
-		try (Connection connection = HikariDatabaseConfig.getConnection();
-				PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY)) {
+	public Boolean update(Connection connection, OrderLine order, Long orderId) {
+		try (PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY)) {
 			pst.setLong(1, orderId);
 			pst.setLong(2, order.getProduct().getId());
 			pst.setInt(3, order.getQuantity());
@@ -98,9 +93,8 @@ public class OrderLineDAO {
 		return false;
 	}
 
-	public Boolean delete(Long id) {
-		try (Connection connection = HikariDatabaseConfig.getConnection();
-				PreparedStatement pst = connection.prepareStatement(SQL_DELETE_QUERY)) {
+	public Boolean delete(Connection connection, Long id) {
+		try (PreparedStatement pst = connection.prepareStatement(SQL_DELETE_QUERY)) {
 			pst.setLong(1, id);
 			return pst.executeUpdate() > 0;
 		} catch (SQLException e) {
@@ -110,10 +104,9 @@ public class OrderLineDAO {
 		return false;
 	}
 
-	public List<OrderLine> getByOrderId(Long orderId) {
+	public List<OrderLine> getByOrderId(Connection connection, Long orderId) {
 		List<OrderLine> ordersLines = new ArrayList<>();
-		try (Connection connection = HikariDatabaseConfig.getConnection();
-				PreparedStatement pst = connection.prepareStatement(SQL_GET_BY_ORDER_ID)) {
+		try (PreparedStatement pst = connection.prepareStatement(SQL_GET_BY_ORDER_ID)) {
 			pst.setLong(1, orderId);
 			try (ResultSet rs = pst.executeQuery()) {
 				while (rs.next()) {
@@ -127,6 +120,35 @@ public class OrderLineDAO {
 		return ordersLines;
 	}
 
+	public List<Long> insertAll(Connection connection, List<OrderLine> orderLines, Long orderId) {
+		List<Long> res = new ArrayList<>();
+
+		try (PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY,
+				PreparedStatement.RETURN_GENERATED_KEYS)) {
+
+			for (OrderLine orderLine : orderLines) {
+				pst.setLong(1, orderId);
+				pst.setLong(2, orderLine.getProduct().getId());
+				pst.setInt(3, orderLine.getQuantity());
+				pst.addBatch();
+			}
+
+			pst.executeBatch();
+
+			try (ResultSet generatedValues = pst.getGeneratedKeys()) {
+				while (generatedValues.next()) {
+					res.add(generatedValues.getLong(1));
+				}
+			}
+
+		} catch (SQLException e) {
+			logger.warn("Error inserting order lines. SQL returned error {}, Error Code: {}",
+					e.getSQLState(), e.getErrorCode());
+		}
+
+		return res;
+	}
+
 	private OrderLine createOrderLine(ResultSet rs) throws SQLException {
 		Product product = new Product(rs.getLong("product_id"), rs.getString("product_name"), new ArrayList<>(),
 				rs.getTimestamp("product_created_at").toLocalDateTime());
@@ -134,32 +156,4 @@ public class OrderLineDAO {
 		return new OrderLine(rs.getLong("id"), product, rs.getInt("quantity"),
 				rs.getTimestamp("created_at").toLocalDateTime());
 	}
-
-	public List<Long> insertAll(Connection connection, List<OrderLine> orderLines, Long orderId) {
-	    List<Long> res = new ArrayList<>();
-	    
-	    try (PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY, PreparedStatement.RETURN_GENERATED_KEYS)) {
-
-	        for (OrderLine orderLine : orderLines) {
-	            pst.setLong(1, orderId);
-	            pst.setLong(2, orderLine.getProduct().getId());
-	            pst.setInt(3, orderLine.getQuantity());
-	            pst.addBatch();
-	        }
-
-	        pst.executeBatch();
-
-	        try (ResultSet generatedValues = pst.getGeneratedKeys()) {
-	            while (generatedValues.next()) {
-	                res.add(generatedValues.getLong(1));
-	            }
-	        }
-
-	    } catch (SQLException e) {
-	        logger.warn("Error inserting order lines. SQL returned error {}, Error Code: {}", 
-	                e.getSQLState(), e.getErrorCode());
-	    }
-
-	    return res;
-	}
-	}
+}

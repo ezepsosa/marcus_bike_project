@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import com.ezepsosa.marcusbike.dto.ProductPartDTO;
 import com.ezepsosa.marcusbike.mappers.ProductPartMapper;
 import com.ezepsosa.marcusbike.repositories.ProductPartDAO;
+import com.ezepsosa.marcusbike.utils.TransactionHandler;
 
 public class ProductPartService {
 
@@ -17,25 +18,33 @@ public class ProductPartService {
     }
 
     public List<ProductPartDTO> getAll() {
-        return productPartDAO.getAll().stream().map(productPart -> ProductPartMapper.toDTO(productPart))
-                .collect(Collectors.toList());
+        return TransactionHandler.startTransaction((connection) -> {
+            return productPartDAO.getAll(connection).stream().map(productPart -> ProductPartMapper.toDTO(productPart))
+                    .collect(Collectors.toList());
+        });
 
     }
 
     public ProductPartDTO getById(Long id) {
-        return ProductPartMapper.toDTO(productPartDAO.getById(id));
+        return TransactionHandler.startTransaction((connection) -> {
+            return ProductPartMapper.toDTO(productPartDAO.getById(connection, id));
+        });
     }
 
     public Map<Long, Double> getAllPartPrice() {
-        return productPartDAO.getAll().stream().map(productPart -> ProductPartMapper.toDTO(productPart))
-                .collect(Collectors.toMap(ProductPartDTO::id, ProductPartDTO::basePrice));
+        return TransactionHandler.startTransaction((connection) -> {
+            return productPartDAO.getAll(connection).stream().map(productPart -> ProductPartMapper.toDTO(productPart))
+                    .collect(Collectors.toMap(ProductPartDTO::id, ProductPartDTO::basePrice));
+        });
 
     }
 
     Map<Long, Double> getAllPartPriceById(List<Long> productIds) {
-        return productPartDAO.getAllPartPriceById(productIds).stream()
-                .map(productPart -> ProductPartMapper.toDTO(productPart))
-                .collect(Collectors.toMap(ProductPartDTO::id, ProductPartDTO::basePrice));
+        return TransactionHandler.startTransaction((connection) -> {
+            return productPartDAO.getAllPartPriceById(connection, productIds).stream()
+                    .map(productPart -> ProductPartMapper.toDTO(productPart))
+                    .collect(Collectors.toMap(ProductPartDTO::id, ProductPartDTO::basePrice));
+        });
     }
 
 }

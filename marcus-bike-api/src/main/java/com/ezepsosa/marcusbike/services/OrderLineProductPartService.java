@@ -11,6 +11,7 @@ import com.ezepsosa.marcusbike.dto.ProductPartPriceCondition;
 import com.ezepsosa.marcusbike.mappers.OrderLineProductPartMapper;
 import com.ezepsosa.marcusbike.models.OrderLineProductPart;
 import com.ezepsosa.marcusbike.repositories.OrderLineProductPartDAO;
+import com.ezepsosa.marcusbike.utils.TransactionHandler;
 
 public class OrderLineProductPartService {
 
@@ -27,16 +28,24 @@ public class OrderLineProductPartService {
     }
 
     public List<OrderLineProductPartDTO> getByOrderLineId(Long orderLineId) {
-        return orderLineProductPartDAO.getByOrderLineId(orderLineId).stream().map(OrderLineProductPartMapper::toDTO)
-                .collect(Collectors.toList());
+        return TransactionHandler.startTransaction((connection) -> {
+            return orderLineProductPartDAO.getByOrderLineId(connection, orderLineId).stream()
+                    .map(OrderLineProductPartMapper::toDTO)
+                    .collect(Collectors.toList());
+        });
     }
 
     public OrderLineProductPartDTO getByOrderId(Long orderLine, Long dependantPart) {
-        return OrderLineProductPartMapper.toDTO(orderLineProductPartDAO.getById(orderLine, dependantPart));
+        return TransactionHandler.startTransaction((connection) -> {
+            return OrderLineProductPartMapper
+                    .toDTO(orderLineProductPartDAO.getById(connection, orderLine, dependantPart));
+        });
     }
 
     public Boolean delete(Long orderLine, Long dependantPart) {
-        return orderLineProductPartDAO.delete(orderLine, dependantPart);
+        return TransactionHandler.startTransaction((connection) -> {
+            return orderLineProductPartDAO.delete(connection, orderLine, dependantPart);
+        });
     }
 
     public List<Long> insertAll(Connection connection, List<OrderLineProductPartInsertDTO> orderLineProductPartsInsert,

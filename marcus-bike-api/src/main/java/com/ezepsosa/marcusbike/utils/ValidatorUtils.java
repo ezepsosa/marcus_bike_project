@@ -1,9 +1,9 @@
 package com.ezepsosa.marcusbike.utils;
 
 import com.ezepsosa.marcusbike.dto.OrderInsertDTO;
+import com.ezepsosa.marcusbike.dto.ProductInsertDTO;
 import com.ezepsosa.marcusbike.dto.UserDTO;
 import com.ezepsosa.marcusbike.dto.UserInsertDTO;
-import com.ezepsosa.marcusbike.models.Product;
 
 public class ValidatorUtils {
 
@@ -20,8 +20,8 @@ public class ValidatorUtils {
                 && user.username().equals(userToCompare.username());
     }
 
-    public static boolean validateProduct(Product product) {
-        return checkStringField(product.getProductName());
+    public static boolean validateProduct(ProductInsertDTO product) {
+        return checkStringField(product.productName());
     }
 
     public static boolean validateOrderToInsert(OrderInsertDTO orderToInsert) {
