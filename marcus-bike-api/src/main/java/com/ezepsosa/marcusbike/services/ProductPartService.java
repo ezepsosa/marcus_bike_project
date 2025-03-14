@@ -25,6 +25,23 @@ public class ProductPartService {
 
     }
 
+    public List<ProductPartDTO> getByProductId(Long productId) {
+        return TransactionHandler.startTransaction((connection) -> {
+            return productPartDAO.getAllByProductId(connection, productId).stream()
+                    .map(productPart -> ProductPartMapper.toDTO(productPart))
+                    .collect(Collectors.toList());
+        });
+    }
+
+    Map<Long, Double> getAllPartPriceById(List<Long> productIds) {
+        return TransactionHandler.startTransaction((connection) -> {
+            return productPartDAO.getAllByProductPartId(connection, productIds).stream()
+                    .map(productPart -> ProductPartMapper.toDTO(productPart))
+                    .collect(Collectors.toMap(ProductPartDTO::id, ProductPartDTO::basePrice));
+        });
+    }
+
+    ///////////////////
     public ProductPartDTO getById(Long id) {
         return TransactionHandler.startTransaction((connection) -> {
             return ProductPartMapper.toDTO(productPartDAO.getById(connection, id));
@@ -37,14 +54,6 @@ public class ProductPartService {
                     .collect(Collectors.toMap(ProductPartDTO::id, ProductPartDTO::basePrice));
         });
 
-    }
-
-    Map<Long, Double> getAllPartPriceById(List<Long> productIds) {
-        return TransactionHandler.startTransaction((connection) -> {
-            return productPartDAO.getAllPartPriceById(connection, productIds).stream()
-                    .map(productPart -> ProductPartMapper.toDTO(productPart))
-                    .collect(Collectors.toMap(ProductPartDTO::id, ProductPartDTO::basePrice));
-        });
     }
 
 }
