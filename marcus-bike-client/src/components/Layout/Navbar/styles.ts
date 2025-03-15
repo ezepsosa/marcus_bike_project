@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { GeneralColors, fonts } from "../../../styles/sharedStyles";
+import { Link } from "react-router-dom";
 
 export const Header = styled.header`
   display: flex;
@@ -25,7 +26,7 @@ export const UnorderedList = styled.ul`
   gap: 1rem;
 `;
 
-export const LinkMenu = styled.a`
+export const LinkMenu = styled(Link)`
   color: ${GeneralColors.textSecondary};
   font-weight: 400;
   text-decoration: none;

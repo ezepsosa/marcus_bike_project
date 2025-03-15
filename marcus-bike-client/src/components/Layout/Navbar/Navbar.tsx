@@ -1,5 +1,5 @@
 import { GeneralColors } from "../../../styles/sharedStyles";
-import { PrimaryButton } from "../../styles";
+import { SecondaryButton } from "../../styles";
 import {
   AuthNavContainer,
   Header,
@@ -17,19 +17,19 @@ export const Navbar = () => {
       <Nav>
         <TextLogo>MarcuShop</TextLogo>
         <UnorderedList>
-          <LinkMenu href="/">HOME</LinkMenu>
-          <LinkMenu href="/customize">CUSTOMIZE YOUR BIKE</LinkMenu>
-          <LinkMenu href="#">CONTACT</LinkMenu>
+          <LinkMenu to="/">HOME</LinkMenu>
+          <LinkMenu to="/customize">CUSTOMIZE YOUR BIKE</LinkMenu>
+          <LinkMenu to="#">CONTACT</LinkMenu>
         </UnorderedList>
         <AuthNavContainer>
-          <PrimaryButton>Login</PrimaryButton>
-          <PrimaryButton $padding="0.3rem 0.7rem">
+          <SecondaryButton>Login</SecondaryButton>
+          <SecondaryButton $padding="0.3rem 0.7rem">
             <ShoppingCarCounter color="white">0</ShoppingCarCounter>
             <GiShoppingCart
               size="1.2rem"
-              color={GeneralColors.linkPrimary}
+              color={GeneralColors.textPrimary}
             ></GiShoppingCart>
-          </PrimaryButton>
+          </SecondaryButton>
         </AuthNavContainer>
       </Nav>
     </Header>

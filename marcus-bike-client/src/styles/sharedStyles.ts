@@ -6,10 +6,16 @@ export const GeneralColors = {
   textSecondary: "#b0b0b0",
   textHighlight: "#fff",
   borderPrimary: "#444",
-  buttonHover: "#ccc",
+  PrimaryButtonBackground: "#fff",
+  PrimaryButtonHover: "#f4f4f4",
+  PrimaryButtonColor: "#424242",
+  SecondaryButtonBackground: "#1a1a1a",
+  SecondayButtonHover: "#d3d3d3",
+  SecondayButtonColor: "#e0e0e0",
 };
 
 export const fonts = {
   montserratFontFamily: '"Montserrat", sans-serif',
   robotoFontFamily: '"Roboto", sans-serif',
+  playFairFontFamily: '"Playfair Display", serif',
 };

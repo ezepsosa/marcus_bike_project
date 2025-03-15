@@ -1,8 +1,7 @@
-export interface PrimaryButtonProps {
-  $color?: string;
+export interface ButtonProps {
   $padding?: string;
 }
 
-export interface PrimaryTextProps {
-  $fontSize?: number;
+export interface TextProps {
+  $fontSize?: string;
 }
