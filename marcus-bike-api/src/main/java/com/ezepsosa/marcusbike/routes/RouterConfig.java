@@ -9,6 +9,7 @@ import com.ezepsosa.marcusbike.config.DependencyInjection;
 
 import io.undertow.server.HttpHandler;
 import io.undertow.server.RoutingHandler;
+import io.undertow.server.handlers.PathHandler;
 
 public class RouterConfig {
 
@@ -30,9 +31,14 @@ public class RouterConfig {
 
         controllers.forEach(controller -> controller.registerRoutes(router));
 
+        CorsHandler corsHanlder = new CorsHandler(router);
+
+        PathHandler apiRouter = new PathHandler()
+                .addPrefixPath("/api", corsHanlder);
+
         logger.info("Returning routes");
 
-        return router;
+        return apiRouter;
     }
 
 }
