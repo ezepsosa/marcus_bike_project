@@ -8,9 +8,9 @@ export const GeneralColors = {
   borderPrimary: "#444",
   PrimaryButtonBackground: "#fff",
   PrimaryButtonHover: "#f4f4f4",
-  PrimaryButtonColor: "#424242",
+  PrimaryButtonColor: "#1a1a1a",
   SecondaryButtonBackground: "#1a1a1a",
-  SecondayButtonHover: "#d3d3d3",
+  SecondayButtonHover: "#2a2a2a",
   SecondayButtonColor: "#e0e0e0",
 };
 

@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import {
   PrimaryButton,
   PrimaryText,
@@ -13,7 +14,9 @@ export const Home = () => {
         <PrimaryText>
           Customize every detail with high quality materials.
         </PrimaryText>
-        <PrimaryButton>Customize now</PrimaryButton>
+        <Link to="/customize">
+          <PrimaryButton>Customize now</PrimaryButton>
+        </Link>
       </Container>
     </Section>
   );

@@ -49,9 +49,10 @@ export const PrimaryButton = styled.button<ButtonProps>`
   font-weight: 600;
   font-size: 0.9rem;
   border: 0.0625rem solid ${GeneralColors.borderPrimary};
+  transition: background 0.3s, transform 0.2s;
+  margin: 0.5rem;
   &:hover {
     background-color: ${GeneralColors.PrimaryButtonHover};
     transform: scale(1.05);
   }
-  transition: background 0.3s, transform 0.2s;
 `;
