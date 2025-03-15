@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { GeneralColors } from "../styles/sharedStyles";
+import { fonts, GeneralColors } from "../styles/sharedStyles";
 import { PrimaryButtonProps, PrimaryTextProps } from "./types";
 
 export const Container = styled.div`
@@ -26,4 +26,6 @@ export const PrimaryButton = styled.button<PrimaryButtonProps>`
 export const PrimaryText = styled.p<PrimaryTextProps>`
   color: ${GeneralColors.textPrimary};
   font-size: ${({ $fontSize }) => $fontSize || "0.8em"};
+  font-family: ${fonts.robotoFontFamily};
+  font-weight: 400;
 `;

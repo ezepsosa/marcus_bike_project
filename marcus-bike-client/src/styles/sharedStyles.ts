@@ -11,4 +11,5 @@ export const GeneralColors = {
 
 export const fonts = {
   montserratFontFamily: '"Montserrat", sans-serif',
+  robotoFontFamily: '"Roboto", sans-serif',
 };
