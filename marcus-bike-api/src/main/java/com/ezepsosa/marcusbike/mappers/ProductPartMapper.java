@@ -9,6 +9,7 @@ public class ProductPartMapper {
 
         public static ProductPartDTO toDTO(ProductPart productPart) {
                 return new ProductPartDTO(productPart.getId(), productPart.getPartOption(), productPart.getBasePrice(),
+                                productPart.getIsAvailable(),
                                 productPart.getCategory().name());
         }
 
