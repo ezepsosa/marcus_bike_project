@@ -129,7 +129,8 @@ public class ProductPartController implements RouteRegistrar {
                 }
                 logger.info("Product part created with ID {}", productPartId);
                 ProductPartDTO productPartInserted = new ProductPartDTO(productPartId, productPartToInsert.partOption(),
-                        productPartToInsert.basePrice(), productPartToInsert.productPartCategory());
+                        productPartToInsert.basePrice(), productPartToInsert.isAvailable(),
+                        productPartToInsert.productPartCategory());
                 JsonResponseUtil.sendJsonResponse(exchange, productPartInserted, 201);
 
             } catch (Exception e) {
