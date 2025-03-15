@@ -1,14 +1,13 @@
 import styled from "styled-components";
-import { colors, fonts } from "../../../styles/sharedStyles";
+import { GeneralColors, fonts } from "../../../styles/sharedStyles";
 
-export const Header = styled.header``;
-
-export const Container = styled.div`
+export const Header = styled.header`
   display: flex;
   justify-content: center;
-  background-color: ${colors.primary};
+  background-color: ${GeneralColors.primary};
   width: 100%;
-  height: 4rem;
+  height: 5rem;
+  border-bottom: 0.25px solid #444;
 `;
 
 export const Nav = styled.nav`
@@ -27,9 +26,10 @@ export const UnorderedList = styled.ul`
 `;
 
 export const LinkMenu = styled.a`
-  color: ${colors.linkPrimary};
+  color: ${GeneralColors.linkPrimary};
   font-weight: 400;
   text-decoration: none;
+  font-size: 0.9rem;
   font-family: ${fonts.montserratFontFamily};
   &:hover {
     color: #fff;
@@ -37,8 +37,23 @@ export const LinkMenu = styled.a`
 `;
 
 export const TextLogo = styled.h1`
-  color: ${colors.seconday};
+  color: ${GeneralColors.seconday};
   font-family: ${fonts.montserratFontFamily};
-
   font-weight: 700;
+`;
+
+export const ShoppingCarCounter = styled.span`
+  position: absolute;
+  top: -0.6rem;
+  right: -0.6rem;
+  background-color: red;
+  padding: 0.2rem;
+  border-radius: 2rem;
+`;
+
+export const AuthNavContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
 `;
