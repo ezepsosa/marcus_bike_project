@@ -4,7 +4,7 @@ import { GeneralColors, fonts } from "../../../styles/sharedStyles";
 export const Header = styled.header`
   display: flex;
   justify-content: center;
-  background-color: ${GeneralColors.primary};
+  background-color: ${GeneralColors.headerFooter};
   width: 100%;
   height: 5rem;
   border-bottom: 0.25px solid #444;
@@ -26,7 +26,7 @@ export const UnorderedList = styled.ul`
 `;
 
 export const LinkMenu = styled.a`
-  color: ${GeneralColors.linkPrimary};
+  color: ${GeneralColors.textSecondary};
   font-weight: 400;
   text-decoration: none;
   font-size: 0.9rem;
@@ -37,7 +37,7 @@ export const LinkMenu = styled.a`
 `;
 
 export const TextLogo = styled.h1`
-  color: ${GeneralColors.seconday};
+  color: ${GeneralColors.textHighlight};
   font-family: ${fonts.montserratFontFamily};
   font-weight: 700;
 `;

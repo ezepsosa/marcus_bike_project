@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { GeneralColors } from "../styles/sharedStyles";
-import { PrimaryButtonProps } from "./types";
+import { PrimaryButtonProps, PrimaryTextProps } from "./types";
 
 export const Container = styled.div`
   display: flex;
@@ -12,12 +12,18 @@ export const Container = styled.div`
 
 export const PrimaryButton = styled.button<PrimaryButtonProps>`
   position: relative;
-  background-color: ${({ $color }) => $color || GeneralColors.primary};
+  background-color: ${({ $color }) =>
+    $color || GeneralColors.backgroundPrimary};
   border-radius: 0.2rem;
   padding: ${({ $padding }) => $padding || "0.5rem"};
-  color: ${GeneralColors.seconday};
-  border: 0.0625rem solid ${GeneralColors.seconday};
+  color: ${GeneralColors.textPrimary};
+  border: 0.0625rem solid ${GeneralColors.borderPrimary};
   &:hover {
-    background-color: ${GeneralColors.linkSecondary};
+    background-color: ${GeneralColors.backgroundSecondary};
   }
+`;
+
+export const PrimaryText = styled.p<PrimaryTextProps>`
+  color: ${GeneralColors.textPrimary};
+  font-size: ${({ $fontSize }) => $fontSize || "0.8em"};
 `;

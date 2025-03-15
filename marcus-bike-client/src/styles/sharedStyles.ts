@@ -1,8 +1,12 @@
 export const GeneralColors = {
-  linkPrimary: "#b0b0b0",
-  linkSecondary: "#454545",
-  primary: "#222",
-  seconday: "#fff",
+  backgroundPrimary: "#1a1a1a",
+  backgroundSecondary: "#2a2a2a",
+  headerFooter: "#222",
+  textPrimary: "#e0e0e0",
+  textSecondary: "#b0b0b0",
+  textHighlight: "#fff",
+  borderPrimary: "#444",
+  buttonHover: "#ccc",
 };
 
 export const fonts = {
