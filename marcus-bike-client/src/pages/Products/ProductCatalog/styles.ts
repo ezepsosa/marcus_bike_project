@@ -23,11 +23,12 @@ export const Section = styled.section`
 
 export const ProductCard = styled.div`
   width: 15rem;
-  height: 20rem;
+  height: 22rem;
   padding:1rem;
   display: flex;
   flex-direction:column;
   align-items: center;
+  justify-content:center;
   text-align: center;
   border: 1px solid #fff;
   border-radius: 2rem;
