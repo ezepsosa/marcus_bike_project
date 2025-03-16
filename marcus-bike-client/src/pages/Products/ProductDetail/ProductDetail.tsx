@@ -7,15 +7,15 @@ import {
 import { ProductPart } from "../../../models/productPart";
 import { Container, FormikForm, Section, SelectContainer } from "./style";
 import {
+  FormikSelectField,
   LabelText,
   Option,
   PrimaryButton,
-  Select,
   SpanText,
 } from "../../../components/styles";
 import { ProductImage } from "../ProductCatalog/styles";
 import { ProductPartCondition } from "../../../models/productPartCondition";
-import { Formik } from "formik";
+import { ErrorMessage, Formik } from "formik";
 
 export const ProductDetail = () => {
   const location = useLocation();
@@ -23,7 +23,9 @@ export const ProductDetail = () => {
 
   const { id, productName, imageUrl } = location.state || {};
   const [parts, setProductParts] = useState<ProductPart[]>([]);
+
   const [errors, setErrors] = useState<string[]>([]);
+
   const [extraPrice, setExtra] = useState<string[]>([]);
 
   const [selectedParts, setSelectedParts] = useState<Record<string, number>>(
@@ -49,6 +51,7 @@ export const ProductDetail = () => {
     }
   }, [location.state, navigate, id]);
 
+  // Updating selected parts
   function changeSelectedParts(type: string, value: number) {
     setSelectedParts((prev) => ({
       ...prev,
@@ -56,7 +59,7 @@ export const ProductDetail = () => {
     }));
   }
 
-  //Check compatibilities and prices
+  // Check compatibilities and prices
   useEffect(() => {
     function checkExtraPrice() {
       let resPrice: number = 0;
@@ -139,53 +142,83 @@ export const ProductDetail = () => {
         <br />
 
         <Formik
-          initialValues={{ selectedParts: [] }}
-          onSubmit={() => console.log("hi")}
+          initialValues={{ selectedParts: {} as Record<string, number> }}
+          validate={(values) => {
+            const errors: Record<string, string> = {};
+
+            Object.keys(groupedParts).forEach((type: string) => {
+              if (!values.selectedParts[type]) {
+                errors[type] = "You have to select a valid option";
+              }
+            });
+            return errors;
+          }}
+          onSubmit={() => {
+            if (errors.length != 0) {
+              alert("You cannot add this product with incompatible parts");
+            } else {
+              console.log("Sending");
+            }
+          }}
         >
-          <FormikForm>
-            {groupedParts &&
-              Object.keys(groupedParts).map((type) => {
-                const options = groupedParts[type];
+          {({ _, setFieldValue }) => (
+            <FormikForm>
+              {groupedParts &&
+                Object.keys(groupedParts).map((type) => {
+                  const options = groupedParts[type];
+                  return (
+                    <SelectContainer key={type}>
+                      <LabelText $color="gray" $fontSize="1.2rem">
+                        Select the {type.replace("_", " ").toLowerCase()}:
+                      </LabelText>
+                      <FormikSelectField
+                        as={"select"}
+                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                          setFieldValue(
+                            `selectedParts.${type}`,
+                            e.target.value
+                          );
+                          changeSelectedParts(type, Number(e.target.value));
+                        }}
+                      >
+                        <Option value="">--</Option>
+                        {options.map((option) => (
+                          <Option key={option.id} value={option.id}>
+                            {option.partOption} - {option.basePrice}€
+                          </Option>
+                        ))}
+                      </FormikSelectField>
+                      <ErrorMessage name={`selectedParts.${type}`}>
+                        {(msg) => (
+                          <SpanText $fontSize="0.9rem" $color="#ff5e5e">
+                            {msg}
+                          </SpanText>
+                        )}
+                      </ErrorMessage>
+                    </SelectContainer>
+                  );
+                })}
+              {errors?.map((e) => {
                 return (
-                  <SelectContainer key={type}>
-                    <LabelText $color="gray" $fontSize="1.2rem">
-                      Select the {type.replace("_", " ").toLowerCase()}:
-                    </LabelText>
-                    <Select
-                      onChange={(e) =>
-                        changeSelectedParts(type, Number(e.target.value))
-                      }
-                    >
-                      <Option value="">--</Option>
-                      {options.map((option) => (
-                        <Option key={option.id} value={option.id}>
-                          {option.partOption} - {option.basePrice}€
-                        </Option>
-                      ))}
-                    </Select>
-                  </SelectContainer>
+                  <SpanText $fontSize="0.9rem" $color="#ff5e5e">
+                    {e}
+                  </SpanText>
                 );
               })}
-            {errors?.map((e) => {
-              return (
-                <SpanText $fontSize="0.9rem" $color="#ff5e5e">
-                  {e}
-                </SpanText>
-              );
-            })}
-            {extraPrice.map((e) => {
-              return (
-                <SpanText $fontSize="0.9rem" $color="#ffd9a7">
-                  {e}
-                </SpanText>
-              );
-            })}
+              {extraPrice.map((e) => {
+                return (
+                  <SpanText $fontSize="0.9rem" $color="#ffd9a7">
+                    {e}
+                  </SpanText>
+                );
+              })}
 
-            <SpanText $fontSize="1.2rem" $color="#ffc600">
-              Total: {totalPrice}€
-            </SpanText>
-            <PrimaryButton>Add to cart</PrimaryButton>
-          </FormikForm>
+              <SpanText $fontSize="1.2rem" $color="#ffc600">
+                Total: {totalPrice}€
+              </SpanText>
+              <PrimaryButton type="submit">Add to cart</PrimaryButton>
+            </FormikForm>
+          )}
         </Formik>
       </Container>
     </Section>

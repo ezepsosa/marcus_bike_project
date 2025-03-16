@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { fonts, GeneralColors } from "../styles/sharedStyles";
 import { ButtonProps, TextProps } from "./types";
 import { Link } from "react-router-dom";
+import { Field } from "formik";
 
 export const Container = styled.div`
   display: flex;
@@ -81,7 +82,7 @@ export const LabelText = styled.label<TextProps>`
   font-style: italic;
 `;
 
-export const Select = styled.select`
+export const FormikSelectField = styled(Field)`
   width: 80%;
   margin: 0.5rem;
 
