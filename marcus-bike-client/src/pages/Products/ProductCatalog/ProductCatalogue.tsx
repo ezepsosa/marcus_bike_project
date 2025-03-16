@@ -38,6 +38,7 @@ export const ProductCatalogue = () => {
             <ProductCard>
               <ProductImage src={product.imageUrl} />
               <ProductInfoContainer>
+                {product.id}
                 <ProductInfo
                   icon={<TbBoxModel color="#fff" />}
                   label="Model"

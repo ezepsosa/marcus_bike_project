@@ -12,6 +12,7 @@ export const GeneralColors = {
   SecondaryButtonBackground: "#1a1a1a",
   SecondayButtonHover: "#2a2a2a",
   SecondayButtonColor: "#e0e0e0",
+  SecondayBackground: "#424242",
 };
 
 export const fonts = {

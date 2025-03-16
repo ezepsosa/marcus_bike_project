@@ -1,8 +1,10 @@
+import { ProductPartCategory } from "./productPartCategory";
+
 export interface ProductPart {
   id: number;
   partOption: string;
   basePrice: number;
-  productPartCategory: string;
+  productPartCategory: ProductPartCategory;
 }
 
 export interface ProductPartInsert {

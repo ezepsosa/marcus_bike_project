@@ -66,7 +66,7 @@ export const LinkText = styled(Link)`
 `;
 
 export const SpanText = styled.span<TextProps>`
-  color: ${GeneralColors.textPrimary};
+  color: ${({ $color }) => $color || GeneralColors.textPrimary};
   font-size: ${({ $fontSize }) => $fontSize || "1rem"};
   font-family: ${fonts.robotoFontFamily};
   font-weight: 600;
@@ -74,9 +74,27 @@ export const SpanText = styled.span<TextProps>`
 `;
 
 export const LabelText = styled.label<TextProps>`
-  color: ${GeneralColors.textPrimary};
+  color: ${({ $color }) => $color || GeneralColors.textPrimary};
   font-size: ${({ $fontSize }) => $fontSize || "0.8rem"};
   font-family: ${fonts.robotoFontFamily};
   font-weight: 600;
   font-style: italic;
 `;
+
+export const Select = styled.select`
+  width: 80%;
+  margin: 0.5rem;
+
+  background-color: ${GeneralColors.backgroundSecondary};
+  padding: 0.5rem;
+  color: ${GeneralColors.textHighlight};
+  border-radius: 0.25rem;
+  border: 1px solid ${GeneralColors.textHighlight};
+  &:hover {
+    background-color: ${GeneralColors.SecondayBackground};
+  }
+  font-family: ${fonts.robotoFontFamily};
+  font-weight: 600;
+`;
+
+export const Option = styled.option``;
