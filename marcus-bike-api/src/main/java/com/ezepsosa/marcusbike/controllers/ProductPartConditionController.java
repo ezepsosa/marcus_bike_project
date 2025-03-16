@@ -28,7 +28,6 @@ public class ProductPartConditionController implements RouteRegistrar {
     @Override
     public void registerRoutes(RoutingHandler router) {
         router.add(Methods.GET, "/productpartconditions", this::getAll);
-        router.add(Methods.POST, "/productpartconditions", this::delete);
         router.add(Methods.POST, "/productpartconditions", this::insert);
         router.add(Methods.DELETE, "/productpartconditions/{productpartid}/{dependantproductpartid}",
                 this::delete);

@@ -31,7 +31,7 @@ public class ProductController implements RouteRegistrar {
         router.add(Methods.GET, "/products", this::getAll);
         router.add(Methods.GET, "/products/{id}", this::getById);
         router.add(Methods.POST, "/products", this::insert);
-        router.add(Methods.PUT, "/products", this::update);
+        router.add(Methods.PUT, "/products/{id}", this::update);
         router.add(Methods.DELETE, "/products/{id}", this::delete);
 
     }
@@ -83,7 +83,9 @@ public class ProductController implements RouteRegistrar {
                     return;
                 }
                 logger.info("Product created with ID {}", productId);
-                ProductDTO productInserted = new ProductDTO(productId, productToInsert.productName());
+                ProductDTO productInserted = new ProductDTO(productId, productToInsert.productName(),
+                        productToInsert.brand(), productToInsert.category(), productToInsert.material(),
+                        productToInsert.imageUr());
                 JsonResponseUtil.sendJsonResponse(exchange, productInserted, 201);
 
             } catch (Exception e) {
@@ -98,6 +100,7 @@ public class ProductController implements RouteRegistrar {
         logger.info("Received request: PUT /products/{id}");
 
         exchage.getRequestReceiver().receiveFullBytes((exchange, message) -> {
+
             try {
                 ProductInsertDTO productToUpdate = JsonResponseUtil.parseJson(message, ProductInsertDTO.class);
                 Long productId = RequestUtils.getRequestParam(exchange, "id");
@@ -118,8 +121,10 @@ public class ProductController implements RouteRegistrar {
                     return;
                 }
                 logger.info("Product updated with ID {}", productId);
-                ProductDTO product = new ProductDTO(productId, productToUpdate.productName());
-                JsonResponseUtil.sendJsonResponse(exchange, productToUpdate);
+                ProductDTO product = new ProductDTO(productId, productToUpdate.productName(),
+                        productToUpdate.brand(), productToUpdate.category(), productToUpdate.material(),
+                        productToUpdate.imageUr());
+                JsonResponseUtil.sendJsonResponse(exchange, product);
             } catch (Exception e) {
                 logger.error("Error processing request", e);
                 JsonResponseUtil.sendErrorResponse(exchange, 500, "Invalid request body");

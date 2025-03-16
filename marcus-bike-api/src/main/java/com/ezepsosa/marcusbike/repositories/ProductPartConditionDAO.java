@@ -24,7 +24,7 @@ public class ProductPartConditionDAO {
     private final String SQL_INSERT_QUERY = "INSERT INTO product_part_condition (part_id, dependant_part_id, price_adjustment, is_restriction) VALUES (?, ?, ?, ?)";
     private final String SQL_UPDATE_QUERY = "UPDATE product_part_condition SET price_adjustment = ?, is_restriction = ? WHERE part_id = ? AND dependant_part_id = ?";
     private final String SQL_DELETE_QUERY = "DELETE FROM product_part_condition WHERE part_id = ? AND dependant_part_id = ?";
-    private final String SQL_GET_ALL_BY_PRODUCT_ID_QUERY = "SELECT * FROM product_part_condition WHERE id IN (?)";
+    private final String SQL_GET_ALL_BY_PRODUCT_ID_QUERY = "SELECT * FROM product_part_condition WHERE part_id IN (%s)";
 
     public List<ProductPartCondition> getAll(Connection connection) {
         List<ProductPartCondition> conditions = new ArrayList<>();
@@ -106,8 +106,12 @@ public class ProductPartConditionDAO {
         List<ProductPartCondition> conditions = new ArrayList<>();
         String placeholders = productIds.stream().map(id -> "?").collect(Collectors.joining(","));
         String query = String.format(SQL_GET_ALL_BY_PRODUCT_ID_QUERY, placeholders);
-        try (PreparedStatement pst = connection.prepareStatement(query);
-                ResultSet rs = pst.executeQuery()) {
+
+        try (PreparedStatement pst = connection.prepareStatement(query)){
+            for (int i = 0; i < productIds.size(); i++) {
+                pst.setLong(i + 1, productIds.get(i));
+            }
+                ResultSet rs = pst.executeQuery();
             while (rs.next()) {
                 conditions.add(createProductPartConditions(rs));
             }

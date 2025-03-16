@@ -8,12 +8,13 @@ import com.ezepsosa.marcusbike.models.Product;
 public class OrderLineMapper {
 
     public static OrderLineDTO toDTO(OrderLine orderLine) {
-        return new OrderLineDTO(orderLine.getId(), ProductMapper.toDTO(orderLine.getProduct()),
+        return new OrderLineDTO(orderLine.getId(), orderLine.getProduct().getId(),
+                orderLine.getProduct().getProductName(),
                 orderLine.getQuantity());
     }
 
     public static OrderLine toModel(OrderLineInsertDTO orderLineInsertDTO) {
-        return new OrderLine(new Product(orderLineInsertDTO.productId(), null, null, null),
+        return new OrderLine(new Product(orderLineInsertDTO.productId()),
                 orderLineInsertDTO.quantity());
     }
 

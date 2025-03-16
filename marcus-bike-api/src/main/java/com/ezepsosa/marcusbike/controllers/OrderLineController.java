@@ -31,7 +31,6 @@ public class OrderLineController implements RouteRegistrar {
     @Override
     public void registerRoutes(RoutingHandler router) {
         router.add(Methods.GET, "/orders/{id}/orderlines", this::getOrderLinesById);
-        router.add(Methods.GET, "/orderlines/{id}/productparts", this::getProductPartsById);
     }
 
     public void getOrderLinesById(HttpServerExchange exchange) {
