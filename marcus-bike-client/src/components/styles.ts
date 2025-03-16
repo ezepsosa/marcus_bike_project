@@ -65,9 +65,17 @@ export const LinkText = styled(Link)`
   text-decoration: none;
 `;
 
-export const LabelText = styled.span<TextProps>`
+export const SpanText = styled.span<TextProps>`
   color: ${GeneralColors.textPrimary};
-  font-size: ${({ $fontSize }) => $fontSize || "0.8em"};
+  font-size: ${({ $fontSize }) => $fontSize || "1rem"};
+  font-family: ${fonts.robotoFontFamily};
+  font-weight: 600;
+  margin: 0.2rem 0;
+`;
+
+export const LabelText = styled.label<TextProps>`
+  color: ${GeneralColors.textPrimary};
+  font-size: ${({ $fontSize }) => $fontSize || "0.8rem"};
   font-family: ${fonts.robotoFontFamily};
   font-weight: 600;
   font-style: italic;

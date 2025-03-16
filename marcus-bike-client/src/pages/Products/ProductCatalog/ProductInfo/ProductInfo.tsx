@@ -1,4 +1,4 @@
-import { LabelText, PrimaryText } from "../../../../components/styles";
+import { SpanText, PrimaryText } from "../../../../components/styles";
 import { Container, LabelContainer } from "./styles";
 import { ProductInfoProps } from "./types";
 
@@ -7,7 +7,7 @@ export const ProductInfo = ({ value, icon, label }: ProductInfoProps) => {
     <Container>
       <LabelContainer>
         {icon}
-        <LabelText>{label}:</LabelText>
+        <SpanText>{label}:</SpanText>
       </LabelContainer>
       <PrimaryText>{value}</PrimaryText>
     </Container>
