@@ -1,31 +1,34 @@
-import { Form, useLocation, useNavigate, useSubmit } from "react-router-dom";
-import { Container, Section } from "../styles";
-import { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getProductDetails } from "../../../server/api";
+import { ProductPart } from "../../../models/productPart";
+import { Container, Section } from "./style";
 
 export const ProductDetail = () => {
   const location = useLocation();
   const { id, productName, imageUrl } = location.state || {};
-  const submit = useSubmit();
+  const [parts, setProductParts] = useState<ProductPart[]>();
 
   const navigate = useNavigate();
 
   useEffect(() => {
+    async function loadProductDetails(productId: number) {
+      setProductParts(await getProductDetails(productId));
+    }
+
     if (!location.state) {
       navigate("/");
+    } else {
+      loadProductDetails(id);
     }
-  }, [location.state, navigate]);
+  }, [location.state, navigate, id]);
+  console.log(parts);
   return (
     <Section>
       <Container>
-        <Form
-          onChange={(event) => {
-            submit(event.currentTarget);
-          }}
-        >
-          {id}
-          {productName}
-          {imageUrl}
-        </Form>
+        {id}
+        {productName}
+        {imageUrl}
       </Container>
     </Section>
   );

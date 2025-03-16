@@ -1,6 +1,5 @@
 import { LinkText, PrimaryTitle } from "../../components/styles";
 import {
-  Container,
   ProductCard,
   ProductImage,
   Section,
@@ -28,44 +27,42 @@ export const ProductCatalogue = () => {
 
   return (
     <Section>
-      <Container>
-        <PrimaryTitle>Select your base model</PrimaryTitle>
-        <GridProducts>
-          {products.map((product) => (
-            <LinkText
-              to={`/customize/details`}
-              state={product}
-              key={String(product.id)}
-            >
-              <ProductCard>
-                <ProductImage src={product.imageUrl} />
-                <ProductInfoContainer>
-                  <ProductInfo
-                    icon={<TbBoxModel color="#fff" />}
-                    label="Model"
-                    value={product.productName}
-                  />
-                  <ProductInfo
-                    icon={<MdBlurCircular color="#fff" />}
-                    label="Brand"
-                    value={product.brand}
-                  />
-                  <ProductInfo
-                    icon={<MdCategory color="#fff" />}
-                    label="Category"
-                    value={product.category}
-                  />
-                  <ProductInfo
-                    icon={<GiMetalPlate color="#fff" />}
-                    label="Material"
-                    value={product.material}
-                  />
-                </ProductInfoContainer>
-              </ProductCard>
-            </LinkText>
-          ))}
-        </GridProducts>
-      </Container>
+      <PrimaryTitle>Select your base model</PrimaryTitle>
+      <GridProducts>
+        {products.map((product) => (
+          <LinkText
+            to={`/customize/details`}
+            state={product}
+            key={String(product.id)}
+          >
+            <ProductCard>
+              <ProductImage src={product.imageUrl} />
+              <ProductInfoContainer>
+                <ProductInfo
+                  icon={<TbBoxModel color="#fff" />}
+                  label="Model"
+                  value={product.productName}
+                />
+                <ProductInfo
+                  icon={<MdBlurCircular color="#fff" />}
+                  label="Brand"
+                  value={product.brand}
+                />
+                <ProductInfo
+                  icon={<MdCategory color="#fff" />}
+                  label="Category"
+                  value={product.category}
+                />
+                <ProductInfo
+                  icon={<GiMetalPlate color="#fff" />}
+                  label="Material"
+                  value={product.material}
+                />
+              </ProductInfoContainer>
+            </ProductCard>
+          </LinkText>
+        ))}
+      </GridProducts>
     </Section>
   );
 };
