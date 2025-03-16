@@ -16,7 +16,6 @@ import {
 import { ProductImage } from "../ProductCatalog/styles";
 import { ProductPartCondition } from "../../../models/productPartCondition";
 import { Formik } from "formik";
-import { access } from "fs";
 
 export const ProductDetail = () => {
   const location = useLocation();
