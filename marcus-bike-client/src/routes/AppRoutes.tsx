@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Layout } from "../components/Layout/Layout";
 import { Home } from "../pages/Home/Home";
-import { ProductCatalogue } from "../pages/Products/ProductCatalogue";
+import { ProductCatalogue } from "../pages/Products/ProductCatalog/ProductCatalogue";
 import { ProductDetail } from "../pages/Products/ProductDetail/ProductDetail";
 
 export function AppRoutes() {

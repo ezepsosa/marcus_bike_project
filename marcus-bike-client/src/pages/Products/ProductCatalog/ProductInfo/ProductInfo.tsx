@@ -1,4 +1,4 @@
-import { LabelText, PrimaryText } from "../../../components/styles";
+import { LabelText, PrimaryText } from "../../../../components/styles";
 import { Container, LabelContainer } from "./styles";
 import { ProductInfoProps } from "./types";
 

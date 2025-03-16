@@ -1,4 +1,4 @@
-import { LinkText, PrimaryTitle } from "../../components/styles";
+import { LinkText, PrimaryTitle } from "../../../components/styles";
 import {
   ProductCard,
   ProductImage,
@@ -7,12 +7,12 @@ import {
   GridProducts,
 } from "./styles";
 import { useEffect, useState } from "react";
-import { Product } from "../../models/products";
-import { getProducts } from "../../server/api";
+import { Product } from "../../../models/products";
+import { getProducts } from "../../../server/api";
 import { TbBoxModel } from "react-icons/tb";
-import { ProductInfo } from "./ProductInfo/ProductInfo";
 import { MdBlurCircular, MdCategory } from "react-icons/md";
 import { GiMetalPlate } from "react-icons/gi";
+import { ProductInfo } from "./ProductInfo/ProductInfo";
 
 export const ProductCatalogue = () => {
   const [products, setProduct] = useState<Product[]>([]);

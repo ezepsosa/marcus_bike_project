@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { GeneralColors } from "../../styles/sharedStyles";
+import { GeneralColors } from "../../../styles/sharedStyles";
 
 export const GridProducts = styled.div`
   width: 100%;
