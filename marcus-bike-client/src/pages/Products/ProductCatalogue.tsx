@@ -32,7 +32,11 @@ export const ProductCatalogue = () => {
         <PrimaryTitle>Select your base model</PrimaryTitle>
         <GridProducts>
           {products.map((product) => (
-            <LinkText to={`/customize/${product.id}`} key={String(product.id)}>
+            <LinkText
+              to={`/customize/details`}
+              state={product}
+              key={String(product.id)}
+            >
               <ProductCard>
                 <ProductImage src={product.imageUrl} />
                 <ProductInfoContainer>
