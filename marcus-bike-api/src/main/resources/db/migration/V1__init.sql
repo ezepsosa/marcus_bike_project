@@ -18,11 +18,16 @@ create table app_order (
     CONSTRAINT fk_app_order_user FOREIGN KEY (app_user_id) REFERENCES app_user(id) ON DELETE CASCADE
     );
    
-create table product(
+CREATE TABLE product (
     id SERIAL PRIMARY KEY,
     product_name VARCHAR(255) NOT NULL,
+    brand VARCHAR(100) NOT NULL,
+    category VARCHAR(50) NOT NULL,
+    material VARCHAR(100) NOT NULL,
+    image_url TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
+);
+
 
 create table order_line(
     id SERIAL PRIMARY KEY,

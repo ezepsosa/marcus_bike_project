@@ -18,8 +18,8 @@ public class ProductDAO {
 
     private final String SQL_GET_ALL_QUERY = "SELECT * FROM product";
     private final String SQL_GET_ID_QUERY = "SELECT * FROM product WHERE id = (?)";
-    private final String SQL_INSERT_QUERY = "INSERT INTO product(product_name) VALUES (?) RETURNING id";
-    private final String SQL_UPDATE_QUERY = "UPDATE product SET product_name = ? WHERE id = ?";
+    private final String SQL_INSERT_QUERY = "INSERT INTO product(product_name, brand, category, material, image_url) VALUES (?, ?, ?, ?, ?) RETURNING id";
+    private final String SQL_UPDATE_QUERY = "UPDATE product SET product_name = ?, brand = ?, category = ?, material = ?, image_url = ? WHERE id = ?";
     private final String SQL_DELETE_QUERY = "DELETE FROM product WHERE id = (?)";
 
     public List<Product> getAll(Connection connection) {
@@ -55,6 +55,10 @@ public class ProductDAO {
         try (PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY,
                 PreparedStatement.RETURN_GENERATED_KEYS)) {
             pst.setString(1, product.getProductName());
+            pst.setString(2, product.getBrand());
+            pst.setString(3, product.getCategory());
+            pst.setString(4, product.getMaterial());
+            pst.setString(5, product.getImageUrl());
 
             int affectedRows = pst.executeUpdate();
             if (affectedRows > 0) {
@@ -74,7 +78,11 @@ public class ProductDAO {
     public Boolean update(Connection connection, Product product, Long id) {
         try (PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY)) {
             pst.setString(1, product.getProductName());
-            pst.setLong(2, id);
+            pst.setString(2, product.getBrand());
+            pst.setString(3, product.getCategory());
+            pst.setString(4, product.getMaterial());
+            pst.setString(5, product.getImageUrl());
+            pst.setLong(6, id);
 
             return pst.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -96,7 +104,8 @@ public class ProductDAO {
     }
 
     private Product createProduct(ResultSet rs) throws SQLException {
-        return new Product(rs.getLong("id"), rs.getString("product_name"), new ArrayList<>(),
+        return new Product(rs.getLong("id"), rs.getString("product_name"), rs.getString("brand"),
+                rs.getString("category"), rs.getString("material"), rs.getString("image_url"), new ArrayList<>(),
                 rs.getTimestamp("created_at").toLocalDateTime());
     }
 }

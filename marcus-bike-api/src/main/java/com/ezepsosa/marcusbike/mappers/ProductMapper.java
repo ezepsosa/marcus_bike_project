@@ -9,11 +9,13 @@ import com.ezepsosa.marcusbike.models.Product;
 public class ProductMapper {
 
     public static ProductDTO toDTO(Product product) {
-        return new ProductDTO(product.getId(), product.getProductName());
+        return new ProductDTO(product.getId(), product.getProductName(), product.getBrand(), product.getCategory(),
+                product.getMaterial(), product.getImageUrl());
     }
 
     public static Product toModel(ProductInsertDTO productInsertDTO) {
-        return new Product(productInsertDTO.productName(), List.of());
+        return new Product(productInsertDTO.productName(), productInsertDTO.brand(), productInsertDTO.category(),
+                productInsertDTO.material(), productInsertDTO.imageUr(), List.of());
     }
 
 }

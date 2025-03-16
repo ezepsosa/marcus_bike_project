@@ -2,9 +2,13 @@ INSERT INTO app_user (username, email, password_hash, user_role) VALUES
 ('marcus', 'marcus@admin.com', 'password_hash_1', 'admin'),
 ('john', 'johndoe@example.com', 'password_hash_2', 'user');
 
-INSERT INTO product (product_name) VALUES
-('bike TN'),
-('bike MB');
+INSERT INTO product (product_name, brand, category, material, image_url) VALUES
+('Trek Domane AL 2', 'Trek', 'Ruta', 'Aluminio', 'https://example.com/trek-domane.jpg'),
+('Specialized Roubaix', 'Specialized', 'Ruta', 'Carbono', 'https://example.com/specialized-roubaix.jpg'),
+('Cannondale Synapse Carbon', 'Cannondale', 'Ruta', 'Carbono', 'https://example.com/cannondale-synapse.jpg'),
+('Trek Marlin 7', 'Trek', 'Montaña', 'Aluminio', 'https://example.com/trek-marlin-7.jpg'),
+('Specialized Rockhopper', 'Specialized', 'Montaña', 'Aluminio', 'https://example.com/specialized-rockhopper.jpg');
+
 
 INSERT INTO product_part (part_option, is_available, base_price, category) VALUES
 ('Full-suspension', true, 130, 'frame_type'),
