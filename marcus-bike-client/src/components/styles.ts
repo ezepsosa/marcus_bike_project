@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { fonts, GeneralColors } from "../styles/sharedStyles";
 import { ButtonProps, TextProps } from "./types";
+import { Link } from "react-router-dom";
 
 export const Container = styled.div`
   display: flex;
@@ -16,6 +17,8 @@ export const PrimaryText = styled.p<TextProps>`
   font-family: ${fonts.robotoFontFamily};
   font-weight: 400;
   margin: 0.5rem;
+  word-break: break-word;
+  overflow-wrap: break-word;
 `;
 
 export const PrimaryTitle = styled.h1<TextProps>`
@@ -55,4 +58,16 @@ export const PrimaryButton = styled.button<ButtonProps>`
     background-color: ${GeneralColors.PrimaryButtonHover};
     transform: scale(1.05);
   }
+`;
+
+export const LinkText = styled(Link)`
+  text-decoration: none;
+`;
+
+export const LabelText = styled.span<TextProps>`
+  color: ${GeneralColors.textPrimary};
+  font-size: ${({ $fontSize }) => $fontSize || "0.8em"};
+  font-family: ${fonts.robotoFontFamily};
+  font-weight: 600;
+  font-style: italic;
 `;

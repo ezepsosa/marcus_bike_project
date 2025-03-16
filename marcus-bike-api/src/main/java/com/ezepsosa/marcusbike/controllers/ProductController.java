@@ -85,7 +85,7 @@ public class ProductController implements RouteRegistrar {
                 logger.info("Product created with ID {}", productId);
                 ProductDTO productInserted = new ProductDTO(productId, productToInsert.productName(),
                         productToInsert.brand(), productToInsert.category(), productToInsert.material(),
-                        productToInsert.imageUr());
+                        productToInsert.imageUrl());
                 JsonResponseUtil.sendJsonResponse(exchange, productInserted, 201);
 
             } catch (Exception e) {
@@ -123,7 +123,7 @@ public class ProductController implements RouteRegistrar {
                 logger.info("Product updated with ID {}", productId);
                 ProductDTO product = new ProductDTO(productId, productToUpdate.productName(),
                         productToUpdate.brand(), productToUpdate.category(), productToUpdate.material(),
-                        productToUpdate.imageUr());
+                        productToUpdate.imageUrl());
                 JsonResponseUtil.sendJsonResponse(exchange, product);
             } catch (Exception e) {
                 logger.error("Error processing request", e);
