@@ -1,6 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import { Product } from "../models/products";
 import { ProductPart } from "../models/productPart";
+import { ProductPartCondition } from "../models/productPartCondition";
 
 const API_BASE_URL = `http://localhost:8080/api/`;
 
@@ -48,6 +49,32 @@ export async function getProductDetails(id: number): Promise<ProductPart[]> {
     } else {
       throw {
         message: "An unexpected error occurred fetching product parts",
+        statusText: "Unknown Error",
+        status: 500,
+      };
+    }
+  }
+}
+
+export async function getProductPartConditions(): Promise<
+  ProductPartCondition[]
+> {
+  try {
+    const res: AxiosResponse<ProductPartCondition[]> = await apiService.get(
+      `productpartconditions`
+    );
+    return res.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw {
+        message: "Failed to fetch product part conditions",
+        statusText: error.response?.statusText || "Network error",
+        status: error.response?.status || 500,
+      };
+    } else {
+      throw {
+        message:
+          "An unexpected error occurred fetching product part conditions",
         statusText: "Unknown Error",
         status: 500,
       };
