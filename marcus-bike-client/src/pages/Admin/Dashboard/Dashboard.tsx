@@ -14,7 +14,7 @@ export const Dashboard = () => {
         <PrimaryText $fontSize="1.5rem">
           Keep track of your products, parts and conditions from this dashboard
         </PrimaryText>
-        <Link to="/customize">
+        <Link to="/manage/products">
           <PrimaryButton>Manage products</PrimaryButton>
         </Link>
       </Container>

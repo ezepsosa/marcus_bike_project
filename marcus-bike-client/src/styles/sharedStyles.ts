@@ -13,6 +13,12 @@ export const GeneralColors = {
   SecondayButtonHover: "#2a2a2a",
   SecondayButtonColor: "#e0e0e0",
   SecondayBackground: "#424242",
+  //table
+  tableBodyBackground: "#444",
+  tableHeadBackground: "#333",
+  tableFontColor: "#f4f4f4",
+  TableButtonColor: "#007bff",
+  TableButtonHover: "#8d8d8d",
 };
 
 export const fonts = {

@@ -62,6 +62,22 @@ export const PrimaryButton = styled.button<ButtonProps>`
   }
 `;
 
+export const TableButton = styled.button<ButtonProps>`
+  background-color: ${({ $backgroundColor }) =>
+    $backgroundColor || GeneralColors.TableButtonColor};
+  border-radius: 0.7rem;
+  padding: ${({ $padding }) => $padding || "0.5rem"};
+  color: ${({ $color }) => $color || GeneralColors.textHighlight};
+  font-family: ${fonts.robotoFontFamily};
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: 0.0625rem solid ${GeneralColors.borderPrimary};
+  transition: background 0.3s, transform 0.2s;
+  &:hover {
+    background-color: ${GeneralColors.TableButtonHover};
+  }
+`;
+
 export const LinkText = styled(Link)`
   text-decoration: none;
 `;
@@ -99,3 +115,34 @@ export const FormikSelectField = styled(Field)`
 `;
 
 export const Option = styled.option``;
+
+export const Table = styled.table`
+  border: 1px solid ${GeneralColors.SecondaryButtonBackground};
+  border-radius: 1rem;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  font-size: 1rem;
+  font-weight: 400;
+  margin: 0.5rem;
+  width: 50%;
+`;
+export const Thead = styled.thead`
+  background-color: ${GeneralColors.tableHeadBackground};
+  font-family: ${fonts.playFairFontFamily};
+  color: ${GeneralColors.tableFontColor};
+`;
+export const Tbody = styled.tbody`
+  background-color: ${GeneralColors.tableBodyBackground};
+  font-family: ${fonts.playFairFontFamily};
+  color: ${GeneralColors.tableFontColor};
+`;
+export const TrTable = styled.tr``;
+export const TdBody = styled.td`
+  text-align: center;
+  padding: 0.8rem;
+`;
+export const ThBody = styled.th`
+  text-align: center;
+  padding: 0.5rem;
+`;
