@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import { fonts, GeneralColors } from "../styles/sharedStyles";
-import { ButtonProps, TextProps } from "./types";
+import { ButtonProps, TableProps, TextProps } from "./types";
 import { Link } from "react-router-dom";
-import { Field } from "formik";
+import { Field, Form } from "formik";
 
 export const Container = styled.div`
   display: flex;
@@ -62,6 +62,22 @@ export const PrimaryButton = styled.button<ButtonProps>`
   }
 `;
 
+export const TableButton = styled.button<ButtonProps>`
+  background-color: ${({ $backgroundColor }) =>
+    $backgroundColor || GeneralColors.TableButtonColor};
+  border-radius: 0.7rem;
+  padding: ${({ $padding }) => $padding || "0.5rem"};
+  color: ${({ $color }) => $color || GeneralColors.textHighlight};
+  font-family: ${fonts.robotoFontFamily};
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: 0.0625rem solid ${GeneralColors.borderPrimary};
+  transition: background 0.3s, transform 0.2s;
+  &:hover {
+    background-color: ${GeneralColors.TableButtonHover};
+  }
+`;
+
 export const LinkText = styled(Link)`
   text-decoration: none;
 `;
@@ -82,6 +98,23 @@ export const LabelText = styled.label<TextProps>`
   font-style: italic;
 `;
 
+export const SelectContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+`;
+
+//Formik
+export const FormikForm = styled(Form)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+`;
+
 export const FormikSelectField = styled(Field)`
   width: 80%;
   margin: 0.5rem;
@@ -99,3 +132,39 @@ export const FormikSelectField = styled(Field)`
 `;
 
 export const Option = styled.option``;
+
+//Table
+export const Table = styled.table<TableProps>`
+  border: 1px solid ${GeneralColors.SecondaryButtonBackground};
+  border-radius: 1rem;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  font-size: 1rem;
+  font-weight: 400;
+  margin: 0.5rem;
+  width: ${({ $width }) => $width || "50%"};
+`;
+export const Thead = styled.thead`
+  background-color: ${GeneralColors.tableHeadBackground};
+  font-family: ${fonts.playFairFontFamily};
+  color: ${GeneralColors.tableFontColor};
+`;
+export const Tbody = styled.tbody`
+  background-color: ${GeneralColors.tableBodyBackground};
+  font-family: ${fonts.playFairFontFamily};
+  color: ${GeneralColors.tableFontColor};
+`;
+export const TrTable = styled.tr`
+  &:hover {
+    background-color: ${GeneralColors.tableHeadBackground};
+  }
+`;
+export const TdBody = styled.td`
+  text-align: center;
+  padding: 0.8rem;
+`;
+export const ThBody = styled.th`
+  text-align: center;
+  padding: 0.5rem;
+`;
