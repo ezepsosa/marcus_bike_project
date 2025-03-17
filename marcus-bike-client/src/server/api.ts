@@ -81,3 +81,27 @@ export async function getProductPartConditions(): Promise<
     }
   }
 }
+
+export async function getProductParts(): Promise<ProductPart[]> {
+  try {
+    const res: AxiosResponse<ProductPart[]> = await apiService.get(
+      `productparts`
+    );
+    return res.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw {
+        message: "Failed to fetch product part conditions",
+        statusText: error.response?.statusText || "Network error",
+        status: error.response?.status || 500,
+      };
+    } else {
+      throw {
+        message:
+          "An unexpected error occurred fetching product part conditions",
+        statusText: "Unknown Error",
+        status: 500,
+      };
+    }
+  }
+}
