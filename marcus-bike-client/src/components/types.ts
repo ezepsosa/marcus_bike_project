@@ -8,3 +8,7 @@ export interface TextProps {
   $fontSize?: string;
   $color?: string;
 }
+
+export interface TableProps {
+  $width?: string;
+}

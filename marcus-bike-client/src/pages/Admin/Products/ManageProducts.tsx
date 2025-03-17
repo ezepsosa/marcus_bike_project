@@ -45,7 +45,7 @@ export const ManageProducts = () => {
               <ThBody>Brand</ThBody>
               <ThBody>Material</ThBody>
               <ThBody>Category</ThBody>
-              <ThBody>Options</ThBody>
+              <ThBody>Actions</ThBody>
             </TrTable>
           </Thead>
           <Tbody>

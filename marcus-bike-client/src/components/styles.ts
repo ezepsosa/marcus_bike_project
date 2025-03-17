@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { fonts, GeneralColors } from "../styles/sharedStyles";
-import { ButtonProps, TextProps } from "./types";
+import { ButtonProps, TableProps, TextProps } from "./types";
 import { Link } from "react-router-dom";
 import { Field } from "formik";
 
@@ -116,7 +116,7 @@ export const FormikSelectField = styled(Field)`
 
 export const Option = styled.option``;
 
-export const Table = styled.table`
+export const Table = styled.table<TableProps>`
   border: 1px solid ${GeneralColors.SecondaryButtonBackground};
   border-radius: 1rem;
   border-collapse: separate;
@@ -125,7 +125,7 @@ export const Table = styled.table`
   font-size: 1rem;
   font-weight: 400;
   margin: 0.5rem;
-  width: 50%;
+  width: ${({ $width }) => $width || "50%"};
 `;
 export const Thead = styled.thead`
   background-color: ${GeneralColors.tableHeadBackground};
