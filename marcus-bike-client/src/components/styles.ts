@@ -1,13 +1,16 @@
 import styled from "styled-components";
 import { fonts, GeneralColors } from "../styles/sharedStyles";
 import { ButtonProps, TextProps } from "./types";
+import { Link } from "react-router-dom";
+import { Field } from "formik";
 
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 `;
 
 export const PrimaryText = styled.p<TextProps>`
@@ -16,6 +19,8 @@ export const PrimaryText = styled.p<TextProps>`
   font-family: ${fonts.robotoFontFamily};
   font-weight: 400;
   margin: 0.5rem;
+  word-break: break-word;
+  overflow-wrap: break-word;
 `;
 
 export const PrimaryTitle = styled.h1<TextProps>`
@@ -56,3 +61,41 @@ export const PrimaryButton = styled.button<ButtonProps>`
     transform: scale(1.05);
   }
 `;
+
+export const LinkText = styled(Link)`
+  text-decoration: none;
+`;
+
+export const SpanText = styled.span<TextProps>`
+  color: ${({ $color }) => $color || GeneralColors.textPrimary};
+  font-size: ${({ $fontSize }) => $fontSize || "1rem"};
+  font-family: ${fonts.robotoFontFamily};
+  font-weight: 600;
+  margin: 0.2rem 0;
+`;
+
+export const LabelText = styled.label<TextProps>`
+  color: ${({ $color }) => $color || GeneralColors.textPrimary};
+  font-size: ${({ $fontSize }) => $fontSize || "0.8rem"};
+  font-family: ${fonts.robotoFontFamily};
+  font-weight: 600;
+  font-style: italic;
+`;
+
+export const FormikSelectField = styled(Field)`
+  width: 80%;
+  margin: 0.5rem;
+
+  background-color: ${GeneralColors.backgroundSecondary};
+  padding: 0.5rem;
+  color: ${GeneralColors.textHighlight};
+  border-radius: 0.25rem;
+  border: 1px solid ${GeneralColors.textHighlight};
+  &:hover {
+    background-color: ${GeneralColors.SecondayBackground};
+  }
+  font-family: ${fonts.robotoFontFamily};
+  font-weight: 600;
+`;
+
+export const Option = styled.option``;

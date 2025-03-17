@@ -15,7 +15,7 @@ public class ProductMapper {
 
     public static Product toModel(ProductInsertDTO productInsertDTO) {
         return new Product(productInsertDTO.productName(), productInsertDTO.brand(), productInsertDTO.category(),
-                productInsertDTO.material(), productInsertDTO.imageUr(), List.of());
+                productInsertDTO.material(), productInsertDTO.imageUrl(), List.of());
     }
 
 }

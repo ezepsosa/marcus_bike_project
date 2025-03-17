@@ -4,4 +4,5 @@ export interface ButtonProps {
 
 export interface TextProps {
   $fontSize?: string;
+  $color?: string;
 }

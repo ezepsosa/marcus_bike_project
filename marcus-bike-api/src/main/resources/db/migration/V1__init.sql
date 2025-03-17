@@ -78,3 +78,23 @@ CREATE TABLE order_line_product_part(
     FOREIGN KEY (order_line_id) REFERENCES order_line(id) ON DELETE CASCADE,
     FOREIGN KEY (product_part_id) REFERENCES product_part(id) ON DELETE CASCADE
 );
+
+
+CREATE OR REPLACE FUNCTION normalize_fields()
+RETURNS TRIGGER AS $$
+DECLARE
+  temp INTEGER;
+BEGIN
+  IF NEW.part_id > NEW.dependant_part_id THEN
+    temp := NEW.part_id;
+    NEW.part_id := NEW.dependant_part_id;
+    NEW.dependant_part_id := temp;
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_normalize_fields
+BEFORE INSERT OR UPDATE ON product_part_condition
+FOR EACH ROW
+EXECUTE FUNCTION normalize_fields();

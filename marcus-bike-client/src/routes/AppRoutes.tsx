@@ -1,6 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Layout } from "../components/Layout/Layout";
 import { Home } from "../pages/Home/Home";
+import { ProductCatalogue } from "../pages/Products/ProductCatalog/ProductCatalogue";
+import { ProductDetail } from "../pages/Products/ProductDetail/ProductDetail";
 
 export function AppRoutes() {
   return (
@@ -8,6 +10,8 @@ export function AppRoutes() {
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
+          <Route path="/customize" element={<ProductCatalogue />} />
+          <Route path="/customize/details" element={<ProductDetail />} />
         </Route>
       </Routes>
     </BrowserRouter>
