@@ -162,7 +162,7 @@ Once both the backend and frontend are running:
   ```
 - The **frontend** will be available at:  
   ```
-  http://localhost:3000
+  http://localhost:5173
   ```
 
 You can test the API using **Postman**, **cURL**, or any other API testing tool.
