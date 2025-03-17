@@ -77,7 +77,7 @@ export const ManageProducts = () => {
           </Tbody>
         </Table>
         <ModalProductParts
-          closeModal={() => setIsModalOpen}
+          closeModal={setIsModalOpen}
           isOpen={isModalOpen}
           parts={productParts}
           productId={productSelected?.id}

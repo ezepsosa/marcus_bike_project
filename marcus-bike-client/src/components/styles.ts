@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { fonts, GeneralColors } from "../styles/sharedStyles";
 import { ButtonProps, TableProps, TextProps } from "./types";
 import { Link } from "react-router-dom";
-import { Field } from "formik";
+import { Field, Form } from "formik";
 
 export const Container = styled.div`
   display: flex;
@@ -98,6 +98,23 @@ export const LabelText = styled.label<TextProps>`
   font-style: italic;
 `;
 
+export const SelectContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+`;
+
+//Formik
+export const FormikForm = styled(Form)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+`;
+
 export const FormikSelectField = styled(Field)`
   width: 80%;
   margin: 0.5rem;
@@ -116,6 +133,7 @@ export const FormikSelectField = styled(Field)`
 
 export const Option = styled.option``;
 
+//Table
 export const Table = styled.table<TableProps>`
   border: 1px solid ${GeneralColors.SecondaryButtonBackground};
   border-radius: 1rem;
@@ -137,7 +155,11 @@ export const Tbody = styled.tbody`
   font-family: ${fonts.playFairFontFamily};
   color: ${GeneralColors.tableFontColor};
 `;
-export const TrTable = styled.tr``;
+export const TrTable = styled.tr`
+  &:hover {
+    background-color: ${GeneralColors.tableHeadBackground};
+  }
+`;
 export const TdBody = styled.td`
   text-align: center;
   padding: 0.8rem;

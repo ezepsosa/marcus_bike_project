@@ -4,5 +4,5 @@ export interface ModalProductPartsProps {
   productId?: number;
   parts: ProductPart[];
   isOpen: boolean;
-  closeModal: () => void;
+  closeModal: (value: boolean) => void;
 }

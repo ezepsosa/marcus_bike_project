@@ -5,13 +5,15 @@ import {
   getProductPartConditions,
 } from "../../../server/api";
 import { ProductPart } from "../../../models/productPart";
-import { Container, FormikForm, Section, SelectContainer } from "./style";
+import { Container, Section } from "./style";
 import {
+  FormikForm,
   FormikSelectField,
   LabelText,
   Option,
   PrimaryButton,
   SpanText,
+  SelectContainer,
 } from "../../../components/styles";
 import { ProductImage } from "../ProductCatalog/styles";
 import { ProductPartCondition } from "../../../models/productPartCondition";

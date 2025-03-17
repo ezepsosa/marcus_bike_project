@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
 import {
+  FormikForm,
+  FormikSelectField,
+  LabelText,
+  Option,
+  SelectContainer,
   Table,
   TableButton,
   Tbody,
@@ -14,12 +19,15 @@ import { ProductPart } from "../../../../models/productPart";
 import {
   deletePartFromProduct,
   getPartsFromProduct,
+  postPartFromProduct,
 } from "../../../../server/api";
+import { Formik } from "formik";
 
 export const ModalProductParts = ({
   isOpen,
   productId,
   parts,
+  closeModal,
 }: ModalProductPartsProps) => {
   const [productParts, setProductParts] = useState<ProductPart[]>([]);
   useEffect(() => {
@@ -38,6 +46,15 @@ export const ModalProductParts = ({
     }
   }
 
+  async function handleSubmit(part: ProductPart) {
+    try {
+      if (productId) await postPartFromProduct(productId, part.id);
+      setProductParts((prev) => [...prev, part]);
+    } catch (error) {
+      console.error("Error adding part:", part.id);
+    }
+  }
+
   if (isOpen)
     return (
       <ModalContainer>
@@ -52,9 +69,9 @@ export const ModalProductParts = ({
               </TrTable>
             </Thead>
             <Tbody>
-              {productParts.map((part, index) => {
+              {productParts.map((part) => {
                 return (
-                  <TrTable key={index}>
+                  <TrTable key={part.id}>
                     <TdBody>
                       {String(part.productPartCategory)
                         .replace("_", " ")
@@ -75,6 +92,59 @@ export const ModalProductParts = ({
               })}
             </Tbody>
           </Table>
+          <Formik
+            initialValues={{ selectedPart: "" }}
+            onSubmit={(values) => {
+              const selectedPart = parts.find(
+                (part) => part.id === Number(values.selectedPart)
+              );
+              if (selectedPart) {
+                handleSubmit(selectedPart);
+              }
+            }}
+          >
+            {({ values, handleChange }) => (
+              <FormikForm>
+                <SelectContainer>
+                  <LabelText $color="white" $fontSize="1.2rem">
+                    Select a part to add:
+                  </LabelText>
+                  <FormikSelectField
+                    as="select"
+                    name="selectedPart"
+                    value={values.selectedPart}
+                    onChange={handleChange}
+                  >
+                    {parts
+                      .filter(
+                        (part) =>
+                          !productParts
+                            .map((productPart) => productPart.id)
+                            .includes(part.id)
+                      )
+                      .map((option) => (
+                        <Option key={option.id} value={option.id.toString()}>
+                          {option.partOption} -{" "}
+                          {String(option.productPartCategory)
+                            .replace("_", " ")
+                            .toLowerCase()}
+                        </Option>
+                      ))}
+                  </FormikSelectField>
+                  <TableButton type="submit" $backgroundColor="green">
+                    Add part
+                  </TableButton>
+                  <TableButton
+                    type="button"
+                    $backgroundColor="gray"
+                    onClick={() => closeModal(false)}
+                  >
+                    Close
+                  </TableButton>
+                </SelectContainer>
+              </FormikForm>
+            )}
+          </Formik>
         </ModalContent>
       </ModalContainer>
     );
