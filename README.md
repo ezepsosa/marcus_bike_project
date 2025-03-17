@@ -27,7 +27,7 @@ The app currently contains the following views:
 ### **General Requirements**
 - ☕ **Java 17** → Required for backend development. Install from [Oracle](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html) or your preferred JDK provider.
 - ⚙️ **Maven** → Used for managing backend dependencies. Install from [Apache Maven](https://maven.apache.org/download.cgi).
-- 🗄️ **PostgreSQL** → Relational database for storing application data. Install from [PostgreSQL](https://www.postgresql.org/download/) You can also use a .
+- 🗄️ **PostgreSQL** → Relational database for storing application data. Install from [PostgreSQL](https://www.postgresql.org/download/).
 - 🟢 **Node.js (LTS version)** → Required for frontend development. Install from [Node.js](https://nodejs.org/).
 - 📦 **npm or yarn** → Package managers for installing frontend dependencies (npm is part of Node.js).
 # 🛠️ Tools & Libraries Used
