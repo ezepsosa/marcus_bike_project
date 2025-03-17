@@ -204,8 +204,22 @@ You can test the API using **Postman**, **cURL**, or any other API testing tool.
         │   │   ├── routes/ (Client-side Routing)
         │   │   ├── server/ (API Service Calls)
         │   │   ├── styles/ (Global & Shared Styles)
-                
-### Database Model
+
+## 📌 Database Design Rationale                
+
+The model is designed with **product parts as the main entity**.  
+
+- **Users and roles** are linked to orders.  
+- **Each order has a separate line per product**, allowing invoices to track individual parts separately. This enables proper validation of restrictions and pricing.  
+- **Product parts have a many-to-many relationship with products**, so administrators don’t need to duplicate parts when adding new products.  
+- **Conditions are assigned directly to product parts**, meaning restrictions only need to be defined once and will apply wherever necessary.  
+- **The `product_part_condition` table is key**, as it enables validation of:  
+  - Parts that **cannot be combined**.  
+  - Parts that **require an additional cost**.  
+- **Stock is currently a boolean**, but it can be extended to store quantities and be managed at the business logic level.  
+- **A product category field can be added** to classify items by sport type (bikes, skis, scooters, etc.).  
+
+This design ensures that the system is **scalable, reusable, and easy to manage**, allowing future extensions with minimal changes.  
 
 ![Database Model](docs/db-model.png)
 
