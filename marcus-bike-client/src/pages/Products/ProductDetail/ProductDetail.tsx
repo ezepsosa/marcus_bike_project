@@ -142,83 +142,67 @@ export const ProductDetail = () => {
         <br />
 
         <Formik
-          initialValues={{ selectedParts: {} as Record<string, number> }}
-          validate={(values) => {
-            const errors: Record<string, string> = {};
-
-            Object.keys(groupedParts).forEach((type: string) => {
-              if (!values.selectedParts[type]) {
-                errors[type] = "You have to select a valid option";
-              }
-            });
-            return errors;
-          }}
+          initialValues={{}}
           onSubmit={() => {
-            if (errors.length != 0) {
+            if (errors.length > 0) {
               alert("You cannot add this product with incompatible parts");
             } else {
               console.log("Sending");
             }
           }}
         >
-          {({ _, setFieldValue }) => (
-            <FormikForm>
-              {groupedParts &&
-                Object.keys(groupedParts).map((type) => {
-                  const options = groupedParts[type];
-                  return (
-                    <SelectContainer key={type}>
-                      <LabelText $color="gray" $fontSize="1.2rem">
-                        Select the {type.replace("_", " ").toLowerCase()}:
-                      </LabelText>
-                      <FormikSelectField
-                        as={"select"}
-                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                          setFieldValue(
-                            `selectedParts.${type}`,
-                            e.target.value
-                          );
-                          changeSelectedParts(type, Number(e.target.value));
-                        }}
-                      >
-                        <Option value="">--</Option>
-                        {options.map((option) => (
-                          <Option key={option.id} value={option.id}>
-                            {option.partOption} - {option.basePrice}€
-                          </Option>
-                        ))}
-                      </FormikSelectField>
-                      <ErrorMessage name={`selectedParts.${type}`}>
-                        {(msg) => (
-                          <SpanText $fontSize="0.9rem" $color="#ff5e5e">
-                            {msg}
-                          </SpanText>
-                        )}
-                      </ErrorMessage>
-                    </SelectContainer>
-                  );
-                })}
-              {errors?.map((e) => {
+          <FormikForm>
+            {groupedParts &&
+              Object.keys(groupedParts).map((type) => {
+                const options = groupedParts[type];
                 return (
-                  <SpanText $fontSize="0.9rem" $color="#ff5e5e">
-                    {e}
-                  </SpanText>
+                  <SelectContainer key={type}>
+                    <LabelText $color="gray" $fontSize="1.2rem">
+                      Select the {type.replace("_", " ").toLowerCase()}:
+                    </LabelText>
+                    <FormikSelectField
+                      as={"select"}
+                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                        changeSelectedParts(type, Number(e.target.value));
+                      }}
+                    >
+                      <Option value="">--</Option>
+                      {options.map((option) => (
+                        <Option key={option.id} value={option.id}>
+                          {option.partOption} - {option.basePrice}€
+                        </Option>
+                      ))}
+                    </FormikSelectField>
+                    <ErrorMessage name={`selectedParts.${type}`}>
+                      {(msg) => (
+                        <SpanText $fontSize="0.9rem" $color="#ff5e5e">
+                          {msg}
+                        </SpanText>
+                      )}
+                    </ErrorMessage>
+                  </SelectContainer>
                 );
               })}
-              {extraPrice.map((e) => {
-                return (
-                  <SpanText $fontSize="0.9rem" $color="#ffd9a7">
-                    {e}
-                  </SpanText>
-                );
-              })}
+            {errors?.map((e, index) => {
+              return (
+                <SpanText key={index} $fontSize="0.9rem" $color="#ff5e5e">
+                  {e}
+                </SpanText>
+              );
+            })}
+            {extraPrice.map((e, index) => {
+              return (
+                <SpanText key={index} $fontSize="0.9rem" $color="#ffd9a7">
+                  {e}
+                </SpanText>
+              );
+            })}
 
-              <SpanText $fontSize="1.2rem" $color="#ffc600">
-                Total: {totalPrice}€
-              </SpanText>
-              <PrimaryButton type="submit">Add to cart</PrimaryButton>
-            </FormikForm>
-          )}
+            <SpanText $fontSize="1.2rem" $color="#ffc600">
+              Total: {totalPrice}€
+            </SpanText>
+            <PrimaryButton type="submit">Add to cart</PrimaryButton>
+          </FormikForm>
         </Formik>
       </Container>
     </Section>
