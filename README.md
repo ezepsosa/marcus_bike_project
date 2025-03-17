@@ -158,7 +158,7 @@ Once both the backend and frontend are running:
 
 - The **backend** will be available at:  
   ```
-  http://localhost:8080
+  http://localhost:8080/api
   ```
 - The **frontend** will be available at:  
   ```
