@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { Product, ProductInsert } from "../models/products";
-import { ProductPart } from "../models/productPart";
+import { ProductPart, ProductPartInsert } from "../models/productPart";
 import { ProductPartCondition } from "../models/productPartCondition";
 
 const API_BASE_URL = `http://localhost:8080/api/`;
@@ -212,13 +212,13 @@ export async function updateProduct(
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw {
-        message: "Failed to add a product",
+        message: "Failed to edit a product",
         statusText: error.response?.statusText || "Network error",
         status: error.response?.status || 500,
       };
     } else {
       throw {
-        message: "An unexpected error occurred while adding a product",
+        message: "An unexpected error occurred while editing a product",
         statusText: "Unknown Error",
         status: 500,
       };
@@ -240,6 +240,73 @@ export async function deleteProduct(id: number): Promise<Product> {
     } else {
       throw {
         message: "An unexpected error occurred while deleting a product",
+        statusText: "Unknown Error",
+        status: 500,
+      };
+    }
+  }
+}
+
+export async function deleteProductPart(id: number): Promise<void> {
+  try {
+    await apiService.delete(`productparts/${id}`);
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw {
+        message: "Failed to delete product part",
+        statusText: error.response?.statusText || "Network error",
+        status: error.response?.status || 500,
+      };
+    } else {
+      throw {
+        message: "An unexpected error occurred deleting product part",
+        statusText: "Unknown Error",
+        status: 500,
+      };
+    }
+  }
+}
+
+export async function postProductPart(
+  productPart: ProductPartInsert
+): Promise<ProductPart> {
+  try {
+    const res = await apiService.post(`products`, productPart);
+    return res.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw {
+        message: "Failed to add a product part",
+        statusText: error.response?.statusText || "Network error",
+        status: error.response?.status || 500,
+      };
+    } else {
+      throw {
+        message: "An unexpected error occurred while adding a product part",
+        statusText: "Unknown Error",
+        status: 500,
+      };
+    }
+  }
+}
+
+export async function updateProductPart(
+  productPart: ProductPartInsert,
+  id: number
+): Promise<ProductPart> {
+  try {
+    const res = await apiService.put(`productparts/${id}`, productPart);
+    return res.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw {
+        message: "Failed to edit a product part",
+        statusText: error.response?.statusText || "Network error",
+        status: error.response?.status || 500,
+      };
+    } else {
+      throw {
+        message: "An unexpected error occurred while editing a product part",
         statusText: "Unknown Error",
         status: 500,
       };
