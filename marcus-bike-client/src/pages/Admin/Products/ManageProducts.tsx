@@ -9,17 +9,21 @@ import {
   ThBody,
   Thead,
   TrTable,
+  ButtonContainer,
 } from "../../../components/styles";
-import { ButtonContainer, Container, Section } from "./styles";
+import { Container, Section } from "./styles";
 import { Product } from "../../../models/products";
 import { getProductParts, getProducts } from "../../../server/api";
 import { ProductPart } from "../../../models/productPart";
 import { ModalProductParts } from "./ModalProductParts/ModalProductParts";
+import { ModalManageProducts } from "./ModalManageProduct/ModalManageProduct";
 
 export const ManageProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [productParts, setProductParts] = useState<ProductPart[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isProductPartModalOpen, setIsProductPartModalOpen] =
+    useState<boolean>(false);
+  const [isProductModalOpen, setIsProductModalOpen] = useState<boolean>(false);
   const [productSelected, setProductSelected] = useState<Product>();
 
   useEffect(() => {
@@ -37,7 +41,12 @@ export const ManageProducts = () => {
     <Section>
       <Container>
         <PrimaryTitle $fontSize={"2.4rem"}>Manage your products</PrimaryTitle>
-        <PrimaryButton $backgroundColor="#f83">Add product</PrimaryButton>
+        <PrimaryButton
+          $backgroundColor="#f83"
+          onClick={() => setIsProductModalOpen(true)}
+        >
+          Add product
+        </PrimaryButton>
         <Table>
           <Thead>
             <TrTable>
@@ -60,7 +69,7 @@ export const ManageProducts = () => {
                     <ButtonContainer>
                       <TableButton
                         onClick={() => {
-                          setIsModalOpen(true);
+                          setIsProductPartModalOpen(true);
                           setProductSelected(product);
                         }}
                       >
@@ -77,10 +86,14 @@ export const ManageProducts = () => {
           </Tbody>
         </Table>
         <ModalProductParts
-          closeModal={setIsModalOpen}
-          isOpen={isModalOpen}
+          closeModal={setIsProductPartModalOpen}
+          isOpen={isProductPartModalOpen}
           parts={productParts}
           productId={productSelected?.id}
+        />
+        <ModalManageProducts
+          setIsOpen={setIsProductModalOpen}
+          isOpen={isProductModalOpen}
         />
       </Container>
     </Section>

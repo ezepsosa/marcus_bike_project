@@ -62,20 +62,10 @@ export const PrimaryButton = styled.button<ButtonProps>`
   }
 `;
 
-export const TableButton = styled.button<ButtonProps>`
-  background-color: ${({ $backgroundColor }) =>
-    $backgroundColor || GeneralColors.TableButtonColor};
-  border-radius: 0.7rem;
-  padding: ${({ $padding }) => $padding || "0.5rem"};
-  color: ${({ $color }) => $color || GeneralColors.textHighlight};
-  font-family: ${fonts.robotoFontFamily};
-  font-weight: 600;
-  font-size: 0.9rem;
-  border: 0.0625rem solid ${GeneralColors.borderPrimary};
-  transition: background 0.3s, transform 0.2s;
-  &:hover {
-    background-color: ${GeneralColors.TableButtonHover};
-  }
+export const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
 `;
 
 export const LinkText = styled(Link)`
@@ -167,4 +157,50 @@ export const TdBody = styled.td`
 export const ThBody = styled.th`
   text-align: center;
   padding: 0.5rem;
+`;
+
+export const TableButton = styled.button<ButtonProps>`
+  background-color: ${({ $backgroundColor }) =>
+    $backgroundColor || GeneralColors.TableButtonColor};
+  border-radius: 0.7rem;
+  padding: ${({ $padding }) => $padding || "0.5rem"};
+  color: ${({ $color }) => $color || GeneralColors.textHighlight};
+  font-family: ${fonts.robotoFontFamily};
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: 0.0625rem solid ${GeneralColors.borderPrimary};
+  transition: background 0.3s, transform 0.2s;
+  &:hover {
+    background-color: ${GeneralColors.TableButtonHover};
+  }
+`;
+
+// Modals
+
+export const ModalContainer = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background-color: rgba(77, 77, 77, 0.12);
+  height: 80;
+  overflow-y: auto;
+  padding-top: 2rem;
+`;
+
+export const ModalContent = styled.div`
+  height: auto;
+  width: 50%;
+  margin: 1rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid #fff;
+  border-radius: 1rem;
+  background-color: ${GeneralColors.backgroundSecondary};
 `;

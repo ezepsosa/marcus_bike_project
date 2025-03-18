@@ -12,8 +12,10 @@ import {
   ThBody,
   Thead,
   TrTable,
+  ModalContainer,
+  ModalContent,
+  ButtonContainer,
 } from "../../../../components/styles";
-import { ModalContainer, ModalContent } from "./styles";
 import { ModalProductPartsProps } from "./types";
 import { ProductPart } from "../../../../models/productPart";
 import {
@@ -131,16 +133,18 @@ export const ModalProductParts = ({
                         </Option>
                       ))}
                   </FormikSelectField>
-                  <TableButton type="submit" $backgroundColor="green">
-                    Add part
-                  </TableButton>
-                  <TableButton
-                    type="button"
-                    $backgroundColor="gray"
-                    onClick={() => closeModal(false)}
-                  >
-                    Close
-                  </TableButton>
+                  <ButtonContainer>
+                    <TableButton type="submit" $backgroundColor="green">
+                      Add part
+                    </TableButton>
+                    <TableButton
+                      type="button"
+                      $backgroundColor="gray"
+                      onClick={() => closeModal(false)}
+                    >
+                      Close
+                    </TableButton>
+                  </ButtonContainer>
                 </SelectContainer>
               </FormikForm>
             )}
