@@ -9,5 +9,5 @@ export interface ProductPartConditionInsert {
   partId: number;
   dependantPartId: number;
   priceAdjustment: number;
-  isRestriction: number;
+  isRestriction: boolean;
 }
