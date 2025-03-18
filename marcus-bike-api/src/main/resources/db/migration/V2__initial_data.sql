@@ -3,11 +3,11 @@ INSERT INTO app_user (username, email, password_hash, user_role) VALUES
 ('john', 'johndoe@example.com', 'password_hash_2', 'user');
 
 INSERT INTO product (product_name, brand, category, material, image_url) VALUES
-('Trek Domane AL 2', 'Trek', 'Ruta', 'Aluminio', 'https://example.com/trek-domane.jpg'),
-('Specialized Roubaix', 'Specialized', 'Ruta', 'Carbono', 'https://example.com/specialized-roubaix.jpg'),
-('Cannondale Synapse Carbon', 'Cannondale', 'Ruta', 'Carbono', 'https://example.com/cannondale-synapse.jpg'),
-('Trek Marlin 7', 'Trek', 'Montaña', 'Aluminio', 'https://example.com/trek-marlin-7.jpg'),
-('Specialized Rockhopper', 'Specialized', 'Montaña', 'Aluminio', 'https://example.com/specialized-rockhopper.jpg');
+('Trek Domane AL 2', 'Trek', 'Ruta', 'Aluminio', 'Trek Domane AL 2.png'),
+('Specialized Roubaix', 'Specialized', 'Ruta', 'Carbono', 'Specialized Roubaix.png'),
+('Cannondale Synapse Carbon', 'Cannondale', 'Ruta', 'Carbono', 'Cannondale Synapse Carbon.png'),
+('Trek Marlin 7', 'Trek', 'Montaña', 'Aluminio', 'Trek Marlin 7.png'),
+('Specialized Rockhopper', 'Specialized', 'Montaña', 'Aluminio', 'Specialized Rockhopper.png');
 
 
 INSERT INTO product_part (part_option, is_available, base_price, category) VALUES
