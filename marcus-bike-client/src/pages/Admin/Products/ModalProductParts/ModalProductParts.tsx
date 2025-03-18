@@ -12,8 +12,10 @@ import {
   ThBody,
   Thead,
   TrTable,
+  ModalContainer,
+  ModalContent,
+  ButtonContainer,
 } from "../../../../components/styles";
-import { ModalContainer, ModalContent } from "./styles";
 import { ModalProductPartsProps } from "./types";
 import { ProductPart } from "../../../../models/productPart";
 import {
@@ -40,7 +42,7 @@ export const ModalProductParts = ({
   async function deletePart(partId: number) {
     try {
       if (productId) await deletePartFromProduct(partId, productId);
-      setProductParts(productParts.filter((part) => part.id != partId));
+      setProductParts((prev) => prev.filter((part) => part.id != partId));
     } catch (error) {
       console.error("Error deleting part:", partId);
     }
@@ -51,9 +53,14 @@ export const ModalProductParts = ({
       if (productId) await postPartFromProduct(productId, part.id);
       setProductParts((prev) => [...prev, part]);
     } catch (error) {
-      console.error("Error adding part:", part.id);
+      console.error("Error adding part:", part);
     }
   }
+
+  const availableOptions = parts.filter(
+    (part) =>
+      !productParts.map((productPart) => productPart.id).includes(part.id)
+  );
 
   if (isOpen)
     return (
@@ -93,11 +100,13 @@ export const ModalProductParts = ({
             </Tbody>
           </Table>
           <Formik
-            initialValues={{ selectedPart: "" }}
+            initialValues={{
+              selectedPart: "",
+            }}
             onSubmit={(values) => {
-              const selectedPart = parts.find(
-                (part) => part.id === Number(values.selectedPart)
-              );
+              const selectedId = Number(values.selectedPart);
+              if (!selectedId) return;
+              const selectedPart = parts.find((part) => part.id === selectedId);
               if (selectedPart) {
                 handleSubmit(selectedPart);
               }
@@ -110,37 +119,42 @@ export const ModalProductParts = ({
                     Select a part to add:
                   </LabelText>
                   <FormikSelectField
+                    disabled={availableOptions.length === 0}
                     as="select"
                     name="selectedPart"
                     value={values.selectedPart}
                     onChange={handleChange}
                   >
-                    {parts
-                      .filter(
-                        (part) =>
-                          !productParts
-                            .map((productPart) => productPart.id)
-                            .includes(part.id)
-                      )
-                      .map((option) => (
-                        <Option key={option.id} value={option.id.toString()}>
-                          {option.partOption} -{" "}
-                          {String(option.productPartCategory)
-                            .replace("_", " ")
-                            .toLowerCase()}
-                        </Option>
-                      ))}
+                    <Option value="" disabled>
+                      -- Select a part --
+                    </Option>
+                    {availableOptions.map((option) => (
+                      <Option key={option.id} value={option.id.toString()}>
+                        {option.partOption} -{" "}
+                        {String(option.productPartCategory)
+                          .replace("_", " ")
+                          .toLowerCase()}{" "}
+                      </Option>
+                    ))}
                   </FormikSelectField>
-                  <TableButton type="submit" $backgroundColor="green">
-                    Add part
-                  </TableButton>
-                  <TableButton
-                    type="button"
-                    $backgroundColor="gray"
-                    onClick={() => closeModal(false)}
-                  >
-                    Close
-                  </TableButton>
+                  <ButtonContainer>
+                    <TableButton
+                      type="submit"
+                      $backgroundColor="black"
+                      disabled={
+                        availableOptions.length === 0 || !values.selectedPart
+                      }
+                    >
+                      Add part
+                    </TableButton>
+                    <TableButton
+                      type="button"
+                      $backgroundColor="gray"
+                      onClick={() => closeModal(false)}
+                    >
+                      Close
+                    </TableButton>
+                  </ButtonContainer>
                 </SelectContainer>
               </FormikForm>
             )}

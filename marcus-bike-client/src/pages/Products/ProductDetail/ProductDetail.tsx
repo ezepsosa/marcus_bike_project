@@ -133,7 +133,7 @@ export const ProductDetail = () => {
   return (
     <Section>
       <Container>
-        <ProductImage src={imageUrl} />
+        <ProductImage src={`/${imageUrl}`} />
         <SpanText $fontSize="1.5rem">Model: {productName}</SpanText>
         <SpanText $fontSize="1.2rem" $color="#ffc600">
           Customize your model

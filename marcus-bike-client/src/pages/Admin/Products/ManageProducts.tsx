@@ -9,17 +9,25 @@ import {
   ThBody,
   Thead,
   TrTable,
+  ButtonContainer,
 } from "../../../components/styles";
-import { ButtonContainer, Container, Section } from "./styles";
+import { Container, Section } from "./styles";
 import { Product } from "../../../models/products";
-import { getProductParts, getProducts } from "../../../server/api";
+import {
+  deleteProduct,
+  getProductParts,
+  getProducts,
+} from "../../../server/api";
 import { ProductPart } from "../../../models/productPart";
 import { ModalProductParts } from "./ModalProductParts/ModalProductParts";
+import { ModalManageProducts } from "./ModalManageProduct/ModalManageProduct";
 
 export const ManageProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [productParts, setProductParts] = useState<ProductPart[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isProductPartModalOpen, setIsProductPartModalOpen] =
+    useState<boolean>(false);
+  const [isProductModalOpen, setIsProductModalOpen] = useState<boolean>(false);
   const [productSelected, setProductSelected] = useState<Product>();
 
   useEffect(() => {
@@ -33,11 +41,28 @@ export const ManageProducts = () => {
     loadParts();
   }, []);
 
+  async function handleDeleteProduct(id: number) {
+    try {
+      await deleteProduct(id);
+      setProducts(products.filter((p) => p.id != id));
+    } catch (error) {
+      console.error("Error deleting product with id", id);
+    }
+  }
+
   return (
     <Section>
       <Container>
         <PrimaryTitle $fontSize={"2.4rem"}>Manage your products</PrimaryTitle>
-        <PrimaryButton $backgroundColor="#f83">Add product</PrimaryButton>
+        <PrimaryButton
+          $backgroundColor="#f83"
+          onClick={() => {
+            setIsProductModalOpen(true);
+            setProductSelected(undefined);
+          }}
+        >
+          Add product
+        </PrimaryButton>
         <Table>
           <Thead>
             <TrTable>
@@ -60,14 +85,29 @@ export const ManageProducts = () => {
                     <ButtonContainer>
                       <TableButton
                         onClick={() => {
-                          setIsModalOpen(true);
+                          setIsProductPartModalOpen(true);
                           setProductSelected(product);
                         }}
                       >
                         Manage parts
                       </TableButton>
-                      <TableButton $color="black" $backgroundColor="#ffc107">
+                      <TableButton
+                        $color="black"
+                        $backgroundColor="#ffc107"
+                        type="button"
+                        onClick={() => {
+                          setIsProductModalOpen(true);
+                          setProductSelected(product);
+                        }}
+                      >
                         Edit product
+                      </TableButton>
+                      <TableButton
+                        type="button"
+                        $backgroundColor="red"
+                        onClick={() => handleDeleteProduct(product.id)}
+                      >
+                        Delete
                       </TableButton>
                     </ButtonContainer>
                   </TdBody>
@@ -77,10 +117,17 @@ export const ManageProducts = () => {
           </Tbody>
         </Table>
         <ModalProductParts
-          closeModal={setIsModalOpen}
-          isOpen={isModalOpen}
+          closeModal={setIsProductPartModalOpen}
+          isOpen={isProductPartModalOpen}
           parts={productParts}
           productId={productSelected?.id}
+        />
+        <ModalManageProducts
+          products={products}
+          changeProducts={setProducts}
+          product={productSelected}
+          setIsOpen={setIsProductModalOpen}
+          isOpen={isProductModalOpen}
         />
       </Container>
     </Section>

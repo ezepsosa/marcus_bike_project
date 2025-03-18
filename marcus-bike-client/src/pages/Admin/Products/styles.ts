@@ -19,8 +19,3 @@ export const Section = styled.section`
   background-color: ${GeneralColors.backgroundPrimary};
   flex-grow: 1;
 `;
-
-export const ButtonContainer = styled.div`
-  dispplay: flex;
-  flex-direction: row;
-`;

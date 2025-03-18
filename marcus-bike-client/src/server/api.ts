@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { Product } from "../models/products";
+import { Product, ProductInsert } from "../models/products";
 import { ProductPart } from "../models/productPart";
 import { ProductPartCondition } from "../models/productPartCondition";
 
@@ -174,6 +174,72 @@ export async function postPartFromProduct(
       throw {
         message:
           "An unexpected error occurred while adding a part to the product",
+        statusText: "Unknown Error",
+        status: 500,
+      };
+    }
+  }
+}
+
+export async function postProduct(product: ProductInsert): Promise<Product> {
+  try {
+    const res = await apiService.post(`products`, product);
+    return res.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw {
+        message: "Failed to add a product",
+        statusText: error.response?.statusText || "Network error",
+        status: error.response?.status || 500,
+      };
+    } else {
+      throw {
+        message: "An unexpected error occurred while adding a product",
+        statusText: "Unknown Error",
+        status: 500,
+      };
+    }
+  }
+}
+
+export async function updateProduct(
+  product: ProductInsert,
+  id: number
+): Promise<Product> {
+  try {
+    const res = await apiService.put(`products/${id}`, product);
+    return res.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw {
+        message: "Failed to add a product",
+        statusText: error.response?.statusText || "Network error",
+        status: error.response?.status || 500,
+      };
+    } else {
+      throw {
+        message: "An unexpected error occurred while adding a product",
+        statusText: "Unknown Error",
+        status: 500,
+      };
+    }
+  }
+}
+
+export async function deleteProduct(id: number): Promise<Product> {
+  try {
+    const res = await apiService.delete(`products/${id}`);
+    return res.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw {
+        message: "Failed to delete a product",
+        statusText: error.response?.statusText || "Network error",
+        status: error.response?.status || 500,
+      };
+    } else {
+      throw {
+        message: "An unexpected error occurred while deleting a product",
         statusText: "Unknown Error",
         status: 500,
       };
