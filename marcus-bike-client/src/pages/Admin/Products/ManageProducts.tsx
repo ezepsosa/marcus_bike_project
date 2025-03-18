@@ -45,7 +45,7 @@ export const ManageProducts = () => {
           $backgroundColor="#f83"
           onClick={() => {
             setIsProductModalOpen(true);
-            () => setProductSelected(undefined);
+            setProductSelected(undefined);
           }}
         >
           Add product

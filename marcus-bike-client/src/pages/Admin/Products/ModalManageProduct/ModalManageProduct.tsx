@@ -11,21 +11,36 @@ import {
   TableButton,
 } from "../../../../components/styles";
 import { ModalManageProductProps } from "./types";
-import { Product } from "../../../../models/products";
+import { ProductInsert } from "../../../../models/products";
 import { FormikLabelInput } from "../../../../components/FormikLabelInput/FormikLabelInput";
+import { postProduct, updateProduct } from "../../../../server/api";
 
 export const ModalManageProducts = ({
   product,
   isOpen,
   setIsOpen,
 }: ModalManageProductProps) => {
-  function handleNewProduc(values: Product) {
-    console.log(values);
+  async function handleNewProduc(values: ProductInsert) {
+    try {
+      if (values) await postProduct(values);
+      alert("product created");
+      setIsOpen(false);
+    } catch (error) {
+      console.error("Error adding product", values);
+    }
   }
-  function handleEditProduc(values: Product) {
-    console.log(values);
+  async function handleEditProduc(values: ProductInsert) {
+    try {
+      const { ...productInsert } = product as ProductInsert;
+      Reflect.deleteProperty(productInsert, "id");
+      if (values && product?.id) await updateProduct(productInsert, product.id);
+      alert("product updated");
+      setIsOpen(false);
+    } catch (error) {
+      console.error("Error updating product", values);
+    }
   }
-  console.log(product);
+
   if (isOpen)
     return (
       <ModalContainer>
@@ -33,10 +48,9 @@ export const ModalManageProducts = ({
           <SpanText $fontSize="1.5rem">
             {product ? "Edit" : "Add new"} Product
           </SpanText>
-          <Formik<Product>
+          <Formik<ProductInsert>
             initialValues={
               product ?? {
-                id: -1,
                 productName: "",
                 brand: "",
                 category: "",
@@ -46,16 +60,15 @@ export const ModalManageProducts = ({
             }
             validate={(values) => {
               const errors: Record<string, string> = {};
-              console.log("sadsadasd");
               Object.keys(values).forEach((attribute) =>
-                values[attribute as keyof Product] == ""
+                values[attribute as keyof ProductInsert] == ""
                   ? (errors[attribute] = "This field cannot be empty")
                   : null
               );
               return errors;
             }}
-            onSubmit={(values: Product) => {
-              product ? handleNewProduc(values) : handleEditProduc(values);
+            onSubmit={(values: ProductInsert) => {
+              product ? handleEditProduc(values) : handleNewProduc(values);
             }}
           >
             {({ values, handleChange }) => (
@@ -70,7 +83,7 @@ export const ModalManageProducts = ({
                             key={fieldName}
                             handleChange={handleChange}
                             label={fieldName}
-                            value={String(values[fieldName as keyof Product])}
+                            value={values[fieldName as keyof ProductInsert]}
                           />
                           <ErrorMessageFormik
                             component="div"
