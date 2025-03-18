@@ -134,7 +134,7 @@ export const ModalProductParts = ({
                       ))}
                   </FormikSelectField>
                   <ButtonContainer>
-                    <TableButton type="submit" $backgroundColor="green">
+                    <TableButton type="submit" $backgroundColor="black">
                       Add part
                     </TableButton>
                     <TableButton
