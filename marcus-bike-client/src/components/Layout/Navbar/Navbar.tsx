@@ -20,6 +20,7 @@ export const Navbar = () => {
           <LinkMenu to="/">HOME</LinkMenu>
           <LinkMenu to="/customize">CUSTOMIZE YOUR BIKE</LinkMenu>
           <LinkMenu to="#">CONTACT</LinkMenu>
+          <LinkMenu to="/admin/dashboard">ADMIN</LinkMenu>
         </UnorderedList>
         <AuthNavContainer>
           <SecondaryButton>Login</SecondaryButton>
