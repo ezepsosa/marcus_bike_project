@@ -103,6 +103,8 @@ export const ManageProducts = () => {
           productId={productSelected?.id}
         />
         <ModalManageProducts
+          products={products}
+          changeProducts={setProducts}
           product={productSelected}
           setIsOpen={setIsProductModalOpen}
           isOpen={isProductModalOpen}

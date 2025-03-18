@@ -11,7 +11,7 @@ import {
   TableButton,
 } from "../../../../components/styles";
 import { ModalManageProductProps } from "./types";
-import { ProductInsert } from "../../../../models/products";
+import { Product, ProductInsert } from "../../../../models/products";
 import { FormikLabelInput } from "../../../../components/FormikLabelInput/FormikLabelInput";
 import { postProduct, updateProduct } from "../../../../server/api";
 
@@ -19,23 +19,34 @@ export const ModalManageProducts = ({
   product,
   isOpen,
   setIsOpen,
+  changeProducts,
+  products,
 }: ModalManageProductProps) => {
   async function handleNewProduc(values: ProductInsert) {
     try {
-      if (values) await postProduct(values);
-      alert("product created");
-      setIsOpen(false);
+      if (values) {
+        const productToAdd: Product = await postProduct(values);
+        changeProducts([...products, productToAdd]);
+        setIsOpen(false);
+      }
     } catch (error) {
       console.error("Error adding product", values);
     }
   }
   async function handleEditProduc(values: ProductInsert) {
     try {
-      const { ...productInsert } = product as ProductInsert;
+      const { ...productInsert } = values as ProductInsert;
       Reflect.deleteProperty(productInsert, "id");
-      if (values && product?.id) await updateProduct(productInsert, product.id);
-      alert("product updated");
-      setIsOpen(false);
+      if (values && product?.id) {
+        const productToAdd: Product = await updateProduct(
+          productInsert,
+          product.id
+        );
+        changeProducts(
+          products.map((p) => (p.id === product.id ? productToAdd : p))
+        );
+        setIsOpen(false);
+      }
     } catch (error) {
       console.error("Error updating product", values);
     }

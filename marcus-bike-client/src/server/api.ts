@@ -181,9 +181,10 @@ export async function postPartFromProduct(
   }
 }
 
-export async function postProduct(product: ProductInsert): Promise<void> {
+export async function postProduct(product: ProductInsert): Promise<Product> {
   try {
-    await apiService.post(`products`, product);
+    const res = await apiService.post(`products`, product);
+    return res.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw {
@@ -204,9 +205,10 @@ export async function postProduct(product: ProductInsert): Promise<void> {
 export async function updateProduct(
   product: ProductInsert,
   id: number
-): Promise<void> {
+): Promise<Product> {
   try {
-    await apiService.put(`products/${id}`, product);
+    const res = await apiService.put(`products/${id}`, product);
+    return res.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw {
