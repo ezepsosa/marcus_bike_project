@@ -13,7 +13,11 @@ import {
 } from "../../../components/styles";
 import { Container, Section } from "./styles";
 import { Product } from "../../../models/products";
-import { getProductParts, getProducts } from "../../../server/api";
+import {
+  deleteProduct,
+  getProductParts,
+  getProducts,
+} from "../../../server/api";
 import { ProductPart } from "../../../models/productPart";
 import { ModalProductParts } from "./ModalProductParts/ModalProductParts";
 import { ModalManageProducts } from "./ModalManageProduct/ModalManageProduct";
@@ -36,6 +40,15 @@ export const ManageProducts = () => {
     loadProducts();
     loadParts();
   }, []);
+
+  async function handleDeleteProduct(id: number) {
+    try {
+      await deleteProduct(id);
+      setProducts(products.filter((p) => p.id != id));
+    } catch (error) {
+      console.error("Error deleting product with id", id);
+    }
+  }
 
   return (
     <Section>
@@ -88,6 +101,13 @@ export const ManageProducts = () => {
                         }}
                       >
                         Edit product
+                      </TableButton>
+                      <TableButton
+                        type="button"
+                        $backgroundColor="red"
+                        onClick={() => handleDeleteProduct(product.id)}
+                      >
+                        Delete
                       </TableButton>
                     </ButtonContainer>
                   </TdBody>

@@ -225,3 +225,24 @@ export async function updateProduct(
     }
   }
 }
+
+export async function deleteProduct(id: number): Promise<Product> {
+  try {
+    const res = await apiService.delete(`products/${id}`);
+    return res.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw {
+        message: "Failed to delete a product",
+        statusText: error.response?.statusText || "Network error",
+        status: error.response?.status || 500,
+      };
+    } else {
+      throw {
+        message: "An unexpected error occurred while deleting a product",
+        statusText: "Unknown Error",
+        status: 500,
+      };
+    }
+  }
+}
