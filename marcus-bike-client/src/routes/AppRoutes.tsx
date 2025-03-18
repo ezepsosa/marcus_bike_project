@@ -5,6 +5,7 @@ import { ProductCatalogue } from "../pages/Products/ProductCatalog/ProductCatalo
 import { ProductDetail } from "../pages/Products/ProductDetail/ProductDetail";
 import { Dashboard } from "../pages/Admin/Dashboard/Dashboard";
 import { ManageProducts } from "../pages/Admin/Products/ManageProducts";
+import { ManageProductParts } from "../pages/Admin/Products copy/ManageProductParts";
 
 export function AppRoutes() {
   return (
@@ -17,6 +18,10 @@ export function AppRoutes() {
           <Route path="/admin">
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="manage/products" element={<ManageProducts />} />
+            <Route
+              path="manage/productparts"
+              element={<ManageProductParts />}
+            />
           </Route>
         </Route>
       </Routes>

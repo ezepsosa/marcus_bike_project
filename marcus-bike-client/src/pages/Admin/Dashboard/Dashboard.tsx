@@ -17,6 +17,9 @@ export const Dashboard = () => {
         <Link to="/admin/manage/products">
           <PrimaryButton>Manage products</PrimaryButton>
         </Link>
+        <Link to="/admin/manage/productparts">
+          <PrimaryButton>Manage product parts</PrimaryButton>
+        </Link>
       </Container>
     </Section>
   );

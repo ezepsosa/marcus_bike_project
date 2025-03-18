@@ -39,7 +39,8 @@ export const ProductDetail = () => {
   // Initial api load
   useEffect(() => {
     async function loadProductDetails(productId: number) {
-      setProductParts(await getProductDetails(productId));
+      const parts = await getProductDetails(productId);
+      setProductParts(parts.filter((part: ProductPart) => part.isAvailable));
     }
     async function loadProductPartConditions() {
       setConditions(await getProductPartConditions());

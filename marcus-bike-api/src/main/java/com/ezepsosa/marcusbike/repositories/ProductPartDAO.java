@@ -122,13 +122,13 @@ public class ProductPartDAO {
         return null;
     }
 
-    public Boolean update(Connection connection, ProductPart productPart) {
+    public Boolean update(Connection connection, Long id, ProductPart productPart) {
         try (PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY)) {
             pst.setString(1, productPart.getPartOption());
             pst.setBoolean(2, productPart.getIsAvailable());
             pst.setDouble(3, productPart.getBasePrice());
             pst.setString(4, productPart.getCategory().name().toLowerCase());
-            pst.setLong(5, productPart.getId());
+            pst.setLong(5, id);
 
             return pst.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -191,4 +191,5 @@ public class ProductPartDAO {
             return false;
         }
     }
+
 }
