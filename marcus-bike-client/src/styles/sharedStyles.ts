@@ -19,6 +19,9 @@ export const GeneralColors = {
   tableFontColor: "#f4f4f4",
   TableButtonColor: "#007bff",
   TableButtonHover: "#8d8d8d",
+  //Form
+  InputBackground: "#424242",
+  InputHoverBackground: "#333",
 };
 
 export const fonts = {
