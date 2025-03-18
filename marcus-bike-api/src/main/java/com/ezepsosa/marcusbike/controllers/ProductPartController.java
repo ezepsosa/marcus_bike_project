@@ -31,6 +31,7 @@ public class ProductPartController implements RouteRegistrar {
         router.add(Methods.GET, "/productparts", this::getAll);
         router.add(Methods.POST, "/productparts", this::insert);
         router.add(Methods.DELETE, "/productparts/{id}", this::delete);
+        router.add(Methods.PUT, "/productparts/{id}", this::update);
         router.add(Methods.GET, "/products/{id}/productparts", this::getAllByProduct);
         router.add(Methods.POST, "/products/{id}/productparts", this::addRelationWithProduct);
         router.add(Methods.DELETE, "/products/{productId}/productparts/{id}", this::deleteFromProduct);
@@ -164,5 +165,37 @@ public class ProductPartController implements RouteRegistrar {
             }
         });
 
+    }
+
+    public void update(HttpServerExchange exchage) {
+        logger.info("Received request: PUT /productparts/{id}");
+
+        exchage.getRequestReceiver().receiveFullBytes((exchange, message) -> {
+
+            try {
+                ProductPartInsertDTO productPartToUpdate = JsonResponseUtil.parseJson(message,
+                        ProductPartInsertDTO.class);
+                Long productId = RequestUtils.getRequestParam(exchange, "id");
+                if (productId == null || productId < 0) {
+                    logger.warn("Invalid or missing product part ID");
+                    JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing product ID");
+                    return;
+                }
+                Boolean updated = productPartService.update(productId, productPartToUpdate);
+                if (!updated) {
+                    logger.error("Error updating product part");
+                    JsonResponseUtil.sendErrorResponse(exchange, 204, "Product not updated");
+                    return;
+                }
+                logger.info("Product part updated with ID {}", productId);
+                ProductPartDTO productPart = new ProductPartDTO(productId, productPartToUpdate.partOption(),
+                        productPartToUpdate.basePrice(), productPartToUpdate.isAvailable(),
+                        productPartToUpdate.productPartCategory());
+                JsonResponseUtil.sendJsonResponse(exchange, productPart);
+            } catch (Exception e) {
+                logger.error("Error processing request", e);
+                JsonResponseUtil.sendErrorResponse(exchange, 500, "Invalid request body");
+            }
+        });
     }
 }

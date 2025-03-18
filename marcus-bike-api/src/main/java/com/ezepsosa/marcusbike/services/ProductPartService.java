@@ -64,9 +64,15 @@ public class ProductPartService {
         });
     }
 
-    public boolean delete(Long productId) {
+    public boolean delete(Long id) {
         return TransactionHandler.startTransaction((connection) -> {
-            return productPartDAO.delete(connection, productId);
+            return productPartDAO.delete(connection, id);
+        });
+    }
+
+    public boolean update(Long id, ProductPartInsertDTO productPart) {
+        return TransactionHandler.startTransaction((connection) -> {
+            return productPartDAO.update(connection, id, ProductPartMapper.toModel(productPart));
         });
     }
 
