@@ -1,23 +1,26 @@
 import { Formik } from "formik";
 import {
   ButtonContainer,
+  ErrorMessageFormik,
   FieldFormikWithErrorContainer,
   FormContainer,
   FormikForm,
   FormikInputField,
   FormikSelectField,
-  InputLabelContainer,
+  FieldLabelContainer,
   LabelText,
   ModalContainer,
   ModalContent,
   Option,
   SpanText,
   TableButton,
+  FormikCheckBox,
 } from "../../../../components/styles";
 import { postProductPart, updateProductPart } from "../../../../server/api";
 import { ModalManageProductPartsProps } from "./types";
 import { ProductPart, ProductPartInsert } from "../../../../models/productPart";
 import { ProductPartCategory } from "../../../../models/productPartCategory";
+import { ChangeEvent } from "react";
 
 export const ModalManageProductParts = ({
   productPart,
@@ -76,11 +79,12 @@ export const ModalManageProductParts = ({
             }
             validate={(values) => {
               const errors: Record<string, string> = {};
-              Object.keys(values).forEach((attribute) =>
-                values[attribute as keyof ProductPartInsert] == ""
-                  ? (errors[attribute] = "This field cannot be empty")
-                  : null
-              );
+              if (!values.partOption) {
+                errors.partOption = "This field cannot be empty";
+              } else if (isNaN(Number(values.basePrice))) {
+                errors.basePrice = "Enter a valid number";
+              }
+
               return errors;
             }}
             onSubmit={(values: ProductPartInsert) => {
@@ -91,7 +95,7 @@ export const ModalManageProductParts = ({
               <FormikForm>
                 <FormContainer>
                   <FieldFormikWithErrorContainer>
-                    <InputLabelContainer>
+                    <FieldLabelContainer>
                       <LabelText>Option :</LabelText>
                       <FormikInputField
                         as="input"
@@ -99,14 +103,43 @@ export const ModalManageProductParts = ({
                         value={values.partOption}
                         onChange={handleChange}
                       />
-                    </InputLabelContainer>
+                    </FieldLabelContainer>
+                    <ErrorMessageFormik component="div" name="partOption" />
                   </FieldFormikWithErrorContainer>
                   <FieldFormikWithErrorContainer>
+                    <FieldLabelContainer>
+                      <LabelText>Price :</LabelText>
+                      <FormikInputField
+                        as="input"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        name="basePrice"
+                        value={values.basePrice}
+                        onChange={handleChange}
+                      />
+                    </FieldLabelContainer>
+                    <ErrorMessageFormik component="div" name="basePrice" />
+                  </FieldFormikWithErrorContainer>
+                  <FieldLabelContainer>
+                    <LabelText>Category :</LabelText>
                     <FormikSelectField
                       as="select"
                       name="productPartCategory"
                       value={values.productPartCategory}
-                      onChange={handleChange}
+                      onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+                        handleChange(e);
+                        const selectedValue = e.target.value as string;
+
+                        if (
+                          Object.values(ProductPartCategory).includes(
+                            selectedValue as unknown as ProductPartCategory
+                          )
+                        ) {
+                          values.productPartCategory =
+                            selectedValue as unknown as ProductPartCategory;
+                        }
+                      }}
                     >
                       <Option value="" disabled>
                         -- Select a part --
@@ -114,19 +147,23 @@ export const ModalManageProductParts = ({
                       {Object.keys(ProductPartCategory)
                         .filter((category) => isNaN(Number(category)))
                         .map((category) => (
-                          <Option
-                            key={category}
-                            value={
-                              ProductPartCategory[
-                                category as keyof typeof ProductPartCategory
-                              ]
-                            }
-                          >
+                          <Option key={category} value={category}>
                             {category.replace("_", " ").toLowerCase()}{" "}
                           </Option>
                         ))}
                     </FormikSelectField>
-                  </FieldFormikWithErrorContainer>
+                  </FieldLabelContainer>
+                  <FieldLabelContainer>
+                    <LabelText>Available:</LabelText>
+                    <div>
+                      <FormikCheckBox
+                        type="checkbox"
+                        name="isAvailable"
+                        checked={values.isAvailable}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </FieldLabelContainer>
                 </FormContainer>
                 <ButtonContainer>
                   <TableButton $backgroundColor="black" type="submit">

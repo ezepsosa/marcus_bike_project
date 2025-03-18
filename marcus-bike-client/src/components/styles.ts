@@ -128,9 +128,27 @@ export const FormikInputField = styled(Field)`
   color: ${GeneralColors.textHighlight};
   padding: 0.5rem;
   border-radius: 0.8rem;
+    appearance: textfield;
+  -moz-appearance: textfield;
+  -webkit-appearance: textfield;
+
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   &:hover {
     background-color: ${GeneralColors.InputHoverBackground};
   }
+`;
+
+export const FormikCheckBox = styled(Field)`
+  width: 20px;
+  height: 20px;
+  border: 2px solid #007bff;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  background-color: white;
+  cursor: pointer;
 `;
 
 export const Option = styled.option``;
@@ -144,7 +162,7 @@ export const FormContainer = styled.div`
   padding: 1rem;
 `;
 
-export const InputLabelContainer = styled.div`
+export const FieldLabelContainer = styled.div`
   display: grid;
   grid-template-columns: 25% 75%;
   margin-top: 1rem;

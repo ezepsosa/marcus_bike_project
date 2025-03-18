@@ -271,7 +271,7 @@ export async function postProductPart(
   productPart: ProductPartInsert
 ): Promise<ProductPart> {
   try {
-    const res = await apiService.post(`products`, productPart);
+    const res = await apiService.post(`productparts`, productPart);
     return res.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {

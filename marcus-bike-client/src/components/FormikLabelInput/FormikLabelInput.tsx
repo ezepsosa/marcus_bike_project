@@ -1,4 +1,4 @@
-import { FormikInputField, InputLabelContainer, LabelText } from "../styles";
+import { FormikInputField, FieldLabelContainer, LabelText } from "../styles";
 import { FormikLabelInputProps } from "./types";
 
 export const FormikLabelInput = ({
@@ -7,7 +7,7 @@ export const FormikLabelInput = ({
   handleChange,
 }: FormikLabelInputProps) => {
   return (
-    <InputLabelContainer>
+    <FieldLabelContainer>
       <LabelText>
         {label
           .replace(/([A-Z])/g, " $1")
@@ -20,6 +20,6 @@ export const FormikLabelInput = ({
         value={value}
         onChange={handleChange}
       />
-    </InputLabelContainer>
+    </FieldLabelContainer>
   );
 };
