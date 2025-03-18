@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { fonts, GeneralColors } from "../styles/sharedStyles";
 import { ButtonProps, TableProps, TextProps } from "./types";
 import { Link } from "react-router-dom";
-import { Field, Form } from "formik";
+import { ErrorMessage, Field, Form } from "formik";
 
 export const Container = styled.div`
   display: flex;
@@ -83,9 +83,8 @@ export const SpanText = styled.span<TextProps>`
 export const LabelText = styled.label<TextProps>`
   color: ${({ $color }) => $color || GeneralColors.textPrimary};
   font-size: ${({ $fontSize }) => $fontSize || "0.8rem"};
-  font-family: ${fonts.robotoFontFamily};
+  font-family: ${fonts.montserratFontFamily};
   font-weight: 600;
-  font-style: italic;
 `;
 
 export const SelectContainer = styled.div`
@@ -121,8 +120,53 @@ export const FormikSelectField = styled(Field)`
   font-weight: 600;
 `;
 
+export const FormikInputField = styled(Field)`
+  width: 75%;
+  background-color: ${GeneralColors.InputBackground};
+  border: 1px solid #595959;
+  font-family: ${fonts.montserratFontFamily};
+  color: ${GeneralColors.textHighlight};
+  padding: 0.5rem;
+  border-radius: 0.8rem;
+  &:hover {
+    background-color: ${GeneralColors.InputHoverBackground};
+  }
+`;
+
 export const Option = styled.option``;
 
+export const FormContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  width: 90%;
+  height: 100%;
+  padding: 1rem;
+`;
+
+export const InputLabelContainer = styled.div`
+  display: grid;
+  grid-template-columns: 25% 75%;
+  margin-top: 1rem;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+`;
+
+export const ErrorMessageFormik = styled(ErrorMessage)`
+  color: red;
+  font-size: 0.8rem;
+  font-family: ${fonts.robotoFontFamily};
+  font-weight: 200;
+  margin: 0.2rem 0;
+`;
+
+export const FieldFormikWithErrorContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+`;
 //Table
 export const Table = styled.table<TableProps>`
   border: 1px solid ${GeneralColors.SecondaryButtonBackground};

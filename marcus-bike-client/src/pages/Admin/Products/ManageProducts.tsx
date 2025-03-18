@@ -43,7 +43,10 @@ export const ManageProducts = () => {
         <PrimaryTitle $fontSize={"2.4rem"}>Manage your products</PrimaryTitle>
         <PrimaryButton
           $backgroundColor="#f83"
-          onClick={() => setIsProductModalOpen(true)}
+          onClick={() => {
+            setIsProductModalOpen(true);
+            () => setProductSelected(undefined);
+          }}
         >
           Add product
         </PrimaryButton>
@@ -75,7 +78,15 @@ export const ManageProducts = () => {
                       >
                         Manage parts
                       </TableButton>
-                      <TableButton $color="black" $backgroundColor="#ffc107">
+                      <TableButton
+                        $color="black"
+                        $backgroundColor="#ffc107"
+                        type="button"
+                        onClick={() => {
+                          setIsProductModalOpen(true);
+                          setProductSelected(product);
+                        }}
+                      >
                         Edit product
                       </TableButton>
                     </ButtonContainer>
@@ -92,6 +103,7 @@ export const ManageProducts = () => {
           productId={productSelected?.id}
         />
         <ModalManageProducts
+          product={productSelected}
           setIsOpen={setIsProductModalOpen}
           isOpen={isProductModalOpen}
         />
