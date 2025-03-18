@@ -150,9 +150,9 @@ public class ProductPartController implements RouteRegistrar {
                         ProductPartInsertProductRelationDTO.class);
 
                 Boolean inserted = productPartService.addRelationWithProduct(productPartToInsert);
-                if (inserted == null) {
+                if (inserted == false || inserted == null) {
                     logger.error("error relating product to its part");
-                    JsonResponseUtil.sendErrorResponse(exchange, 500, "Failed relating product to its part");
+                    JsonResponseUtil.sendErrorResponse(exchange, 409, "Failed relating product to its part");
                     return;
                 }
                 logger.info("Successfully inserted relations");
