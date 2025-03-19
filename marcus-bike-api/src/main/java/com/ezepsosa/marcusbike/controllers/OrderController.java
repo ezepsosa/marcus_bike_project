@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.ezepsosa.marcusbike.dto.OrderDTO;
 import com.ezepsosa.marcusbike.dto.OrderInsertDTO;
 import com.ezepsosa.marcusbike.routes.RouteRegistrar;
+import com.ezepsosa.marcusbike.security.JwtAuthHandler;
 import com.ezepsosa.marcusbike.services.OrderService;
 import com.ezepsosa.marcusbike.utils.JsonResponseUtil;
 import com.ezepsosa.marcusbike.utils.RequestUtils;
@@ -31,8 +32,8 @@ public class OrderController implements RouteRegistrar {
         router.add(Methods.GET, "/orders", this::getAll);
         router.add(Methods.GET, "/users/{userId}/orders", this::getByUserId);
         router.add(Methods.GET, "/orders/{id}", this::getById);
-        router.add(Methods.DELETE, "orders/{id}", this::delete);
-        router.add(Methods.POST, "/orders", this::insert);
+        router.add(Methods.DELETE, "orders/{id}", new JwtAuthHandler(this::delete, List.of("USER", "ADMIN")));
+        router.add(Methods.POST, "/orders", new JwtAuthHandler(this::insert, List.of("USER", "ADMIN")));
     }
 
     public void getAll(HttpServerExchange exchange) {

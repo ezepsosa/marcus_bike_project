@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.ezepsosa.marcusbike.dto.UserDTO;
 import com.ezepsosa.marcusbike.dto.UserInsertDTO;
 import com.ezepsosa.marcusbike.routes.RouteRegistrar;
+import com.ezepsosa.marcusbike.security.JwtAuthHandler;
 import com.ezepsosa.marcusbike.services.UserService;
 import com.ezepsosa.marcusbike.utils.JsonResponseUtil;
 import com.ezepsosa.marcusbike.utils.RequestUtils;
@@ -29,11 +30,11 @@ public class UserController implements RouteRegistrar {
 
     @Override
     public void registerRoutes(RoutingHandler router) {
-        router.add(Methods.GET, "/users", this::getAll);
-        router.add(Methods.GET, "/users/{id}", this::getById);
+        router.add(Methods.GET, "/users", new JwtAuthHandler(this::getAll, List.of("ADMIN")));
+        router.add(Methods.GET, "/users/{id}", new JwtAuthHandler(this::getById, List.of("ADMIN")));
         router.add(Methods.POST, "/users", this::insert);
-        router.add(Methods.PUT, "/users/{id}", this::update);
-        router.add(Methods.DELETE, "/users/{id}", this::delete);
+        router.add(Methods.PUT, "/users/{id}", new JwtAuthHandler(this::update, List.of("USER", "ADMIN")));
+        router.add(Methods.DELETE, "/users/{id}", new JwtAuthHandler(this::delete, List.of("ADMIN")));
 
     }
 

@@ -30,11 +30,11 @@ public class ProductController implements RouteRegistrar {
 
     @Override
     public void registerRoutes(RoutingHandler router) {
-        router.add(Methods.GET, "/products", new JwtAuthHandler(this::getAll, List.of("USER", "ADMIN")));
+        router.add(Methods.GET, "/products", this::getAll);
         router.add(Methods.GET, "/products/{id}", this::getById);
-        router.add(Methods.POST, "/products", this::insert);
-        router.add(Methods.PUT, "/products/{id}", this::update);
-        router.add(Methods.DELETE, "/products/{id}", this::delete);
+        router.add(Methods.POST, "/products", new JwtAuthHandler(this::insert, List.of("ADMIN")));
+        router.add(Methods.PUT, "/products/{id}", new JwtAuthHandler(this::update, List.of("ADMIN")));
+        router.add(Methods.DELETE, "/products/{id}", new JwtAuthHandler(this::delete, List.of("ADMIN")));
 
     }
 

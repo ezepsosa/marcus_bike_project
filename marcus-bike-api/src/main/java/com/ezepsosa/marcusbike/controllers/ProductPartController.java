@@ -9,6 +9,7 @@ import com.ezepsosa.marcusbike.dto.ProductPartDTO;
 import com.ezepsosa.marcusbike.dto.ProductPartInsertDTO;
 import com.ezepsosa.marcusbike.dto.ProductPartInsertProductRelationDTO;
 import com.ezepsosa.marcusbike.routes.RouteRegistrar;
+import com.ezepsosa.marcusbike.security.JwtAuthHandler;
 import com.ezepsosa.marcusbike.services.ProductPartService;
 import com.ezepsosa.marcusbike.utils.JsonResponseUtil;
 import com.ezepsosa.marcusbike.utils.RequestUtils;
@@ -30,12 +31,14 @@ public class ProductPartController implements RouteRegistrar {
     @Override
     public void registerRoutes(RoutingHandler router) {
         router.add(Methods.GET, "/productparts", this::getAll);
-        router.add(Methods.POST, "/productparts", this::insert);
-        router.add(Methods.DELETE, "/productparts/{id}", this::delete);
-        router.add(Methods.PUT, "/productparts/{id}", this::update);
+        router.add(Methods.POST, "/productparts", new JwtAuthHandler(this::insert, List.of("ADMIN")));
+        router.add(Methods.DELETE, "/productparts/{id}", new JwtAuthHandler(this::delete, List.of("ADMIN")));
+        router.add(Methods.PUT, "/productparts/{id}", new JwtAuthHandler(this::update, List.of("ADMIN")));
         router.add(Methods.GET, "/products/{id}/productparts", this::getAllByProduct);
-        router.add(Methods.POST, "/products/{id}/productparts", this::addRelationWithProduct);
-        router.add(Methods.DELETE, "/products/{productId}/productparts/{id}", this::deleteFromProduct);
+        router.add(Methods.POST, "/products/{id}/productparts",
+                new JwtAuthHandler(this::addRelationWithProduct, List.of("ADMIN")));
+        router.add(Methods.DELETE, "/products/{productId}/productparts/{id}",
+                new JwtAuthHandler(this::deleteFromProduct, List.of("ADMIN")));
 
     }
 

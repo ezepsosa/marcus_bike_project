@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.ezepsosa.marcusbike.dto.ProductPartConditionDTO;
 import com.ezepsosa.marcusbike.dto.ProductPartConditionInsertDTO;
 import com.ezepsosa.marcusbike.routes.RouteRegistrar;
+import com.ezepsosa.marcusbike.security.JwtAuthHandler;
 import com.ezepsosa.marcusbike.services.ProductPartConditionService;
 import com.ezepsosa.marcusbike.utils.JsonResponseUtil;
 import com.ezepsosa.marcusbike.utils.RequestUtils;
@@ -29,9 +30,9 @@ public class ProductPartConditionController implements RouteRegistrar {
     @Override
     public void registerRoutes(RoutingHandler router) {
         router.add(Methods.GET, "/productpartconditions", this::getAll);
-        router.add(Methods.POST, "/productpartconditions", this::insert);
+        router.add(Methods.POST, "/productpartconditions", new JwtAuthHandler(this::insert, List.of("ADMIN")));
         router.add(Methods.DELETE, "/productpartconditions/{productpartid}/{dependantproductpartid}",
-                this::delete);
+                new JwtAuthHandler(this::delete, List.of("ADMIN")));
     }
 
     public void getAll(HttpServerExchange exchange) {
