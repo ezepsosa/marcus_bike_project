@@ -27,7 +27,8 @@ public class RouterConfig {
                 dependencyInjection.getOrderController(),
                 dependencyInjection.getOrderLineController(),
                 dependencyInjection.getProductPartController(),
-                dependencyInjection.getProductPartConditionController());
+                dependencyInjection.getProductPartConditionController(),
+                dependencyInjection.getAuthController());
 
         controllers.forEach(controller -> controller.registerRoutes(router));
 

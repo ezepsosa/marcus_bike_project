@@ -1,5 +1,6 @@
 package com.ezepsosa.marcusbike.config;
 
+import com.ezepsosa.marcusbike.controllers.AuthController;
 import com.ezepsosa.marcusbike.controllers.OrderController;
 import com.ezepsosa.marcusbike.controllers.OrderLineController;
 import com.ezepsosa.marcusbike.controllers.ProductController;
@@ -13,6 +14,7 @@ import com.ezepsosa.marcusbike.repositories.ProductDAO;
 import com.ezepsosa.marcusbike.repositories.ProductPartConditionDAO;
 import com.ezepsosa.marcusbike.repositories.ProductPartDAO;
 import com.ezepsosa.marcusbike.repositories.UserDAO;
+import com.ezepsosa.marcusbike.services.AuthService;
 import com.ezepsosa.marcusbike.services.OrderLineProductPartService;
 import com.ezepsosa.marcusbike.services.OrderLineService;
 import com.ezepsosa.marcusbike.services.OrderService;
@@ -84,6 +86,15 @@ public class DependencyInjection {
 
     public OrderController getOrderController() {
         return orderController;
+    }
+
+    // Login
+
+    private final AuthService authService = new AuthService();
+    private final AuthController authController = new AuthController(authService, userService);
+
+    public AuthController getAuthController() {
+        return authController;
     }
 
 }
