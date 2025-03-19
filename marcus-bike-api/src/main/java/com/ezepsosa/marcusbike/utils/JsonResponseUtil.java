@@ -15,6 +15,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.Headers;
+import io.undertow.util.StatusCodes;
 
 public class JsonResponseUtil {
 
@@ -26,7 +27,7 @@ public class JsonResponseUtil {
     private static final Logger logger = LoggerFactory.getLogger(JsonResponseUtil.class);
 
     public static void sendJsonResponse(HttpServerExchange exchange, Object response) {
-        sendJsonResponse(exchange, response, 200);
+        sendJsonResponse(exchange, response, StatusCodes.OK);
     }
 
     public static void sendJsonResponse(HttpServerExchange exchange, Object response, int statusCode) {
@@ -40,7 +41,7 @@ public class JsonResponseUtil {
 
         } catch (Exception e) {
             logger.error("Error serializing JSON response", e);
-            sendErrorResponse(exchange, 500, "Internal Server Error");
+            sendErrorResponse(exchange, StatusCodes.INTERNAL_SERVER_ERROR, "Internal Server Error");
         }
     }
 

@@ -15,6 +15,7 @@ import com.ezepsosa.marcusbike.utils.RequestUtils;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.RoutingHandler;
 import io.undertow.util.Methods;
+import io.undertow.util.StatusCodes;
 
 public class ProductPartConditionController implements RouteRegistrar {
 
@@ -49,7 +50,7 @@ public class ProductPartConditionController implements RouteRegistrar {
 
         if (productpartid == null || dependantproductpartid == null) {
             logger.warn("Invalid or missing ids ID");
-            JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing product ID");
+            JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.BAD_REQUEST, "Invalid or missing product ID");
         }
         logger.info("Deleting product part condition with IDs {},{}", productpartid, dependantproductpartid);
 
@@ -59,7 +60,7 @@ public class ProductPartConditionController implements RouteRegistrar {
             JsonResponseUtil.sendErrorResponse(exchange, 404, "Product not deleted or not found");
         }
         logger.info("Product part condition not found", productpartid);
-        JsonResponseUtil.sendJsonResponse(exchange, "Succesfully deleted", 204);
+        JsonResponseUtil.sendJsonResponse(exchange, "Succesfully deleted", StatusCodes.NO_CONTENT);
     }
 
     public void insert(HttpServerExchange exchange) {
@@ -73,13 +74,15 @@ public class ProductPartConditionController implements RouteRegistrar {
                 if (productPartConditionToInsert.partId() == null
                         || productPartConditionToInsert.dependantPartId() == null) {
                     logger.error("Error validating condition");
-                    JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid condition format or missing fields");
+                    JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.BAD_REQUEST,
+                            "Invalid condition format or missing fields");
                     return;
                 }
                 Boolean inserted = productPartConditionService.insert(productPartConditionToInsert);
                 if (inserted == false) {
                     logger.error("Error inserting condition");
-                    JsonResponseUtil.sendErrorResponse(exchange, 500, "Failed to insert condition");
+                    JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.INTERNAL_SERVER_ERROR,
+                            "Failed to insert condition");
                     return;
                 }
                 logger.info("Condition created", productPartConditionToInsert);
@@ -87,7 +90,7 @@ public class ProductPartConditionController implements RouteRegistrar {
 
             } catch (Exception e) {
                 logger.error("Error processing request", e);
-                JsonResponseUtil.sendErrorResponse(exchange, 500, "Invalid request body");
+                JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.INTERNAL_SERVER_ERROR, "Invalid request body");
             }
         });
 

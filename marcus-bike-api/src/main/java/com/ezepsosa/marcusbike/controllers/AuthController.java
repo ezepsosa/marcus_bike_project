@@ -13,13 +13,14 @@ import com.ezepsosa.marcusbike.utils.JsonResponseUtil;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.RoutingHandler;
 import io.undertow.util.Methods;
+import io.undertow.util.StatusCodes;
 
 public class AuthController implements RouteRegistrar {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
-    private AuthService authservice;
-    private UserService userService;
+    private final AuthService authservice;
+    private final UserService userService;
 
     public AuthController(AuthService authservice, UserService userService) {
         this.authservice = authservice;
@@ -47,7 +48,7 @@ public class AuthController implements RouteRegistrar {
                 }
             } catch (Exception e) {
                 logger.error("Error processing request", e);
-                JsonResponseUtil.sendErrorResponse(exchange, 500, "Invalid request body");
+                JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.INTERNAL_SERVER_ERROR, "Invalid request body");
             }
         });
 

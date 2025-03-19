@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.ezepsosa.marcusbike.dto.ProductDTO;
 import com.ezepsosa.marcusbike.dto.ProductInsertDTO;
 import com.ezepsosa.marcusbike.routes.RouteRegistrar;
+import com.ezepsosa.marcusbike.security.JwtAuthHandler;
 import com.ezepsosa.marcusbike.services.ProductService;
 import com.ezepsosa.marcusbike.utils.JsonResponseUtil;
 import com.ezepsosa.marcusbike.utils.RequestUtils;
@@ -16,6 +17,7 @@ import com.ezepsosa.marcusbike.utils.ValidatorUtils;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.RoutingHandler;
 import io.undertow.util.Methods;
+import io.undertow.util.StatusCodes;
 
 public class ProductController implements RouteRegistrar {
 
@@ -28,7 +30,7 @@ public class ProductController implements RouteRegistrar {
 
     @Override
     public void registerRoutes(RoutingHandler router) {
-        router.add(Methods.GET, "/products", this::getAll);
+        router.add(Methods.GET, "/products", new JwtAuthHandler(this::getAll, List.of("USER", "ADMIN")));
         router.add(Methods.GET, "/products/{id}", this::getById);
         router.add(Methods.POST, "/products", this::insert);
         router.add(Methods.PUT, "/products/{id}", this::update);
@@ -50,7 +52,7 @@ public class ProductController implements RouteRegistrar {
         Long productId = RequestUtils.getRequestParam(exchange, "id");
         if (productId == null) {
             logger.warn("Invalid or missing product ID");
-            JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing product ID");
+            JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.BAD_REQUEST, "Invalid or missing product ID");
             return;
         }
         logger.info("Fetching product with ID {}", productId);
@@ -73,13 +75,15 @@ public class ProductController implements RouteRegistrar {
 
                 if (!ValidatorUtils.validateProduct(productToInsert)) {
                     logger.error("Error validating product");
-                    JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid product format or missing fields");
+                    JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.BAD_REQUEST,
+                            "Invalid product format or missing fields");
                     return;
                 }
                 Long productId = productService.insert(productToInsert);
                 if (productId == null) {
                     logger.error("Error inserting product");
-                    JsonResponseUtil.sendErrorResponse(exchange, 500, "Failed to insert product");
+                    JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.INTERNAL_SERVER_ERROR,
+                            "Failed to insert product");
                     return;
                 }
                 logger.info("Product created with ID {}", productId);
@@ -90,7 +94,7 @@ public class ProductController implements RouteRegistrar {
 
             } catch (Exception e) {
                 logger.error("Error processing request", e);
-                JsonResponseUtil.sendErrorResponse(exchange, 500, "Invalid request body");
+                JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.INTERNAL_SERVER_ERROR, "Invalid request body");
             }
         });
 
@@ -106,18 +110,20 @@ public class ProductController implements RouteRegistrar {
                 Long productId = RequestUtils.getRequestParam(exchange, "id");
                 if (productId == null || productId < 0) {
                     logger.warn("Invalid or missing product ID");
-                    JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing product ID");
+                    JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.BAD_REQUEST,
+                            "Invalid or missing product ID");
                     return;
                 }
                 if (!ValidatorUtils.validateProduct(productToUpdate)) {
                     logger.error("Error validating product");
-                    JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid product format or missing fields");
+                    JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.BAD_REQUEST,
+                            "Invalid product format or missing fields");
                     return;
                 }
                 Boolean updated = productService.update(productToUpdate, productId);
                 if (!updated) {
                     logger.error("Error updating product");
-                    JsonResponseUtil.sendErrorResponse(exchange, 204, "Product not updated");
+                    JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.NO_CONTENT, "Product not updated");
                     return;
                 }
                 logger.info("Product updated with ID {}", productId);
@@ -127,7 +133,7 @@ public class ProductController implements RouteRegistrar {
                 JsonResponseUtil.sendJsonResponse(exchange, product);
             } catch (Exception e) {
                 logger.error("Error processing request", e);
-                JsonResponseUtil.sendErrorResponse(exchange, 500, "Invalid request body");
+                JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.INTERNAL_SERVER_ERROR, "Invalid request body");
             }
         });
     }
@@ -138,7 +144,7 @@ public class ProductController implements RouteRegistrar {
         Long productId = RequestUtils.getRequestParam(exchange, "id");
         if (productId == null) {
             logger.warn("Invalid or missing product ID");
-            JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing product ID");
+            JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.BAD_REQUEST, "Invalid or missing product ID");
         }
         logger.info("Deleting product with ID {}", productId);
 
@@ -148,6 +154,6 @@ public class ProductController implements RouteRegistrar {
             JsonResponseUtil.sendErrorResponse(exchange, 404, "Product not deleted or not found");
         }
         logger.info("Product with ID {} found", productId);
-        JsonResponseUtil.sendJsonResponse(exchange, "Succesfully deleted", 204);
+        JsonResponseUtil.sendJsonResponse(exchange, "Succesfully deleted", StatusCodes.NO_CONTENT);
     }
 }
