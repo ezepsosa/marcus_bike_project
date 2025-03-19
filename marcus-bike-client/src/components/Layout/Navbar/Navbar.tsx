@@ -42,7 +42,10 @@ export const Navbar = () => {
               <SecondaryButton onClick={logout}>Logout</SecondaryButton>{" "}
             </LinkText>
           ) : null}
-          <SecondaryButton $padding="0.3rem 0.7rem">
+          <SecondaryButton
+            $padding="0.3rem 0.7rem"
+            onClick={() => console.log(cart)}
+          >
             <ShoppingCarCounter color="white">{cart.length}</ShoppingCarCounter>
             <GiShoppingCart
               size="1.2rem"

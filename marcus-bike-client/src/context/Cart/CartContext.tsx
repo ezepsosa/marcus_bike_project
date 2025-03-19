@@ -1,20 +1,21 @@
 import { createContext, ReactNode, useState } from "react";
 import { CartContextType } from "./types";
-import { OrderLine } from "../../models/orderLines";
+import { OrderLineInsert } from "../../models/orderLines";
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 const CartProvider = ({ children }: { children: ReactNode }) => {
-  const [cart, setCart] = useState<OrderLine[]>([]);
+  const [cart, setCart] = useState<OrderLineInsert[]>([]);
 
-  const addToCart = (orderLine: OrderLine): void => {
+  const addToCart = (orderLine: OrderLineInsert): void => {
     setCart((prev) => [...prev, orderLine]);
   };
 
-  const deleteFromCart = (orderLine: OrderLine): void => {
+  const deleteFromCart = (orderLine: OrderLineInsert): void => {
     setCart((prev) => [
       ...prev.filter(
-        (orderlineCart: OrderLine) => orderlineCart.id != orderLine.id
+        (orderlineCart: OrderLineInsert) =>
+          orderlineCart.orderLineProductParts != orderLine.orderLineProductParts
       ),
     ]);
   };
