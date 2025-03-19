@@ -7,6 +7,7 @@ import { Dashboard } from "../pages/Admin/Dashboard/Dashboard";
 import { ManageConditions } from "../pages/Admin/Conditions/ManageCondition";
 import { ManageProducts } from "../pages/Admin/Product/ManageProducts";
 import { ManageProductParts } from "../pages/Admin/ProductPart/ManageProductParts";
+import { Login } from "../pages/Login/Login";
 
 export function AppRoutes() {
   return (
@@ -14,6 +15,7 @@ export function AppRoutes() {
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/customize" element={<ProductCatalogue />} />
           <Route path="/customize/details" element={<ProductDetail />} />
           <Route path="/admin">
