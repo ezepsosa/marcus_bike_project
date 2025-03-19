@@ -11,28 +11,36 @@ import { Container, Section } from "./styles";
 import { LoginUser } from "../../models/user";
 import { Formik, FormikHelpers } from "formik";
 import { FormikLabelInput } from "../../components/FormikLabelInput/FormikLabelInput";
-import { authenticateUser } from "../../server/api";
 import { useNavigate } from "react-router-dom";
+import { useUserAuth } from "../../context/User/useUserAuth";
 
 export const Login = () => {
   const navigate = useNavigate();
+  const { token, login } = useUserAuth();
+
   async function handleLogin(
     loginUser: LoginUser,
     setErrors: FormikHelpers<LoginUser>["setErrors"]
   ) {
-    try {
-      console.log(await authenticateUser(loginUser));
+    const loginResponse = await login(loginUser);
+    if (
+      typeof loginResponse === "object" &&
+      loginResponse !== null &&
+      "status" in loginResponse
+    ) {
+      console.error(
+        "Status code:",
+        (loginResponse as { status: number }).status
+      );
+      setErrors({
+        username: "Invalid credentials",
+        password: "Invalid credentials",
+      });
+    } else {
       navigate("/");
-    } catch (error: unknown) {
-      if (typeof error === "object" && error !== null && "status" in error) {
-        console.error("Status code:", (error as { status: number }).status);
-        setErrors({
-          username: "Invalid credentials",
-          password: "Invalid credentials",
-        });
-      }
     }
   }
+  if (token) navigate("/");
   return (
     <Section>
       <Container>
