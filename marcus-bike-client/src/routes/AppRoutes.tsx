@@ -10,6 +10,7 @@ import { ManageProductParts } from "../pages/Admin/ProductPart/ManageProductPart
 import { Login } from "../pages/Login/Login";
 import { UserProvider } from "../context/User/UserContext";
 import { AdminRoutes } from "./AdminRoutes";
+import { NotFound } from "../pages/NotFound/NotFound";
 
 export function AppRoutes() {
   return (
@@ -18,6 +19,7 @@ export function AppRoutes() {
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
+            <Route path="*" element={<NotFound />} />
             <Route path="/login" element={<Login />} />
             <Route path="/customize" element={<ProductCatalogue />} />
             <Route path="/customize/details" element={<ProductDetail />} />

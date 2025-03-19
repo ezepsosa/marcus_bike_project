@@ -1,5 +1,9 @@
 import { AuthResponseToken, LoginUser } from "./../models/user";
-import axios, { AxiosResponse } from "axios";
+import axios, {
+  AxiosError,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+} from "axios";
 import { Product, ProductInsert } from "../models/products";
 import { ProductPart, ProductPartInsert } from "../models/productPart";
 import {
@@ -15,6 +19,19 @@ const apiService = axios.create({
     "Content-type": "application/json",
   },
 });
+
+apiService.interceptors.request.use(
+  (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error: AxiosError) => {
+    return Promise.reject(error);
+  }
+);
 
 export async function getProducts(): Promise<Product[]> {
   try {

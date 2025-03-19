@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useState } from "react";
+import { createContext, ReactNode, useState, useEffect } from "react";
 import { AuthResponseToken, LoginUser } from "../../models/user";
 import { authenticateUser } from "../../server/api";
 import { UserContextType } from "./types";
@@ -11,6 +11,20 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
   const [role, setRole] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
 
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    const storedUserId = localStorage.getItem("userId");
+    const storedRole = localStorage.getItem("role");
+    const storedUsername = localStorage.getItem("username");
+
+    if (storedToken) {
+      setToken(storedToken);
+      setUserId(storedUserId ? Number(storedUserId) : null);
+      setRole(storedRole);
+      setUsername(storedUsername);
+    }
+  }, []);
+
   const login = async (loginUser: LoginUser): Promise<AuthResponseToken> => {
     try {
       const loginInfo = await authenticateUser(loginUser);
@@ -19,6 +33,10 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
       setRole(loginInfo.role);
       setUsername(loginInfo.username);
       localStorage.setItem("token", loginInfo.token);
+      localStorage.setItem("userId", String(loginInfo.userId));
+      localStorage.setItem("role", loginInfo.role);
+      localStorage.setItem("username", loginInfo.username);
+
       return loginInfo;
     } catch (error) {
       console.error("Failed to authenticate user");
@@ -32,6 +50,10 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
     setRole(null);
     setUsername(null);
     localStorage.removeItem("token");
+    localStorage.setIremoveItemtem("token");
+    localStorage.setremoveItemItem("userId");
+    localStorage.removeItem("role");
+    localStorage.removeItem("username");
   };
 
   return (

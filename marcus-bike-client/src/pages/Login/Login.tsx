@@ -73,6 +73,7 @@ export const Login = () => {
                 <FieldFormikWithErrorContainer>
                   <FormikLabelInput
                     key="password"
+                    type="password"
                     handleChange={handleChange}
                     label="password"
                     value={values.password}
