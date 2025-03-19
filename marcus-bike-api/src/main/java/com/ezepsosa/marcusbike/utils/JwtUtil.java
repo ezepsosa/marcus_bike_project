@@ -20,8 +20,9 @@ public class JwtUtil {
         return Jwts.builder().subject(username).claim("role", role).issuedAt(new Date()).signWith(key).compact();
     }
 
-    public static String getSubjectFromToken(String token) {
-        return Jwts.parser().verifyWith((SecretKey) key).build().parseSignedClaims(token).getPayload().getSubject();
+    public static String getRoleFromToken(String token) {
+        return Jwts.parser().verifyWith((SecretKey) key).build().parseSignedClaims(token).getPayload().get("role",
+                String.class);
     }
 
     public static boolean validateToken(String token) {
