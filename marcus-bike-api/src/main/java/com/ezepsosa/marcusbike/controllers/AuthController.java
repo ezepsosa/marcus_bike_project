@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ezepsosa.marcusbike.dto.AuthTokenInsert;
+import com.ezepsosa.marcusbike.dto.AuthTokenResponse;
 import com.ezepsosa.marcusbike.dto.UserDTO;
 import com.ezepsosa.marcusbike.routes.RouteRegistrar;
 import com.ezepsosa.marcusbike.services.AuthService;
@@ -42,15 +43,17 @@ public class AuthController implements RouteRegistrar {
                 if (user != null) {
                     String token = authservice.login(user.username(), user.role());
                     logger.warn("Invalid login attempt for user: {}", userToAuthenticate.username());
-                    JsonResponseUtil.sendJsonResponse(exchange, token);
+                    AuthTokenResponse response = new AuthTokenResponse(user.id(), user.username(), user.role(), token);
+                    JsonResponseUtil.sendJsonResponse(exchange, response);
+
                 } else {
-                    JsonResponseUtil.sendErrorResponse(exchange, 401, "Invalid credentials");
+                    JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.UNAUTHORIZED, "Invalid credentials");
                 }
             } catch (Exception e) {
                 logger.error("Error processing request", e);
                 JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.INTERNAL_SERVER_ERROR, "Invalid request body");
             }
-        });
 
+        });
     }
 }

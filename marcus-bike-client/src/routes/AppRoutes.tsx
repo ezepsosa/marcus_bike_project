@@ -7,26 +7,34 @@ import { Dashboard } from "../pages/Admin/Dashboard/Dashboard";
 import { ManageConditions } from "../pages/Admin/Conditions/ManageCondition";
 import { ManageProducts } from "../pages/Admin/Product/ManageProducts";
 import { ManageProductParts } from "../pages/Admin/ProductPart/ManageProductParts";
+import { Login } from "../pages/Login/Login";
+import { UserProvider } from "../context/User/UserContext";
+import { AdminRoutes } from "./AdminRoutes";
+import { NotFound } from "../pages/NotFound/NotFound";
 
 export function AppRoutes() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/customize" element={<ProductCatalogue />} />
-          <Route path="/customize/details" element={<ProductDetail />} />
-          <Route path="/admin">
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="manage/products" element={<ManageProducts />} />
-            <Route
-              path="manage/productparts"
-              element={<ManageProductParts />}
-            />
-            <Route path="manage/conditions" element={<ManageConditions />} />
+    <UserProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="*" element={<NotFound />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/customize" element={<ProductCatalogue />} />
+            <Route path="/customize/details" element={<ProductDetail />} />
+            <Route path="/admin" element={<AdminRoutes />}>
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="manage/products" element={<ManageProducts />} />
+              <Route
+                path="manage/productparts"
+                element={<ManageProductParts />}
+              />
+              <Route path="manage/conditions" element={<ManageConditions />} />
+            </Route>
           </Route>
-        </Route>
-      </Routes>
-    </BrowserRouter>
+        </Routes>
+      </BrowserRouter>
+    </UserProvider>
   );
 }

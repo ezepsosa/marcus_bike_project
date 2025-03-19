@@ -4,6 +4,7 @@ import { FormikLabelInputProps } from "./types";
 export const FormikLabelInput = ({
   label,
   value,
+  type,
   handleChange,
 }: FormikLabelInputProps) => {
   return (
@@ -16,6 +17,7 @@ export const FormikLabelInput = ({
       </LabelText>
       <FormikInputField
         as="input"
+        type={type}
         name={label}
         value={value}
         onChange={handleChange}

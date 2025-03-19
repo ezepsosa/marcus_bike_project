@@ -54,7 +54,12 @@ public class UserService {
 
     public UserDTO getUserByUsernamePassword(String username, String password) {
         return TransactionHandler.startTransaction((connection) -> {
-            return UserMapper.toDTO(userDAO.getUserByUsernamePassword(connection, username, password));
+            User user = userDAO.getUserByUsernamePassword(connection, username, password);
+            if (user != null) {
+                return UserMapper.toDTO(user);
+            } else {
+                return null;
+            }
         });
     }
 
