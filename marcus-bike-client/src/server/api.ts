@@ -342,10 +342,10 @@ export async function getPartsConditions(): Promise<ProductPartCondition[]> {
 }
 
 export async function postCondition(
-  productPart: ProductPartConditionInsert
+  condition: ProductPartConditionInsert
 ): Promise<ProductPartCondition> {
   try {
-    const res = await apiService.post(`productparts`, productPart);
+    const res = await apiService.post(`productpartconditions`, condition);
     return res.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -364,22 +364,24 @@ export async function postCondition(
   }
 }
 
-export async function updateCondition(
-  productPart: ProductPartConditionInsert
-): Promise<ProductPartCondition> {
+export async function deleteCondition(
+  partId: number,
+  dependantPartId: number
+): Promise<void> {
   try {
-    const res = await apiService.put(`productparts`, productPart);
-    return res.data;
+    await apiService.delete(
+      `productpartconditions/${partId}/${dependantPartId}`
+    );
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw {
-        message: "Failed to update a condition",
+        message: "Failed to delete a condition",
         statusText: error.response?.statusText || "Network error",
         status: error.response?.status || 500,
       };
     } else {
       throw {
-        message: "An unexpected error occurred while updating a condition",
+        message: "An unexpected error occurred deleting a condition",
         statusText: "Unknown Error",
         status: 500,
       };
