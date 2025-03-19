@@ -4,8 +4,9 @@ import { Home } from "../pages/Home/Home";
 import { ProductCatalogue } from "../pages/Products/ProductCatalog/ProductCatalogue";
 import { ProductDetail } from "../pages/Products/ProductDetail/ProductDetail";
 import { Dashboard } from "../pages/Admin/Dashboard/Dashboard";
-import { ManageProducts } from "../pages/Admin/Products/ManageProducts";
-import { ManageProductParts } from "../pages/Admin/Products copy/ManageProductParts";
+import { ManageConditions } from "../pages/Admin/Conditions/ManageCondition";
+import { ManageProducts } from "../pages/Admin/Product/ManageProducts";
+import { ManageProductParts } from "../pages/Admin/ProductPart/ManageProductParts";
 
 export function AppRoutes() {
   return (
@@ -22,6 +23,7 @@ export function AppRoutes() {
               path="manage/productparts"
               element={<ManageProductParts />}
             />
+            <Route path="manage/conditions" element={<ManageConditions />} />
           </Route>
         </Route>
       </Routes>

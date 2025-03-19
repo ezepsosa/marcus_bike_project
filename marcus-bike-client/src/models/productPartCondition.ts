@@ -1,3 +1,5 @@
+import { ProductPart } from "./productPart";
+
 export interface ProductPartCondition {
   partId: number;
   dependantPartId: number;
@@ -9,5 +11,12 @@ export interface ProductPartConditionInsert {
   partId: number;
   dependantPartId: number;
   priceAdjustment: number;
-  isRestriction: number;
+  isRestriction: boolean;
+}
+
+export interface ProductPartConditionExtended {
+  part: ProductPart;
+  dependantPart: ProductPart;
+  priceAdjustment: number;
+  isRestriction: boolean;
 }

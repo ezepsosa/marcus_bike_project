@@ -1,7 +1,10 @@
 import axios, { AxiosResponse } from "axios";
 import { Product, ProductInsert } from "../models/products";
 import { ProductPart, ProductPartInsert } from "../models/productPart";
-import { ProductPartCondition } from "../models/productPartCondition";
+import {
+  ProductPartCondition,
+  ProductPartConditionInsert,
+} from "../models/productPartCondition";
 
 const API_BASE_URL = `http://localhost:8080/api/`;
 
@@ -307,6 +310,78 @@ export async function updateProductPart(
     } else {
       throw {
         message: "An unexpected error occurred while editing a product part",
+        statusText: "Unknown Error",
+        status: 500,
+      };
+    }
+  }
+}
+
+export async function getPartsConditions(): Promise<ProductPartCondition[]> {
+  try {
+    const res: AxiosResponse<ProductPartCondition[]> = await apiService.get(
+      `productpartconditions`
+    );
+    return res.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw {
+        message: "Failed to fetch product parts from product",
+        statusText: error.response?.statusText || "Network error",
+        status: error.response?.status || 500,
+      };
+    } else {
+      throw {
+        message:
+          "An unexpected error occurred fetching product parts from product",
+        statusText: "Unknown Error",
+        status: 500,
+      };
+    }
+  }
+}
+
+export async function postCondition(
+  condition: ProductPartConditionInsert
+): Promise<ProductPartCondition> {
+  try {
+    const res = await apiService.post(`productpartconditions`, condition);
+    return res.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw {
+        message: "Failed to add a condition",
+        statusText: error.response?.statusText || "Network error",
+        status: error.response?.status || 500,
+      };
+    } else {
+      throw {
+        message: "An unexpected error occurred while adding a condition",
+        statusText: "Unknown Error",
+        status: 500,
+      };
+    }
+  }
+}
+
+export async function deleteCondition(
+  partId: number,
+  dependantPartId: number
+): Promise<void> {
+  try {
+    await apiService.delete(
+      `productpartconditions/${partId}/${dependantPartId}`
+    );
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw {
+        message: "Failed to delete a condition",
+        statusText: error.response?.statusText || "Network error",
+        status: error.response?.status || 500,
+      };
+    } else {
+      throw {
+        message: "An unexpected error occurred deleting a condition",
         statusText: "Unknown Error",
         status: 500,
       };
