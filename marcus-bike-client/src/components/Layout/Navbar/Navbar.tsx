@@ -33,6 +33,9 @@ export const Navbar = () => {
           {!token ? (
             <LinkText to="/login">
               {" "}
+              {/* Shopping cart button displaying item count.
+               Currently, it only logs to the console, but functionality
+               could be added  to navigate to the cart page. */}
               <SecondaryButton>Login</SecondaryButton>{" "}
             </LinkText>
           ) : null}

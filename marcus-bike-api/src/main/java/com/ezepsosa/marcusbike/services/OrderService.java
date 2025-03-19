@@ -13,6 +13,8 @@ import com.ezepsosa.marcusbike.models.Order;
 import com.ezepsosa.marcusbike.repositories.OrderDAO;
 import com.ezepsosa.marcusbike.utils.TransactionHandler;
 
+// Service for managing orders.  
+// Handles retrieval, insertion, updating, and deletion of orders, ensuring price validation.
 public class OrderService {
 
     private final OrderDAO orderDAO;
@@ -72,6 +74,8 @@ public class OrderService {
 
     }
 
+    // The method is not currently utilized, but it may become useful for future
+    // development or feature enhancements.
     public Boolean update(Order order) {
         return TransactionHandler.startTransaction((connection) -> {
             return orderDAO.update(connection, order);

@@ -13,6 +13,9 @@ import com.ezepsosa.marcusbike.models.OrderLine;
 import com.ezepsosa.marcusbike.repositories.OrderLineDAO;
 import com.ezepsosa.marcusbike.utils.TransactionHandler;
 
+// Service for managing order lines.  
+// Handles retrieval, insertion, updating, deletion, and validation of order line data.
+
 public class OrderLineService {
 
     private final OrderLineDAO orderLineDAO;

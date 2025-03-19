@@ -7,6 +7,7 @@ import com.ezepsosa.marcusbike.routes.RouterConfig;
 
 import io.undertow.Undertow;
 
+// Configures and manages the Undertow HTTP server.
 public class ServerConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(ServerConfig.class);

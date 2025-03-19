@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import com.ezepsosa.marcusbike.models.ProductPart;
 import com.ezepsosa.marcusbike.models.ProductPartCondition;
 
+// Handles database operations for product part conditions, including retrieval, insertion, updating, and deletion.
 public class ProductPartConditionDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(ProductPartConditionDAO.class);
@@ -40,6 +41,8 @@ public class ProductPartConditionDAO {
         return conditions;
     }
 
+    // The method is not currently utilized, but it may become useful for future
+    // development or feature enhancements.
     public ProductPartCondition getById(Connection connection, Long partId, Long dependantPartId) {
         try (PreparedStatement pst = connection.prepareStatement(SQL_GET_ID_QUERY)) {
             pst.setLong(1, partId);
@@ -71,6 +74,8 @@ public class ProductPartConditionDAO {
         return false;
     }
 
+    // The method is not currently utilized, but it may become useful for future
+    // development or feature enhancements.
     public Boolean update(Connection connection, ProductPartCondition productPartCondition) {
         try (PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY)) {
             pst.setDouble(1, productPartCondition.getPriceAdjustment());
@@ -107,11 +112,11 @@ public class ProductPartConditionDAO {
         String placeholders = productIds.stream().map(id -> "?").collect(Collectors.joining(","));
         String query = String.format(SQL_GET_ALL_BY_PRODUCT_ID_QUERY, placeholders);
 
-        try (PreparedStatement pst = connection.prepareStatement(query)){
+        try (PreparedStatement pst = connection.prepareStatement(query)) {
             for (int i = 0; i < productIds.size(); i++) {
                 pst.setLong(i + 1, productIds.get(i));
             }
-                ResultSet rs = pst.executeQuery();
+            ResultSet rs = pst.executeQuery();
             while (rs.next()) {
                 conditions.add(createProductPartConditions(rs));
             }

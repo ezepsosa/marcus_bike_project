@@ -4,6 +4,8 @@ import { ButtonProps, FormStyleProps, TableProps, TextProps } from "./types";
 import { Link } from "react-router-dom";
 import { ErrorMessage, Field, Form } from "formik";
 
+// *** General Styles ***  //
+
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -95,7 +97,8 @@ export const SelectContainer = styled.div`
   height: 100%;
 `;
 
-//Formik
+// *** Styles for Formik components ***  //
+
 export const FormikForm = styled(Form)<FormStyleProps>`
   display: flex;
   flex-direction: column;
@@ -184,7 +187,9 @@ export const FieldFormikWithErrorContainer = styled.div`
   justify-content: flex-start;
   align-items: center;
 `;
-//Table
+
+// *** Styles for tables ***  //
+
 export const Table = styled.table<TableProps>`
   border: 1px solid ${GeneralColors.SecondaryButtonBackground};
   border-radius: 1rem;
@@ -236,7 +241,7 @@ export const TableButton = styled.button<ButtonProps>`
   }
 `;
 
-// Modals
+// *** Styles for modals ***  //
 
 export const ModalContainer = styled.div`
   position: fixed;

@@ -5,6 +5,10 @@ import { UserContextType } from "./types";
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
+/**
+ * Provides authentication state and methods for user login/logout.
+ * Stores authentication details in local storage for persistence.
+ */
 const UserProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
@@ -50,8 +54,8 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
     setRole(null);
     setUsername(null);
     localStorage.removeItem("token");
-    localStorage.setIremoveItemtem("token");
-    localStorage.setremoveItemItem("userId");
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
     localStorage.removeItem("role");
     localStorage.removeItem("username");
   };

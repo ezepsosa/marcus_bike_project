@@ -1,6 +1,7 @@
 import { FormikInputField, FieldLabelContainer, LabelText } from "../styles";
 import { FormikLabelInputProps } from "./types";
 
+// Component for rendering a labeled input field using Formik
 export const FormikLabelInput = ({
   label,
   value,

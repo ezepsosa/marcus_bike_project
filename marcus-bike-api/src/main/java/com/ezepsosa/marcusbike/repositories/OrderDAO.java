@@ -14,6 +14,7 @@ import com.ezepsosa.marcusbike.models.Order;
 import com.ezepsosa.marcusbike.models.User;
 import com.ezepsosa.marcusbike.models.UserRole;
 
+// Handles database operations for orders, including retrieval, insertion, updating, and deletion.
 public class OrderDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(OrderDAO.class);

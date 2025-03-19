@@ -7,22 +7,38 @@ This repository contains my solution for Factorial's challenge on managing sport
 This exercise is designed as a **framework-less solution** using **Java-based technologies** for the backend, along with **PostgreSQL** and **React**.
 
 The application allows users to:
-- List available products.
-- Create new orders.
-- Modify existing products.
-- Apply different types of restrictions to the customer's product selections.
+- View a list of available products.
+- Create and manage new orders.
+- Log in as a user or admin for role-based access.
+- Modify existing products and their available parts.
+- Delete existing products from the system.
+- Apply various types of restrictions to customer product selections.
+- Customize and select parts for a specific product.
+- View detailed product information and part availability.
+- Manage the product parts related to each product (add, remove, update).
+- Add products and product parts via admin interface.
+- Add selected products with customized parts to the shopping cart.
+- Display and handle error messages for invalid selections or actions.
+
 
 The solution is based on the **purchase of customizable sporting goods**, meaning that an order consists of multiple components or parts.
 
 ## Application Views
-
 The app currently contains the following views:
 
 - **Home Page**: Placeholder page with no significant functionality.
 - **Product List Page**: Displays a list of available products.
 - **Order Creation Page**: Allows users to create an order by selecting multiple options, validating selections, checking prices, and finalizing the order.
-- **Product Detail & Parts Management Page**: Displays detailed information about a product and its associated parts, allowing for management of product components.
-  - **Parts Management Modal**: Opens when selecting an option to edit or delete parts related to a product.
+- **404 Page**: Displays an error page for invalid routes.
+
+**Admin Views**:
+- **Admin Dashboard**: Provides three buttons for managing products, parts, and orders (currently without significant functionality).
+  - **Product Management Modal (Admin)**: Opens for adding, editing, and deleting products.
+  - **Parts Management Modal (Admin)**: Opens for adding, editing, and deleting product parts.
+  - **Conditions Management Modal (Admin)**: Opens for adding and deleting product part conditions.
+
+
+
 
 ### **General Requirements**
 - ☕ **Java 17** → Required for backend development. Install from [Oracle](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html) or your preferred JDK provider.
@@ -44,8 +60,8 @@ The app currently contains the following views:
 - [Jackson Databind](https://github.com/FasterXML/jackson-databind) – JSON serialization and deserialization library.  
 - [Jackson JSR310](https://github.com/FasterXML/jackson-modules-java8) – Provides support for Java Date/Time API in JSON processing.  
 - [SLF4J](https://www.slf4j.org/) – Logging abstraction framework.  
-- [Logback](https://logback.qos.ch/) – Logging implementation for SLF4J.  
-- [JUnit](https://junit.org/) – Testing framework for unit and integration tests.  
+- [Logback](https://logback.qos.ch/) – Logging implementation for SLF4J.   
+- [JWT (JSON Web Token)](https://jwt.io/) – For handling authentication and authorization with tokens.   
 
 ### Build & Execution  
 - [Exec Maven Plugin](https://www.mojohaus.org/exec-maven-plugin/) – Enables running Java applications using Maven.  
@@ -184,6 +200,7 @@ You can test the API using **Postman**, **cURL**, or any other API testing tool.
         │   │   │   │   ├── models/ (Database Models)
         │   │   │   │   ├── repositories/ (Data Access Layer)
         │   │   │   │   ├── routes/ (API Routing and CORS)
+        │   │   │   │   ├── security/ (JWT handling security)
         │   │   │   │   ├── services/ (Business Logic)
         │   │   │   │   ├── utils/ (Helper Utilities)
         │   │   │   ├── resources/
@@ -199,6 +216,7 @@ You can test the API using **Postman**, **cURL**, or any other API testing tool.
         │   ├── src/
         │   │   ├── assets/ (Static Images & Icons)
         │   │   ├── components/ (Reusable UI Components)
+        │   │   ├── conext/ (Context components)
         │   │   ├── models/ (Type Definitions)
         │   │   ├── pages/ (Application Views)
         │   │   ├── routes/ (Client-side Routing)
@@ -210,41 +228,45 @@ You can test the API using **Postman**, **cURL**, or any other API testing tool.
 ![Database Model](docs/db-model.png)
 
 ## 📡 API Endpoints
+### Users
+- **GET `/users`** → Retrieves a list of all users (Requires ADMIN role).
+- **GET `/users/{id}`** → Retrieves details of a specific user (Requires ADMIN role).
+- **POST `/users`** → Creates a new user.
+- **PUT `/users/{id}`** → Updates an existing user (Requires USER or ADMIN role).
+- **DELETE `/users/{id}`** → Deletes a user by ID (Requires ADMIN role).
+
+### Product Parts & Conditions
+- **GET `/productpartconditions`** → Retrieves all product part conditions.
+- **POST `/productpartconditions`** → Creates a new product part condition (Requires ADMIN role).
+- **DELETE `/productpartconditions/{productpartid}/{dependantproductpartid}`** → Deletes a product part condition (Requires ADMIN role).
+
+### Product Parts Management
+- **GET `/productparts`** → Retrieves all product parts.
+- **POST `/productparts`** → Creates a new product part (Requires ADMIN role).
+- **PUT `/productparts/{id}`** → Updates an existing product part (Requires ADMIN role).
+- **DELETE `/productparts/{id}`** → Deletes a product part by ID (Requires ADMIN role).
+- **GET `/products/{id}/productparts`** → Retrieves all product parts related to a specific product.
+- **POST `/products/{id}/productparts`** → Adds a relation between a product and a product part (Requires ADMIN role).
+- **DELETE `/products/{productId}/productparts/{id}`** → Removes a product part from a product (Requires ADMIN role).
+
+### Products
+- **GET `/products`** → Retrieves a list of all products.
+- **GET `/products/{id}`** → Retrieves details of a specific product.
+- **POST `/products`** → Creates a new product (Requires ADMIN role).
+- **PUT `/products/{id}`** → Updates an existing product (Requires ADMIN role).
+- **DELETE `/products/{id}`** → Deletes a product by ID (Requires ADMIN role).
 
 ### Orders
 - **GET `/orders`** → Retrieves a list of all orders.
 - **GET `/orders/{id}`** → Retrieves details of a specific order.
 - **GET `/users/{userId}/orders`** → Retrieves all orders placed by a specific user.
+- **POST `/orders`** → Creates a new order (Requires USER or ADMIN role).
+- **DELETE `/orders/{id}`** → Deletes an order by ID (Requires USER or ADMIN role).
 - **GET `/orders/{id}/orderlines`** → Retrieves order lines associated with a specific order.
-- **POST `/orders`** → Creates a new order.
-- **DELETE `/orders/{id}`** → Deletes an order by ID.
 
-### Products
-- **GET `/products`** → Retrieves a list of all products.
-- **GET `/products/{id}`** → Retrieves details of a specific product.
-- **POST `/products`** → Creates a new product.
-- **PUT `/products/{id}`** → Updates an existing product.
-- **DELETE `/products/{id}`** → Deletes a product by ID.
+### Login
+- **POST `/login`** → Authenticates a user and returns an authentication token.
 
-### Product Parts & Conditions
-- **GET `/productpartconditions`** → Retrieves all product part conditions.
-- **POST `/productpartconditions`** → Creates a new product part condition.
-- **DELETE `/productpartconditions/{productpartid}/{dependantproductpartid}`** → Deletes a product part condition.
-
-- **GET `/productparts`** → Retrieves all product parts.
-- **POST `/productparts`** → Creates a new product part.
-- **DELETE `/productparts/{id}`** → Deletes a product part by ID.
-
-- **GET `/products/{id}/productparts`** → Retrieves all product parts related to a specific product.
-- **POST `/products/{id}/productparts`** → Adds a relation between a product and a product part.
-- **DELETE `/products/{productId}/productparts/{id}`** → Removes a product part from a product.
-
-### Users
-- **GET `/users`** → Retrieves a list of all users.
-- **GET `/users/{id}`** → Retrieves details of a specific user.
-- **POST `/users`** → Creates a new user.
-- **PUT `/users/{id}`** → Updates an existing user.
-- **DELETE `/users/{id}`** → Deletes a user by ID.
              
 ## 🔍 Technical Rationale
 
@@ -274,6 +296,8 @@ The project leverages lightweight, modern, and well-maintained libraries to ensu
 - **Flyway**: Chosen for its simplicity and effectiveness in managing database migrations, ensuring a structured and version-controlled approach.
 - **Jackson**: A highly efficient and configurable JSON serialization library, widely adopted in Java applications.
 - **SLF4J + Logback**: A flexible and lightweight logging solution, offering easy configuration and broad industry adoption.
+- **JWT (JSON Web Token)**: Chosen for its simplicity and security in handling user authentication and authorization. It enables secure, stateless authentication by generating tokens upon user login.
+
 
 ### 🎨 **Frontend Architecture Overview**  
 
@@ -304,29 +328,24 @@ This **framework-less** approach was chosen to keep the application lightweight,
 ### 🚧 Future improvementes
 - Implement tests for both backend and frontend to improve reliability.  
 - Add a dedicated login endpoint.  
-- Implement a session token creation mechanism for secure authentication.  
 - Add more business logic validations to enforce data integrity and application rules.  
 - Improve error handling by making responses more consistent and easier to debug.  
 - Refine how user conditions are managed (currently handled via a database trigger but could also be controlled in frontend and backend).  
-- Implement role-based access control (RBAC) to restrict actions based on user roles.  
 - Optimize database queries by reducing redundancy and improving indexing.  
 - Implement a refresh token mechanism to avoid requiring frequent logins.  
 - Improve logging and monitoring. 
 - Provide API documentation using Swagger/OpenAPI for better maintainability and ease of use.  
 - Add new attributes to the models, such as the product category attribute, to enable future filtering by specific product categories when the store expands beyond just selling bicycles.
 - Improve UI and styling for better consistency and user experience.  
-- Implement a shopping cart for users.  
-- Add a login page.  
-- Implement a 404 Not Found page for better navigation.  
+- Add a registration page 
 - Add JWT authentication to manage user sessions securely.  
-- Improve global state management with React Context API or Redux (This could be used for the shopping cart). 
 - Improve user experience by adding better loading indicators, clearer error messages, and stronger validation.
 - Add more client-side validation to reduce unnecessary API calls.  
 - Improve product search and filtering options.  
-- Improve session security by properly storing tokens and refining authentication mechanisms.
 - Add pagination.
-- Add page of creation and modification of products.
-- Add page for the control of conditions.
+- Improve type safety in the React application.
+- Fix the issue with select fields where Formik doesn't maintain the initial value when left as default in some selects.
+- Error propagation.
 
 ## 📌 Final Notes  
 

@@ -15,6 +15,9 @@ import { Product, ProductInsert } from "../../../../models/products";
 import { FormikLabelInput } from "../../../../components/FormikLabelInput/FormikLabelInput";
 import { postProduct, updateProduct } from "../../../../server/api";
 
+/**
+ * Modal component for managing products, allowing both adding new products and editing existing ones.
+ */
 export const ModalManageProducts = ({
   product,
   isOpen,
@@ -22,6 +25,9 @@ export const ModalManageProducts = ({
   changeProducts,
   products,
 }: ModalManageProductProps) => {
+  /**
+   * Async function to handle adding a new product to the list and closing the modal.
+   */
   async function handleNewProduc(values: ProductInsert) {
     try {
       if (values) {
@@ -33,6 +39,9 @@ export const ModalManageProducts = ({
       console.error("Error adding product", values);
     }
   }
+  /**
+   * Async function to handle editing an existing product and updating the list.
+   */
   async function handleEditProduc(values: ProductInsert) {
     try {
       const { ...productInsert } = values as ProductInsert;

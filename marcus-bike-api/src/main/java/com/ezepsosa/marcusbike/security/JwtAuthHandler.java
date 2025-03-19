@@ -9,6 +9,9 @@ import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.StatusCodes;
 
+// Middleware for handling JWT authentication and authorization.  
+// Validates the token, extracts the user role, and ensures the user has the required role.  
+// No expiration check is implemented as this is a non-production environment for a technical test.
 public class JwtAuthHandler implements HttpHandler {
 
     private final HttpHandler exchangeAuth;

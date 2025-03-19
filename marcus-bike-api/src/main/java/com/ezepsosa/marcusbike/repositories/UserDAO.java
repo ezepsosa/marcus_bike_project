@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.ezepsosa.marcusbike.models.User;
 import com.ezepsosa.marcusbike.models.UserRole;
 
+// Handles database operations for users, including retrieval, insertion, updating, and deletion.
 public class UserDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(UserDAO.class);
@@ -23,6 +24,7 @@ public class UserDAO {
     private final String SQL_UPDATE_QUERY = "UPDATE app_user  SET username = ?, email = ?, password_hash = ?, user_role = ?::user_role   WHERE id = ?";
     private final String SQL_DELETE_QUERY = "DELETE FROM app_user WHERE id = (?)";
     private final String SQL_GET_BY_USERNAME_PASSWORD = "SELECT * FROM app_user WHERE username = ? AND password_hash = ?";
+
     public List<User> getAll(Connection connection) {
         List<User> users = new ArrayList<>();
         try (PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
@@ -101,21 +103,21 @@ public class UserDAO {
         }
         return false;
     }
-    
+
     public User getUserByUsernamePassword(Connection connection, String username, String password) {
-    	 try (PreparedStatement pst = connection.prepareStatement(SQL_GET_BY_USERNAME_PASSWORD)) {
-             pst.setString(1, username);
-             pst.setString(2, password);
-             ResultSet rs = pst.executeQuery();
-             while(rs.next()) {
-            	 return createUser(rs);
-             }
-         } catch (SQLException e) {
-             logger.warn("Error updating user. SQL returned error {}, Error Code: {}", e.getSQLState(),
-                     e.getErrorCode());
-         }
-         return null;
-    	
+        try (PreparedStatement pst = connection.prepareStatement(SQL_GET_BY_USERNAME_PASSWORD)) {
+            pst.setString(1, username);
+            pst.setString(2, password);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                return createUser(rs);
+            }
+        } catch (SQLException e) {
+            logger.warn("Error updating user. SQL returned error {}, Error Code: {}", e.getSQLState(),
+                    e.getErrorCode());
+        }
+        return null;
+
     }
 
     private User createUser(ResultSet rs) throws SQLException {

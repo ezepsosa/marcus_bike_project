@@ -22,6 +22,12 @@ import { useUserAuth } from "../../../context/User/useUserAuth";
 import { useCart } from "../../../context/Cart/useCart";
 import { OrderLineInsert } from "../../../models/orderLines";
 
+/**
+ * ProductDetail component allows users to customize a product and add selected parts to the cart.
+ * Formik is not properly utilized here, as the form handling and state management are mixed.
+ * The form should purely rely on Formik for better functionality and validation, but can be optimized in the future.
+ */
+
 export const ProductDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();

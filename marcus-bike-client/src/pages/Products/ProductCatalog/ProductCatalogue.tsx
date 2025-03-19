@@ -14,6 +14,12 @@ import { MdBlurCircular, MdCategory } from "react-icons/md";
 import { GiMetalPlate } from "react-icons/gi";
 import { ProductInfo } from "./ProductInfo/ProductInfo";
 
+/**
+ * Product Catalogue component that displays a list of products available for selection.
+ * Each product is displayed with its name, brand, category, and material along with an image.
+ * Clicking a product redirects to the product's details page.
+ */
+
 export const ProductCatalogue = () => {
   const [products, setProduct] = useState<Product[]>([]);
 

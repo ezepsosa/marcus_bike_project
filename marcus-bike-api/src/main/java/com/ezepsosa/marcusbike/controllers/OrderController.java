@@ -18,6 +18,7 @@ import io.undertow.server.RoutingHandler;
 import io.undertow.util.Methods;
 import io.undertow.util.StatusCodes;
 
+// Controller that handles order-related API requests.
 public class OrderController implements RouteRegistrar {
 
     private final OrderService orderService;
@@ -36,6 +37,7 @@ public class OrderController implements RouteRegistrar {
         router.add(Methods.POST, "/orders", new JwtAuthHandler(this::insert, List.of("USER", "ADMIN")));
     }
 
+    // Retrieves all orders
     public void getAll(HttpServerExchange exchange) {
         logger.info("Received request: GET /orders");
         List<OrderDTO> orders = orderService.getAll();
@@ -44,6 +46,7 @@ public class OrderController implements RouteRegistrar {
 
     }
 
+    // Retrieves all orders by user
     public void getByUserId(HttpServerExchange exchange) {
         logger.info("Received request: GET /orders/{userId}/orders");
         Long userId = RequestUtils.getRequestParam(exchange, "userId");
@@ -58,6 +61,7 @@ public class OrderController implements RouteRegistrar {
 
     }
 
+    // Retrieves all orders by id
     public void getById(HttpServerExchange exchange) {
         logger.info("Received request: GET /orders/{id}");
         Long orderId = RequestUtils.getRequestParam(exchange, "id");
@@ -77,6 +81,7 @@ public class OrderController implements RouteRegistrar {
 
     }
 
+    // Retrieves all product parts from an order
     public void getOrderLineProductPartsById(HttpServerExchange exchange) {
         logger.info("Received request: GET /orders/{id}");
         Long orderId = RequestUtils.getRequestParam(exchange, "id");
@@ -91,6 +96,7 @@ public class OrderController implements RouteRegistrar {
 
     }
 
+    // Delete an order given its id
     public void delete(HttpServerExchange exchange) {
         logger.info("Received request: DELETE /order/{id}");
         Long orderId = RequestUtils.getRequestParam(exchange, "id");
@@ -110,6 +116,7 @@ public class OrderController implements RouteRegistrar {
 
     }
 
+    // Insert an order
     public void insert(HttpServerExchange exchange) {
         logger.info("Received request: POST /order");
         exchange.getRequestReceiver().receiveFullBytes((ex, message) -> {

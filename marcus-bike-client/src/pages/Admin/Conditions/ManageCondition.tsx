@@ -24,6 +24,11 @@ import {
 } from "../../../models/productPartCondition";
 import { ModalManageConditions } from "./ModalManageCondition/ModalManageConditions";
 
+/**
+ * Component for managing product part conditions.
+ * Allows users to view, add, and delete conditions between parts.
+ */
+
 export const ManageConditions = () => {
   const [productParts, setProductParts] = useState<ProductPart[]>([]);
   const [informationalConditions, setInformationalConditions] =
@@ -31,6 +36,10 @@ export const ManageConditions = () => {
   const [conditions, setConditions] = useState<ProductPartCondition[]>([]);
   const [isProductModalOpen, setIsProductModalOpen] = useState<boolean>(false);
 
+  /**
+   * Effect to transform raw conditions into a structured format with product part details.
+   * Runs when conditions or product parts change.
+   */
   useEffect(() => {
     function createInformationalConditions() {
       const res: ProductPartConditionExtended[] = [];
@@ -56,6 +65,10 @@ export const ManageConditions = () => {
     createInformationalConditions();
   }, [conditions, productParts]);
 
+  /**
+   * Effect to load product parts and conditions from the API on component mount.
+   */
+
   useEffect(() => {
     async function loadConditions() {
       setConditions(await getPartsConditions());
@@ -68,6 +81,10 @@ export const ManageConditions = () => {
     loadProductParts();
   }, []);
 
+  /**
+   * Handles the deletion of a product part condition.
+   * Calls the API and updates the state by removing the deleted condition.
+   */
   async function handleDeleteCondition(
     partId: number,
     dependantPartId: number

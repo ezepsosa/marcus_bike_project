@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import com.ezepsosa.marcusbike.models.ProductPart;
 import com.ezepsosa.marcusbike.models.ProductPartCategory;
 
+// Handles database operations for product parts, including retrieval, insertion, updating, and deletion.
 public class ProductPartDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(ProductPartDAO.class);
@@ -84,6 +85,8 @@ public class ProductPartDAO {
         return productParts;
     }
 
+    // The method is not currently utilized, but it may become useful for future
+    // development or feature enhancements.
     public ProductPart getById(Connection connection, Long id) {
         try (PreparedStatement pst = connection.prepareStatement(SQL_GET_ID_QUERY)) {
             pst.setLong(1, id);

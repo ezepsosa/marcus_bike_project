@@ -11,6 +11,9 @@ import com.ezepsosa.marcusbike.mappers.ProductPartMapper;
 import com.ezepsosa.marcusbike.repositories.ProductPartDAO;
 import com.ezepsosa.marcusbike.utils.TransactionHandler;
 
+// Service for managing product parts.  
+// Handles retrieval, insertion, updating, deletion, and relations between products and product parts.
+
 public class ProductPartService {
 
     private final ProductPartDAO productPartDAO;

@@ -10,6 +10,8 @@ import com.ezepsosa.marcusbike.models.User;
 import com.ezepsosa.marcusbike.repositories.UserDAO;
 import com.ezepsosa.marcusbike.utils.TransactionHandler;
 
+// Service for managing users.  
+// Handles retrieval, insertion, updating, deletion, and authentication of users.
 public class UserService {
 
     private final UserDAO userDAO;

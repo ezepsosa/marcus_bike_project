@@ -13,6 +13,9 @@ import com.ezepsosa.marcusbike.models.OrderLineProductPart;
 import com.ezepsosa.marcusbike.repositories.OrderLineProductPartDAO;
 import com.ezepsosa.marcusbike.utils.TransactionHandler;
 
+// Service for managing order line product parts.  
+// Handles retrieval, insertion, deletion, and validation of price conditions.
+
 public class OrderLineProductPartService {
 
     private final OrderLineProductPartDAO orderLineProductPartDAO;
@@ -32,19 +35,6 @@ public class OrderLineProductPartService {
             return orderLineProductPartDAO.getByOrderLineId(connection, orderLineId).stream()
                     .map(OrderLineProductPartMapper::toDTO)
                     .collect(Collectors.toList());
-        });
-    }
-
-    public OrderLineProductPartDTO getByOrderId(Long orderLine, Long dependantPart) {
-        return TransactionHandler.startTransaction((connection) -> {
-            return OrderLineProductPartMapper
-                    .toDTO(orderLineProductPartDAO.getById(connection, orderLine, dependantPart));
-        });
-    }
-
-    public Boolean delete(Long orderLine, Long dependantPart) {
-        return TransactionHandler.startTransaction((connection) -> {
-            return orderLineProductPartDAO.delete(connection, orderLine, dependantPart);
         });
     }
 
