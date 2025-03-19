@@ -17,27 +17,20 @@ import { useUserAuth } from "../../context/User/useUserAuth";
 export const Login = () => {
   const navigate = useNavigate();
   const { token, login } = useUserAuth();
-
   async function handleLogin(
     loginUser: LoginUser,
     setErrors: FormikHelpers<LoginUser>["setErrors"]
   ) {
-    const loginResponse = await login(loginUser);
-    if (
-      typeof loginResponse === "object" &&
-      loginResponse !== null &&
-      "status" in loginResponse
-    ) {
-      console.error(
-        "Status code:",
-        (loginResponse as { status: number }).status
-      );
-      setErrors({
-        username: "Invalid credentials",
-        password: "Invalid credentials",
-      });
-    } else {
-      navigate("/");
+    try {
+      await login(loginUser);
+    } catch (error: unknown) {
+      if (typeof error === "object" && error !== null && "status" in error) {
+        console.error("Status code:", (error as { status: number }).status);
+        setErrors({
+          username: "Invalid credentials",
+          password: "Invalid credentials",
+        });
+      }
     }
   }
   if (token) navigate("/");

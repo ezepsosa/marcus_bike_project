@@ -18,10 +18,12 @@ import {
 import { ProductImage } from "../ProductCatalog/styles";
 import { ProductPartCondition } from "../../../models/productPartCondition";
 import { ErrorMessage, Formik } from "formik";
+import { useUserAuth } from "../../../context/User/useUserAuth";
 
 export const ProductDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { token } = useUserAuth();
 
   const { id, productName, imageUrl } = location.state || {};
   const [parts, setProductParts] = useState<ProductPart[]>([]);
@@ -204,7 +206,13 @@ export const ProductDetail = () => {
             <SpanText $fontSize="1.2rem" $color="#ffc600">
               Total: {totalPrice}€
             </SpanText>
-            <PrimaryButton type="submit">Add to cart</PrimaryButton>
+            {token ? (
+              <PrimaryButton type="submit">Add to cart</PrimaryButton>
+            ) : (
+              <PrimaryButton type="button" onClick={() => navigate("/login")}>
+                Login First
+              </PrimaryButton>
+            )}
           </FormikForm>
         </Formik>
       </Container>
