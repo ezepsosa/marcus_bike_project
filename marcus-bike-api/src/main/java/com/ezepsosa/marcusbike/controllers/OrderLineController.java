@@ -16,6 +16,7 @@ import com.ezepsosa.marcusbike.utils.RequestUtils;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.RoutingHandler;
 import io.undertow.util.Methods;
+import io.undertow.util.StatusCodes;
 
 public class OrderLineController implements RouteRegistrar {
     private static final Logger logger = LoggerFactory.getLogger(OrderLineController.class);
@@ -38,7 +39,7 @@ public class OrderLineController implements RouteRegistrar {
         Long orderId = RequestUtils.getRequestParam(exchange, "id");
         if (orderId == null) {
             logger.warn("Invalid or missing order ID");
-            JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing order ID");
+            JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.BAD_REQUEST, "Invalid or missing order ID");
             return;
         }
         List<OrderLineDTO> orderLines = orderLineService.getByOrderId(orderId);
@@ -52,7 +53,7 @@ public class OrderLineController implements RouteRegistrar {
         Long orderLineId = RequestUtils.getRequestParam(exchange, "id");
         if (orderLineId == null) {
             logger.warn("Invalid or missing orderLine ID");
-            JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing orderLine ID");
+            JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.BAD_REQUEST, "Invalid or missing orderLine ID");
             return;
         }
 

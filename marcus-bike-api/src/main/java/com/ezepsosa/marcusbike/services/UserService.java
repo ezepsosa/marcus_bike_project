@@ -52,4 +52,10 @@ public class UserService {
 
     }
 
+    public UserDTO getUserByUsernamePassword(String username, String password) {
+        return TransactionHandler.startTransaction((connection) -> {
+            return UserMapper.toDTO(userDAO.getUserByUsernamePassword(connection, username, password));
+        });
+    }
+
 }

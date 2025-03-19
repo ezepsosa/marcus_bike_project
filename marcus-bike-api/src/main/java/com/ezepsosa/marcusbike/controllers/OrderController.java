@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.ezepsosa.marcusbike.dto.OrderDTO;
 import com.ezepsosa.marcusbike.dto.OrderInsertDTO;
 import com.ezepsosa.marcusbike.routes.RouteRegistrar;
+import com.ezepsosa.marcusbike.security.JwtAuthHandler;
 import com.ezepsosa.marcusbike.services.OrderService;
 import com.ezepsosa.marcusbike.utils.JsonResponseUtil;
 import com.ezepsosa.marcusbike.utils.RequestUtils;
@@ -15,6 +16,7 @@ import com.ezepsosa.marcusbike.utils.RequestUtils;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.RoutingHandler;
 import io.undertow.util.Methods;
+import io.undertow.util.StatusCodes;
 
 public class OrderController implements RouteRegistrar {
 
@@ -30,8 +32,8 @@ public class OrderController implements RouteRegistrar {
         router.add(Methods.GET, "/orders", this::getAll);
         router.add(Methods.GET, "/users/{userId}/orders", this::getByUserId);
         router.add(Methods.GET, "/orders/{id}", this::getById);
-        router.add(Methods.DELETE, "orders/{id}", this::delete);
-        router.add(Methods.POST, "/orders", this::insert);
+        router.add(Methods.DELETE, "orders/{id}", new JwtAuthHandler(this::delete, List.of("USER", "ADMIN")));
+        router.add(Methods.POST, "/orders", new JwtAuthHandler(this::insert, List.of("USER", "ADMIN")));
     }
 
     public void getAll(HttpServerExchange exchange) {
@@ -47,7 +49,7 @@ public class OrderController implements RouteRegistrar {
         Long userId = RequestUtils.getRequestParam(exchange, "userId");
         if (userId == null) {
             logger.warn("Invalid or missing user ID");
-            JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing order ID");
+            JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.BAD_REQUEST, "Invalid or missing order ID");
             return;
         }
         List<OrderDTO> orders = orderService.getByUserId(userId);
@@ -61,13 +63,13 @@ public class OrderController implements RouteRegistrar {
         Long orderId = RequestUtils.getRequestParam(exchange, "id");
         if (orderId == null) {
             logger.warn("Invalid or missing order ID");
-            JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing order ID");
+            JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.BAD_REQUEST, "Invalid or missing order ID");
             return;
         }
         OrderDTO order = orderService.getById(orderId);
         if (order == null) {
             logger.warn("No orders found with ID {}", orderId);
-            JsonResponseUtil.sendErrorResponse(exchange, 400, "No orders found");
+            JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.BAD_REQUEST, "No orders found");
             return;
         }
         JsonResponseUtil.sendJsonResponse(exchange, order);
@@ -80,7 +82,7 @@ public class OrderController implements RouteRegistrar {
         Long orderId = RequestUtils.getRequestParam(exchange, "id");
         if (orderId == null) {
             logger.warn("Invalid or missing order ID");
-            JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing order ID");
+            JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.BAD_REQUEST, "Invalid or missing order ID");
             return;
         }
         OrderDTO orders = orderService.getById(orderId);
@@ -94,7 +96,7 @@ public class OrderController implements RouteRegistrar {
         Long orderId = RequestUtils.getRequestParam(exchange, "id");
         if (orderId == null) {
             logger.warn("Invalid or missing order ID");
-            JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing order ID");
+            JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.BAD_REQUEST, "Invalid or missing order ID");
             return;
         }
         Boolean deleted = orderService.delete(orderId);
@@ -117,14 +119,15 @@ public class OrderController implements RouteRegistrar {
                 Long orderId = orderService.insert(orderToInsert);
                 if (orderId == null) {
                     logger.error("Error inserting order");
-                    JsonResponseUtil.sendErrorResponse(exchange, 500, "Failed to insert order");
+                    JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.INTERNAL_SERVER_ERROR,
+                            "Failed to insert order");
                     return;
                 }
                 logger.info("Order created with ID {}", orderId);
                 JsonResponseUtil.sendJsonResponse(exchange, orderId, 201);
             } catch (Exception e) {
                 logger.error("Error processing request", e);
-                JsonResponseUtil.sendErrorResponse(exchange, 500, "Invalid request body");
+                JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.INTERNAL_SERVER_ERROR, "Invalid request body");
             }
         });
 

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.ezepsosa.marcusbike.dto.UserDTO;
 import com.ezepsosa.marcusbike.dto.UserInsertDTO;
 import com.ezepsosa.marcusbike.routes.RouteRegistrar;
+import com.ezepsosa.marcusbike.security.JwtAuthHandler;
 import com.ezepsosa.marcusbike.services.UserService;
 import com.ezepsosa.marcusbike.utils.JsonResponseUtil;
 import com.ezepsosa.marcusbike.utils.RequestUtils;
@@ -16,6 +17,7 @@ import com.ezepsosa.marcusbike.utils.ValidatorUtils;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.RoutingHandler;
 import io.undertow.util.Methods;
+import io.undertow.util.StatusCodes;
 
 public class UserController implements RouteRegistrar {
 
@@ -28,11 +30,11 @@ public class UserController implements RouteRegistrar {
 
     @Override
     public void registerRoutes(RoutingHandler router) {
-        router.add(Methods.GET, "/users", this::getAll);
-        router.add(Methods.GET, "/users/{id}", this::getById);
+        router.add(Methods.GET, "/users", new JwtAuthHandler(this::getAll, List.of("ADMIN")));
+        router.add(Methods.GET, "/users/{id}", new JwtAuthHandler(this::getById, List.of("ADMIN")));
         router.add(Methods.POST, "/users", this::insert);
-        router.add(Methods.PUT, "/users/{id}", this::update);
-        router.add(Methods.DELETE, "/users/{id}", this::delete);
+        router.add(Methods.PUT, "/users/{id}", new JwtAuthHandler(this::update, List.of("USER", "ADMIN")));
+        router.add(Methods.DELETE, "/users/{id}", new JwtAuthHandler(this::delete, List.of("ADMIN")));
 
     }
 
@@ -50,7 +52,7 @@ public class UserController implements RouteRegistrar {
         Long userId = RequestUtils.getRequestParam(exchange, "id");
         if (userId == null) {
             logger.warn("Invalid or missing user ID");
-            JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing user ID");
+            JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.BAD_REQUEST, "Invalid or missing user ID");
             return;
         }
         logger.info("Fetching user with ID {}", userId);
@@ -74,13 +76,15 @@ public class UserController implements RouteRegistrar {
 
                 if (!ValidatorUtils.validateUser(userToInsert)) {
                     logger.error("Error validating user");
-                    JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid user format or missing fields");
+                    JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.BAD_REQUEST,
+                            "Invalid user format or missing fields");
                     return;
                 }
                 Long userId = userService.insert(userToInsert);
                 if (userId == null) {
                     logger.error("Error inserting user");
-                    JsonResponseUtil.sendErrorResponse(exchange, 500, "Failed to insert user");
+                    JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.INTERNAL_SERVER_ERROR,
+                            "Failed to insert user");
                     return;
                 }
                 logger.info("User created with ID {}", userId);
@@ -88,7 +92,7 @@ public class UserController implements RouteRegistrar {
 
             } catch (Exception e) {
                 logger.error("Error processing request", e);
-                JsonResponseUtil.sendErrorResponse(exchange, 500, "Invalid request body");
+                JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.INTERNAL_SERVER_ERROR, "Invalid request body");
             }
         });
 
@@ -102,20 +106,21 @@ public class UserController implements RouteRegistrar {
                 Long userId = RequestUtils.getRequestParam(exchange, "id");
                 if (userId == null || userId < 1) {
                     logger.warn("Invalid or missing user ID");
-                    JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing user ID");
+                    JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.BAD_REQUEST, "Invalid or missing user ID");
                     return;
                 }
                 UserInsertDTO userToUpdate = JsonResponseUtil.parseJson(message, UserInsertDTO.class);
 
                 if (!ValidatorUtils.validateUser(userToUpdate)) {
                     logger.error("Error validating user");
-                    JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid user format or missing fields");
+                    JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.BAD_REQUEST,
+                            "Invalid user format or missing fields");
                     return;
                 }
                 Boolean updated = userService.update(userToUpdate, userId);
                 if (!updated) {
                     logger.error("Error updating user");
-                    JsonResponseUtil.sendErrorResponse(exchange, 204, "User not updated");
+                    JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.NO_CONTENT, "User not updated");
                     return;
                 }
                 logger.info("User updated with ID {}", userId);
@@ -123,7 +128,7 @@ public class UserController implements RouteRegistrar {
                 JsonResponseUtil.sendJsonResponse(exchange, userUpdated);
             } catch (Exception e) {
                 logger.error("Error processing request", e);
-                JsonResponseUtil.sendErrorResponse(exchange, 500, "Invalid request body");
+                JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.INTERNAL_SERVER_ERROR, "Invalid request body");
             }
         });
     }
@@ -134,7 +139,7 @@ public class UserController implements RouteRegistrar {
         Long userId = RequestUtils.getRequestParam(exchange, "id");
         if (userId == null) {
             logger.warn("Invalid or missing user ID");
-            JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing user ID");
+            JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.BAD_REQUEST, "Invalid or missing user ID");
             return;
         }
         logger.info("Deleting user with ID {}", userId);
@@ -146,6 +151,6 @@ public class UserController implements RouteRegistrar {
             return;
         }
         logger.info("User with ID {} found", userId);
-        JsonResponseUtil.sendJsonResponse(exchange, "Succesfully deleted", 204);
+        JsonResponseUtil.sendJsonResponse(exchange, "Succesfully deleted", StatusCodes.NO_CONTENT);
     }
 }

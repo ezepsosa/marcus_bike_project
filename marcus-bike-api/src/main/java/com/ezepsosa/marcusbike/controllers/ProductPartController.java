@@ -9,6 +9,7 @@ import com.ezepsosa.marcusbike.dto.ProductPartDTO;
 import com.ezepsosa.marcusbike.dto.ProductPartInsertDTO;
 import com.ezepsosa.marcusbike.dto.ProductPartInsertProductRelationDTO;
 import com.ezepsosa.marcusbike.routes.RouteRegistrar;
+import com.ezepsosa.marcusbike.security.JwtAuthHandler;
 import com.ezepsosa.marcusbike.services.ProductPartService;
 import com.ezepsosa.marcusbike.utils.JsonResponseUtil;
 import com.ezepsosa.marcusbike.utils.RequestUtils;
@@ -16,6 +17,7 @@ import com.ezepsosa.marcusbike.utils.RequestUtils;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.RoutingHandler;
 import io.undertow.util.Methods;
+import io.undertow.util.StatusCodes;
 
 public class ProductPartController implements RouteRegistrar {
 
@@ -29,12 +31,14 @@ public class ProductPartController implements RouteRegistrar {
     @Override
     public void registerRoutes(RoutingHandler router) {
         router.add(Methods.GET, "/productparts", this::getAll);
-        router.add(Methods.POST, "/productparts", this::insert);
-        router.add(Methods.DELETE, "/productparts/{id}", this::delete);
-        router.add(Methods.PUT, "/productparts/{id}", this::update);
+        router.add(Methods.POST, "/productparts", new JwtAuthHandler(this::insert, List.of("ADMIN")));
+        router.add(Methods.DELETE, "/productparts/{id}", new JwtAuthHandler(this::delete, List.of("ADMIN")));
+        router.add(Methods.PUT, "/productparts/{id}", new JwtAuthHandler(this::update, List.of("ADMIN")));
         router.add(Methods.GET, "/products/{id}/productparts", this::getAllByProduct);
-        router.add(Methods.POST, "/products/{id}/productparts", this::addRelationWithProduct);
-        router.add(Methods.DELETE, "/products/{productId}/productparts/{id}", this::deleteFromProduct);
+        router.add(Methods.POST, "/products/{id}/productparts",
+                new JwtAuthHandler(this::addRelationWithProduct, List.of("ADMIN")));
+        router.add(Methods.DELETE, "/products/{productId}/productparts/{id}",
+                new JwtAuthHandler(this::deleteFromProduct, List.of("ADMIN")));
 
     }
 
@@ -55,13 +59,13 @@ public class ProductPartController implements RouteRegistrar {
         Long productId = RequestUtils.getRequestParam(exchange, "id");
         if (productId == null) {
             logger.warn("Invalid or missing product ID");
-            JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing product ID");
+            JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.BAD_REQUEST, "Invalid or missing product ID");
             return;
         }
         List<ProductPartDTO> productParts = productPartService.getByProductId(productId);
         if (productParts == null) {
             logger.warn("No product parts found with ID {}", productId);
-            JsonResponseUtil.sendErrorResponse(exchange, 400, "No product parts found");
+            JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.BAD_REQUEST, "No product parts found");
             return;
         }
         JsonResponseUtil.sendJsonResponse(exchange, productParts);
@@ -76,7 +80,7 @@ public class ProductPartController implements RouteRegistrar {
 
         if (productPartId == null) {
             logger.warn("Invalid or missing product part ID");
-            JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing product ID");
+            JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.BAD_REQUEST, "Invalid or missing product ID");
         }
         logger.info("Deleting product part with ID {}", productPartId);
 
@@ -86,7 +90,7 @@ public class ProductPartController implements RouteRegistrar {
             JsonResponseUtil.sendErrorResponse(exchange, 404, "Product part not deleted or not found");
         }
         logger.info("Product part with ID {} found", productPartId);
-        JsonResponseUtil.sendJsonResponse(exchange, "Succesfully deleted", 204);
+        JsonResponseUtil.sendJsonResponse(exchange, "Succesfully deleted", StatusCodes.NO_CONTENT);
     }
 
     public void deleteFromProduct(HttpServerExchange exchange) {
@@ -97,12 +101,12 @@ public class ProductPartController implements RouteRegistrar {
 
         if (productPartId == null) {
             logger.warn("Invalid or missing product part ID");
-            JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing product part ID");
+            JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.BAD_REQUEST, "Invalid or missing product part ID");
         }
         logger.info("Deleting product part with ID {}", productPartId);
         if (productId == null) {
             logger.warn("Invalid or missing product ID");
-            JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing product ID");
+            JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.BAD_REQUEST, "Invalid or missing product ID");
         }
         logger.info("Deleting product part with ID {}", productPartId);
         Boolean deleted = productPartService.deleteFromProduct(productId, productPartId);
@@ -111,7 +115,7 @@ public class ProductPartController implements RouteRegistrar {
             JsonResponseUtil.sendErrorResponse(exchange, 404, "Product part not deleted or not found");
         }
         logger.info("Product {} with product part ID {} deleted", productPartId, productPartId);
-        JsonResponseUtil.sendJsonResponse(exchange, "Succesfully deleted", 204);
+        JsonResponseUtil.sendJsonResponse(exchange, "Succesfully deleted", StatusCodes.NO_CONTENT);
     }
 
     public void insert(HttpServerExchange exchange) {
@@ -125,7 +129,8 @@ public class ProductPartController implements RouteRegistrar {
                 Long productPartId = productPartService.insert(productPartToInsert);
                 if (productPartId == null) {
                     logger.error("Error inserting product part");
-                    JsonResponseUtil.sendErrorResponse(exchange, 500, "Failed to insert product part");
+                    JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.INTERNAL_SERVER_ERROR,
+                            "Failed to insert product part");
                     return;
                 }
                 logger.info("Product part created with ID {}", productPartId);
@@ -136,7 +141,7 @@ public class ProductPartController implements RouteRegistrar {
 
             } catch (Exception e) {
                 logger.error("Error processing request", e);
-                JsonResponseUtil.sendErrorResponse(exchange, 500, "Invalid request body");
+                JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.INTERNAL_SERVER_ERROR, "Invalid request body");
             }
         });
 
@@ -161,7 +166,7 @@ public class ProductPartController implements RouteRegistrar {
 
             } catch (Exception e) {
                 logger.error("Error processing request", e);
-                JsonResponseUtil.sendErrorResponse(exchange, 500, "Invalid request body");
+                JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.INTERNAL_SERVER_ERROR, "Invalid request body");
             }
         });
 
@@ -178,13 +183,14 @@ public class ProductPartController implements RouteRegistrar {
                 Long productId = RequestUtils.getRequestParam(exchange, "id");
                 if (productId == null || productId < 0) {
                     logger.warn("Invalid or missing product part ID");
-                    JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing product ID");
+                    JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.BAD_REQUEST,
+                            "Invalid or missing product ID");
                     return;
                 }
                 Boolean updated = productPartService.update(productId, productPartToUpdate);
                 if (!updated) {
                     logger.error("Error updating product part");
-                    JsonResponseUtil.sendErrorResponse(exchange, 204, "Product not updated");
+                    JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.NO_CONTENT, "Product not updated");
                     return;
                 }
                 logger.info("Product part updated with ID {}", productId);
@@ -194,7 +200,7 @@ public class ProductPartController implements RouteRegistrar {
                 JsonResponseUtil.sendJsonResponse(exchange, productPart);
             } catch (Exception e) {
                 logger.error("Error processing request", e);
-                JsonResponseUtil.sendErrorResponse(exchange, 500, "Invalid request body");
+                JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.INTERNAL_SERVER_ERROR, "Invalid request body");
             }
         });
     }

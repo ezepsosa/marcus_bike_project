@@ -3,6 +3,7 @@ package com.ezepsosa.marcusbike.routes;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HttpString;
+import io.undertow.util.StatusCodes;
 
 public class CorsHandler implements HttpHandler {
     private final HttpHandler next;
@@ -19,7 +20,7 @@ public class CorsHandler implements HttpHandler {
                 "Content-Type, Authorization");
 
         if (exchange.getRequestMethod().equals(new HttpString("OPTIONS"))) {
-            exchange.setStatusCode(204);
+            exchange.setStatusCode(StatusCodes.NO_CONTENT);
             exchange.endExchange();
             return;
         }

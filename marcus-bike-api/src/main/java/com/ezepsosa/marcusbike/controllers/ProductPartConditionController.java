@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.ezepsosa.marcusbike.dto.ProductPartConditionDTO;
 import com.ezepsosa.marcusbike.dto.ProductPartConditionInsertDTO;
 import com.ezepsosa.marcusbike.routes.RouteRegistrar;
+import com.ezepsosa.marcusbike.security.JwtAuthHandler;
 import com.ezepsosa.marcusbike.services.ProductPartConditionService;
 import com.ezepsosa.marcusbike.utils.JsonResponseUtil;
 import com.ezepsosa.marcusbike.utils.RequestUtils;
@@ -15,6 +16,7 @@ import com.ezepsosa.marcusbike.utils.RequestUtils;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.RoutingHandler;
 import io.undertow.util.Methods;
+import io.undertow.util.StatusCodes;
 
 public class ProductPartConditionController implements RouteRegistrar {
 
@@ -28,9 +30,9 @@ public class ProductPartConditionController implements RouteRegistrar {
     @Override
     public void registerRoutes(RoutingHandler router) {
         router.add(Methods.GET, "/productpartconditions", this::getAll);
-        router.add(Methods.POST, "/productpartconditions", this::insert);
+        router.add(Methods.POST, "/productpartconditions", new JwtAuthHandler(this::insert, List.of("ADMIN")));
         router.add(Methods.DELETE, "/productpartconditions/{productpartid}/{dependantproductpartid}",
-                this::delete);
+                new JwtAuthHandler(this::delete, List.of("ADMIN")));
     }
 
     public void getAll(HttpServerExchange exchange) {
@@ -49,7 +51,7 @@ public class ProductPartConditionController implements RouteRegistrar {
 
         if (productpartid == null || dependantproductpartid == null) {
             logger.warn("Invalid or missing ids ID");
-            JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid or missing product ID");
+            JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.BAD_REQUEST, "Invalid or missing product ID");
         }
         logger.info("Deleting product part condition with IDs {},{}", productpartid, dependantproductpartid);
 
@@ -59,7 +61,7 @@ public class ProductPartConditionController implements RouteRegistrar {
             JsonResponseUtil.sendErrorResponse(exchange, 404, "Product not deleted or not found");
         }
         logger.info("Product part condition not found", productpartid);
-        JsonResponseUtil.sendJsonResponse(exchange, "Succesfully deleted", 204);
+        JsonResponseUtil.sendJsonResponse(exchange, "Succesfully deleted", StatusCodes.NO_CONTENT);
     }
 
     public void insert(HttpServerExchange exchange) {
@@ -73,13 +75,15 @@ public class ProductPartConditionController implements RouteRegistrar {
                 if (productPartConditionToInsert.partId() == null
                         || productPartConditionToInsert.dependantPartId() == null) {
                     logger.error("Error validating condition");
-                    JsonResponseUtil.sendErrorResponse(exchange, 400, "Invalid condition format or missing fields");
+                    JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.BAD_REQUEST,
+                            "Invalid condition format or missing fields");
                     return;
                 }
                 Boolean inserted = productPartConditionService.insert(productPartConditionToInsert);
                 if (inserted == false) {
                     logger.error("Error inserting condition");
-                    JsonResponseUtil.sendErrorResponse(exchange, 500, "Failed to insert condition");
+                    JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.INTERNAL_SERVER_ERROR,
+                            "Failed to insert condition");
                     return;
                 }
                 logger.info("Condition created", productPartConditionToInsert);
@@ -87,7 +91,7 @@ public class ProductPartConditionController implements RouteRegistrar {
 
             } catch (Exception e) {
                 logger.error("Error processing request", e);
-                JsonResponseUtil.sendErrorResponse(exchange, 500, "Invalid request body");
+                JsonResponseUtil.sendErrorResponse(exchange, StatusCodes.INTERNAL_SERVER_ERROR, "Invalid request body");
             }
         });
 
