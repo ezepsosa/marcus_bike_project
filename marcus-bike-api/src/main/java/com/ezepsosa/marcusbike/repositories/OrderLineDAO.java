@@ -16,7 +16,6 @@ import com.ezepsosa.marcusbike.models.OrderLine;
 import com.ezepsosa.marcusbike.models.Product;
 
 // Manages database operations for orders, including retrieval, insertion, updating, and deletion.
-
 public class OrderLineDAO {
 
 	private static final Logger logger = LoggerFactory.getLogger(OrderLineDAO.class);

@@ -38,19 +38,6 @@ public class OrderLineProductPartService {
         });
     }
 
-    public OrderLineProductPartDTO getByOrderId(Long orderLine, Long dependantPart) {
-        return TransactionHandler.startTransaction((connection) -> {
-            return OrderLineProductPartMapper
-                    .toDTO(orderLineProductPartDAO.getById(connection, orderLine, dependantPart));
-        });
-    }
-
-    public Boolean delete(Long orderLine, Long dependantPart) {
-        return TransactionHandler.startTransaction((connection) -> {
-            return orderLineProductPartDAO.delete(connection, orderLine, dependantPart);
-        });
-    }
-
     public List<Long> insertAll(Connection connection, List<OrderLineProductPartInsertDTO> orderLineProductPartsInsert,
             Long orderLineId,
             List<Long> productIds) {

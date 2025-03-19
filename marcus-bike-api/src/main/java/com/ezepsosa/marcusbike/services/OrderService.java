@@ -74,6 +74,8 @@ public class OrderService {
 
     }
 
+    // The method is not currently utilized, but it may become useful for future
+    // development or feature enhancements.
     public Boolean update(Order order) {
         return TransactionHandler.startTransaction((connection) -> {
             return orderDAO.update(connection, order);

@@ -26,6 +26,8 @@ public class OrderLineProductPartDAO {
     private final String SQL_DETELE_QUERY = "DELETE FROM order_line_product_part WHERE order_line_id = ? AND product_part_id = ?";
     private final String SQL_GET_ALL_BY_PRODUCT_ID_QUERY = "SELECT olpp.*, pp.id AS product_part_id, pp.part_option, pp.is_available, pp.base_price, pp.category, pp.created_at AS product_part_created_at, p.id AS product_id, p.product_name, p.created_at AS product_created_at FROM order_line_product_part olpp JOIN product_part pp ON olpp.product_part_id = pp.id JOIN product p ON pp.product_id = p.id where olpp.order_line_id = ?";
 
+    // The method is not currently utilized, but it may become useful for future
+    // development or feature enhancements.
     public List<OrderLineProductPart> getAll(Connection connection) {
         List<OrderLineProductPart> orderLines = new ArrayList<>();
         try (PreparedStatement pst = connection.prepareStatement(SQL_GET_ALL_QUERY);
@@ -40,6 +42,8 @@ public class OrderLineProductPartDAO {
         return orderLines;
     }
 
+    // The method is not currently utilized, but it may become useful for future
+    // development or feature enhancements.
     public OrderLineProductPart getById(Connection connection, Long orderLineId, Long productPartId) {
         try (PreparedStatement pst = connection.prepareStatement(SQL_GET_ID_QUERY)) {
             pst.setLong(1, orderLineId);
@@ -56,6 +60,8 @@ public class OrderLineProductPartDAO {
         return null;
     }
 
+    // The method is not currently utilized, but it may become useful for future
+    // development or feature enhancements.
     public Boolean insert(Connection connection, OrderLineProductPart orderLineProductPart) {
         try (PreparedStatement pst = connection.prepareStatement(SQL_INSERT_QUERY)) {
             pst.setLong(1, orderLineProductPart.getOrderLine().getId());
@@ -70,6 +76,8 @@ public class OrderLineProductPartDAO {
         return false;
     }
 
+    // The method is not currently utilized, but it may become useful for future
+    // development or feature enhancements.
     public Boolean update(Connection connection, OrderLineProductPart orderLineProductPart) {
         try (PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY)) {
             pst.setDouble(1, orderLineProductPart.getFinalPrice());
@@ -84,6 +92,8 @@ public class OrderLineProductPartDAO {
         return false;
     }
 
+    // The method is not currently utilized, but it may become useful for future
+    // development or feature enhancements.
     public Boolean delete(Connection connection, Long orderLineId, Long productPartId) {
         try (PreparedStatement pst = connection.prepareStatement(SQL_DETELE_QUERY)) {
             pst.setLong(1, orderLineId);

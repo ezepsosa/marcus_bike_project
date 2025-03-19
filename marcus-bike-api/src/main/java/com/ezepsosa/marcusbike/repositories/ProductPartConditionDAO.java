@@ -41,6 +41,8 @@ public class ProductPartConditionDAO {
         return conditions;
     }
 
+    // The method is not currently utilized, but it may become useful for future
+    // development or feature enhancements.
     public ProductPartCondition getById(Connection connection, Long partId, Long dependantPartId) {
         try (PreparedStatement pst = connection.prepareStatement(SQL_GET_ID_QUERY)) {
             pst.setLong(1, partId);
@@ -72,6 +74,8 @@ public class ProductPartConditionDAO {
         return false;
     }
 
+    // The method is not currently utilized, but it may become useful for future
+    // development or feature enhancements.
     public Boolean update(Connection connection, ProductPartCondition productPartCondition) {
         try (PreparedStatement pst = connection.prepareStatement(SQL_UPDATE_QUERY)) {
             pst.setDouble(1, productPartCondition.getPriceAdjustment());
