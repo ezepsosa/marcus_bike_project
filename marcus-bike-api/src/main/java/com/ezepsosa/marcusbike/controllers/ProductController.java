@@ -19,6 +19,7 @@ import io.undertow.server.RoutingHandler;
 import io.undertow.util.Methods;
 import io.undertow.util.StatusCodes;
 
+// Controller that handles product-related API requests.
 public class ProductController implements RouteRegistrar {
 
     private final ProductService productService;
@@ -38,6 +39,7 @@ public class ProductController implements RouteRegistrar {
 
     }
 
+    // Retrieves all products
     public void getAll(HttpServerExchange exchange) {
         logger.info("Received request: GET /products");
         List<ProductDTO> product = productService.getAll();
@@ -46,6 +48,7 @@ public class ProductController implements RouteRegistrar {
 
     }
 
+    // Retrieves a product by its ID
     public void getById(HttpServerExchange exchange) {
         logger.info("Received request: GET /products/{id}");
 
@@ -66,6 +69,7 @@ public class ProductController implements RouteRegistrar {
         JsonResponseUtil.sendJsonResponse(exchange, product);
     }
 
+    // Inserts a new product
     public void insert(HttpServerExchange exchange) {
         logger.info("Received request: POST /products");
 
@@ -100,6 +104,7 @@ public class ProductController implements RouteRegistrar {
 
     }
 
+    // Updates an existing product
     public void update(HttpServerExchange exchage) {
         logger.info("Received request: PUT /products/{id}");
 
@@ -138,6 +143,7 @@ public class ProductController implements RouteRegistrar {
         });
     }
 
+    // Deletes a product by its ID
     public void delete(HttpServerExchange exchange) {
         logger.info("Received request: DELETE /products/{id}");
 

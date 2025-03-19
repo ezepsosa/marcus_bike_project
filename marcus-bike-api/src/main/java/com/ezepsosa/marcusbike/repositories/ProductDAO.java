@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.ezepsosa.marcusbike.models.Product;
 
+// Handles database operations for products, including retrieval, insertion, updating, and deletion.
 public class ProductDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(ProductDAO.class);

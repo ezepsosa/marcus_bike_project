@@ -11,6 +11,9 @@ import com.ezepsosa.marcusbike.mappers.ProductPartConditionMapper;
 import com.ezepsosa.marcusbike.repositories.ProductPartConditionDAO;
 import com.ezepsosa.marcusbike.utils.TransactionHandler;
 
+// Service for managing product part conditions.  
+// Handles retrieval, insertion, deletion, and validation of product part dependencies and price adjustments.
+
 public class ProductPartConditionService {
 
     private final ProductPartConditionDAO productPartConditionDAO;

@@ -3,6 +3,7 @@ package com.ezepsosa.marcusbike.config;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+// Manages database transactions using a thread-local connection.
 public class TransactionManager {
 
     private static final ThreadLocal<Connection> connectionThread = ThreadLocal.withInitial(() -> null);

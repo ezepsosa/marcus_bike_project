@@ -19,6 +19,7 @@ import io.undertow.server.RoutingHandler;
 import io.undertow.util.Methods;
 import io.undertow.util.StatusCodes;
 
+// Controller that handles user-related API requests.
 public class UserController implements RouteRegistrar {
 
     private final UserService userService;
@@ -38,6 +39,7 @@ public class UserController implements RouteRegistrar {
 
     }
 
+    // Retrieves all users
     public void getAll(HttpServerExchange exchange) {
         logger.info("Received request: GET /users");
         List<UserDTO> users = userService.getAll();
@@ -46,6 +48,7 @@ public class UserController implements RouteRegistrar {
 
     }
 
+    // Retrieves a user by ID
     public void getById(HttpServerExchange exchange) {
         logger.info("Received request: GET /users/{id}");
 
@@ -67,6 +70,7 @@ public class UserController implements RouteRegistrar {
         JsonResponseUtil.sendJsonResponse(exchange, user);
     }
 
+    // Inserts a new user
     public void insert(HttpServerExchange exchange) {
         logger.info("Received request: POST /users");
 
@@ -98,6 +102,7 @@ public class UserController implements RouteRegistrar {
 
     }
 
+    // Updates an existing user
     public void update(HttpServerExchange exchage) {
         logger.info("Received request: PUT /users{id}");
 
@@ -133,6 +138,7 @@ public class UserController implements RouteRegistrar {
         });
     }
 
+    // Delete an user given its ID
     public void delete(HttpServerExchange exchange) {
         logger.info("Received request: DELETE /users/{id}");
 

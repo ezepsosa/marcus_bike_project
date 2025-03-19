@@ -14,6 +14,7 @@ import com.ezepsosa.marcusbike.models.OrderLineProductPart;
 import com.ezepsosa.marcusbike.models.ProductPart;
 import com.ezepsosa.marcusbike.models.ProductPartCategory;
 
+// Handles database operations for order line product parts, including retrieval, insertion, updating, and deletion.
 public class OrderLineProductPartDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(OrderLineProductPartDAO.class);

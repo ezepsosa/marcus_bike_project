@@ -23,6 +23,7 @@ import com.ezepsosa.marcusbike.services.ProductPartService;
 import com.ezepsosa.marcusbike.services.ProductService;
 import com.ezepsosa.marcusbike.services.UserService;
 
+// Class that manually manages dependencies for DAOs, services, and controllers.
 public class DependencyInjection {
     // User
     private final UserDAO userDAO = new UserDAO();

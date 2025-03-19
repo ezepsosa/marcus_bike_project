@@ -19,6 +19,7 @@ import io.undertow.server.RoutingHandler;
 import io.undertow.util.Methods;
 import io.undertow.util.StatusCodes;
 
+// Controller that handles product part-related API requests.
 public class ProductPartController implements RouteRegistrar {
 
     private final ProductPartService productPartService;
@@ -42,10 +43,7 @@ public class ProductPartController implements RouteRegistrar {
 
     }
 
-    public void toImplement(HttpServerExchange exchange) {
-
-    }
-
+    // Retrieves all product parts
     public void getAll(HttpServerExchange exchange) {
         logger.info("Received request: GET /productparts");
         List<ProductPartDTO> product = productPartService.getAll();
@@ -54,6 +52,7 @@ public class ProductPartController implements RouteRegistrar {
 
     }
 
+    // Retrieves product parts by product ID
     public void getAllByProduct(HttpServerExchange exchange) {
         logger.info("Received request: GET /products/{id}/productparts");
         Long productId = RequestUtils.getRequestParam(exchange, "id");
@@ -73,6 +72,7 @@ public class ProductPartController implements RouteRegistrar {
 
     }
 
+    // Deletes a product part by its ID
     public void delete(HttpServerExchange exchange) {
         logger.info("Received request: DELETE /productparts/{id}");
 
@@ -93,6 +93,7 @@ public class ProductPartController implements RouteRegistrar {
         JsonResponseUtil.sendJsonResponse(exchange, "Succesfully deleted", StatusCodes.NO_CONTENT);
     }
 
+    // Deletes a product part from a product relationship
     public void deleteFromProduct(HttpServerExchange exchange) {
         logger.info("Received request: DELETE /products/{id}/productparts");
 
@@ -118,6 +119,7 @@ public class ProductPartController implements RouteRegistrar {
         JsonResponseUtil.sendJsonResponse(exchange, "Succesfully deleted", StatusCodes.NO_CONTENT);
     }
 
+    // Inserts a new product part
     public void insert(HttpServerExchange exchange) {
         logger.info("Received request: POST /productparts");
 
@@ -147,6 +149,7 @@ public class ProductPartController implements RouteRegistrar {
 
     }
 
+    // Adds a relation between a product and a product part
     public void addRelationWithProduct(HttpServerExchange exchange) {
         logger.info("Received request: POST /products/{id}/productparts");
 
@@ -172,6 +175,7 @@ public class ProductPartController implements RouteRegistrar {
 
     }
 
+    // Updates an existing product part
     public void update(HttpServerExchange exchage) {
         logger.info("Received request: PUT /productparts/{id}");
 

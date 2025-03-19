@@ -9,6 +9,9 @@ import com.ezepsosa.marcusbike.mappers.ProductMapper;
 import com.ezepsosa.marcusbike.repositories.ProductDAO;
 import com.ezepsosa.marcusbike.utils.TransactionHandler;
 
+// Service for managing products.  
+// Handles retrieval, insertion, updating, and deletion of products.
+
 public class ProductService {
 
     private final ProductDAO productDAO;

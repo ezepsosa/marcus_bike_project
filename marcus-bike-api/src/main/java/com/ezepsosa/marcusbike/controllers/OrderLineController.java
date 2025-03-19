@@ -18,6 +18,7 @@ import io.undertow.server.RoutingHandler;
 import io.undertow.util.Methods;
 import io.undertow.util.StatusCodes;
 
+// Controller that handles order line-related API requests.
 public class OrderLineController implements RouteRegistrar {
     private static final Logger logger = LoggerFactory.getLogger(OrderLineController.class);
     private final OrderLineService orderLineService;
@@ -34,6 +35,7 @@ public class OrderLineController implements RouteRegistrar {
         router.add(Methods.GET, "/orders/{id}/orderlines", this::getOrderLinesById);
     }
 
+    // Retrieves order lines by order ID
     public void getOrderLinesById(HttpServerExchange exchange) {
         logger.info("Received request: GET /orders/{id}/orderlines");
         Long orderId = RequestUtils.getRequestParam(exchange, "id");
@@ -48,6 +50,7 @@ public class OrderLineController implements RouteRegistrar {
 
     }
 
+    // Retrieves product parts by order line ID
     public void getProductPartsById(HttpServerExchange exchange) {
         logger.info("Received request: GET /orderlines/{id}/productparts");
         Long orderLineId = RequestUtils.getRequestParam(exchange, "id");

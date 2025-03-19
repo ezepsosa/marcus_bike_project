@@ -13,6 +13,9 @@ import com.ezepsosa.marcusbike.models.OrderLineProductPart;
 import com.ezepsosa.marcusbike.repositories.OrderLineProductPartDAO;
 import com.ezepsosa.marcusbike.utils.TransactionHandler;
 
+// Service for managing order line product parts.  
+// Handles retrieval, insertion, deletion, and validation of price conditions.
+
 public class OrderLineProductPartService {
 
     private final OrderLineProductPartDAO orderLineProductPartDAO;

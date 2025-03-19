@@ -13,6 +13,8 @@ import com.ezepsosa.marcusbike.models.Order;
 import com.ezepsosa.marcusbike.repositories.OrderDAO;
 import com.ezepsosa.marcusbike.utils.TransactionHandler;
 
+// Service for managing orders.  
+// Handles retrieval, insertion, updating, and deletion of orders, ensuring price validation.
 public class OrderService {
 
     private final OrderDAO orderDAO;

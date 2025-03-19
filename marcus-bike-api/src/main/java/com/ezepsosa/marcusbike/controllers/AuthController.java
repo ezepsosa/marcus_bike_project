@@ -16,6 +16,7 @@ import io.undertow.server.RoutingHandler;
 import io.undertow.util.Methods;
 import io.undertow.util.StatusCodes;
 
+// Controller that handles authentication-related API requests.
 public class AuthController implements RouteRegistrar {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
@@ -33,6 +34,7 @@ public class AuthController implements RouteRegistrar {
         router.add(Methods.POST, "/login", this::authenticate);
     }
 
+    // Handles user authentication and token generation
     public void authenticate(HttpServerExchange exchange) {
         logger.info("Received login request: POST /login");
         exchange.getRequestReceiver().receiveFullBytes((ex, message) -> {

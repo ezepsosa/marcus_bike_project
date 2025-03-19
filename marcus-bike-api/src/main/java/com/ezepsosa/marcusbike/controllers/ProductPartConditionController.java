@@ -18,6 +18,7 @@ import io.undertow.server.RoutingHandler;
 import io.undertow.util.Methods;
 import io.undertow.util.StatusCodes;
 
+// Controller that handles product part condition-related API requests.
 public class ProductPartConditionController implements RouteRegistrar {
 
     private final ProductPartConditionService productPartConditionService;
@@ -35,6 +36,7 @@ public class ProductPartConditionController implements RouteRegistrar {
                 new JwtAuthHandler(this::delete, List.of("ADMIN")));
     }
 
+    // Deletes a product part condition by its IDs
     public void getAll(HttpServerExchange exchange) {
         logger.info("Received request: GET /productpartconditions");
         List<ProductPartConditionDTO> productPartConditions = productPartConditionService.getAll();
@@ -43,6 +45,7 @@ public class ProductPartConditionController implements RouteRegistrar {
 
     }
 
+    // Inserts a new product part condition
     public void delete(HttpServerExchange exchange) {
         logger.info("Received request: DELETE /products/{id}");
 
