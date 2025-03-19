@@ -11,7 +11,14 @@ export interface insertUser {
   email: string;
 }
 
-export interface loginUser {
+export interface LoginUser {
   username: string;
   password: string;
+}
+
+export interface AuthResponseToken {
+  userId: number;
+  username: string;
+  role: string;
+  token: string;
 }

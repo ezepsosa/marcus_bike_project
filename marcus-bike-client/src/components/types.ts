@@ -12,3 +12,7 @@ export interface TextProps {
 export interface TableProps {
   $width?: string;
 }
+
+export interface FormStyleProps {
+  $width?: string;
+}

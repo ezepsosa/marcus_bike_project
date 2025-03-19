@@ -1,3 +1,4 @@
+import { AuthResponseToken, LoginUser } from "./../models/user";
 import axios, { AxiosResponse } from "axios";
 import { Product, ProductInsert } from "../models/products";
 import { ProductPart, ProductPartInsert } from "../models/productPart";
@@ -382,6 +383,29 @@ export async function deleteCondition(
     } else {
       throw {
         message: "An unexpected error occurred deleting a condition",
+        statusText: "Unknown Error",
+        status: 500,
+      };
+    }
+  }
+}
+
+export async function authenticateUser(
+  loginUser: LoginUser
+): Promise<AuthResponseToken> {
+  try {
+    const res = await apiService.post(`login`, loginUser);
+    return res.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw {
+        message: "Failed to authenticate",
+        statusText: error.response?.statusText || "Network error",
+        status: error.response?.status || 500,
+      };
+    } else {
+      throw {
+        message: "An unexpected error occurred while adding a condition",
         statusText: "Unknown Error",
         status: 500,
       };

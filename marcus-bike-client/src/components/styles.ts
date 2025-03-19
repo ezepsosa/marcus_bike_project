@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { fonts, GeneralColors } from "../styles/sharedStyles";
-import { ButtonProps, TableProps, TextProps } from "./types";
+import { ButtonProps, FormStyleProps, TableProps, TextProps } from "./types";
 import { Link } from "react-router-dom";
 import { ErrorMessage, Field, Form } from "formik";
 
@@ -96,11 +96,11 @@ export const SelectContainer = styled.div`
 `;
 
 //Formik
-export const FormikForm = styled(Form)`
+export const FormikForm = styled(Form)<FormStyleProps>`
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
+  width: ${({ $width }) => $width || "100%"};
   height: 100%;
 `;
 
@@ -158,7 +158,6 @@ export const FormContainer = styled.div`
   flex-direction: column;
   padding: 1rem;
   width: 90%;
-  height: 100%;
   padding: 1rem;
 `;
 
