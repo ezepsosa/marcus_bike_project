@@ -10,7 +10,7 @@ import io.undertow.Undertow;
 public class ServerConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(ServerConfig.class);
-    private Undertow server;
+    private final Undertow server;
 
     public ServerConfig() {
         logger.info("Initializing server on port 8080");

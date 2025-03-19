@@ -14,7 +14,7 @@ import io.undertow.server.handlers.PathHandler;
 public class RouterConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(RouterConfig.class);
-    private static DependencyInjection dependencyInjection = new DependencyInjection();
+    private static final DependencyInjection dependencyInjection = new DependencyInjection();
 
     public static HttpHandler getRoutes() {
         logger.info("Inserting routes");
