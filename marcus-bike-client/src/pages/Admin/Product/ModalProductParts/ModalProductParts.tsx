@@ -25,6 +25,9 @@ import {
 } from "../../../../server/api";
 import { Formik } from "formik";
 
+/**
+ * Modal component to manage product parts, allowing to add and remove parts from a product.
+ */
 export const ModalProductParts = ({
   isOpen,
   productId,
@@ -32,6 +35,10 @@ export const ModalProductParts = ({
   closeModal,
 }: ModalProductPartsProps) => {
   const [productParts, setProductParts] = useState<ProductPart[]>([]);
+
+  /**
+   * Fetch product parts when the product ID changes and store them in the state.
+   */
   useEffect(() => {
     async function loadProductParts(id: number) {
       setProductParts(await getPartsFromProduct(id));
@@ -39,6 +46,9 @@ export const ModalProductParts = ({
     if (productId) loadProductParts(productId);
   }, [productId]);
 
+  /**
+   * Async function to delete a part from the product and update the product parts list.
+   */
   async function deletePart(partId: number) {
     try {
       if (productId) await deletePartFromProduct(partId, productId);
@@ -48,6 +58,9 @@ export const ModalProductParts = ({
     }
   }
 
+  /**
+   * Async function to handle submitting a part to add it to the product and update the list.
+   */
   async function handleSubmit(part: ProductPart) {
     try {
       if (productId) await postPartFromProduct(productId, part.id);
@@ -57,6 +70,9 @@ export const ModalProductParts = ({
     }
   }
 
+  /**
+   * Filters available parts that are not already associated with the current product.
+   */
   const availableOptions = parts.filter(
     (part) =>
       !productParts.map((productPart) => productPart.id).includes(part.id)

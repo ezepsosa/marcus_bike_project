@@ -15,12 +15,17 @@ import { Container, Section } from "./styles";
 import { deleteProductPart, getProductParts } from "../../../server/api";
 import { ProductPart } from "../../../models/productPart";
 import { ModalManageProductParts } from "./ModalManageProduct/ModalManageProductParts";
-
+/**
+ * Manages the product parts.
+ * Displays a table of product parts with options to add, edit, or delete.
+ */
 export const ManageProductParts = () => {
   const [productParts, setProductParts] = useState<ProductPart[]>([]);
   const [isProductModalOpen, setIsProductModalOpen] = useState<boolean>(false);
   const [productPartSelected, setProductPartSelected] = useState<ProductPart>();
-
+  /**
+   * Function to load all product parts
+   */
   useEffect(() => {
     async function loadParts() {
       setProductParts(await getProductParts());

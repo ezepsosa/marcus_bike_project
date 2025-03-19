@@ -13,6 +13,7 @@ import {
 
 const API_BASE_URL = `http://localhost:8080/api/`;
 
+// Axios instance setup for API base URL and default headers.
 const apiService = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -20,6 +21,7 @@ const apiService = axios.create({
   },
 });
 
+// Interceptor to attach the token to each request if it exists in localStorage.
 apiService.interceptors.request.use(
   (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
     const token = localStorage.getItem("token");
@@ -33,6 +35,7 @@ apiService.interceptors.request.use(
   }
 );
 
+// Function to fetch products from the API.
 export async function getProducts(): Promise<Product[]> {
   try {
     const res: AxiosResponse<Product[]> = await apiService.get("products");
@@ -54,6 +57,7 @@ export async function getProducts(): Promise<Product[]> {
   }
 }
 
+// Function to fetch product parts for a specific product.
 export async function getProductDetails(id: number): Promise<ProductPart[]> {
   try {
     const res: AxiosResponse<ProductPart[]> = await apiService.get(
@@ -77,6 +81,7 @@ export async function getProductDetails(id: number): Promise<ProductPart[]> {
   }
 }
 
+// Function to fetch all product part conditions.
 export async function getProductPartConditions(): Promise<
   ProductPartCondition[]
 > {
@@ -102,7 +107,7 @@ export async function getProductPartConditions(): Promise<
     }
   }
 }
-
+// Function to fetch product parts for products
 export async function getProductParts(): Promise<ProductPart[]> {
   try {
     const res: AxiosResponse<ProductPart[]> = await apiService.get(
@@ -126,6 +131,7 @@ export async function getProductParts(): Promise<ProductPart[]> {
   }
 }
 
+// Function to fetch product parts for a specific product.
 export async function getPartsFromProduct(id: number): Promise<ProductPart[]> {
   try {
     const res: AxiosResponse<ProductPart[]> = await apiService.get(
@@ -150,6 +156,7 @@ export async function getPartsFromProduct(id: number): Promise<ProductPart[]> {
   }
 }
 
+// Function to delete a product part from the product.
 export async function deletePartFromProduct(
   partId: number,
   productId: number
@@ -173,7 +180,7 @@ export async function deletePartFromProduct(
     }
   }
 }
-
+// Function to add a product part to a product.
 export async function postPartFromProduct(
   productId: number,
   partId: number
@@ -201,7 +208,7 @@ export async function postPartFromProduct(
     }
   }
 }
-
+// Function to add a product
 export async function postProduct(product: ProductInsert): Promise<Product> {
   try {
     const res = await apiService.post(`products`, product);
@@ -222,7 +229,7 @@ export async function postProduct(product: ProductInsert): Promise<Product> {
     }
   }
 }
-
+// Function to update a product
 export async function updateProduct(
   product: ProductInsert,
   id: number
@@ -247,6 +254,7 @@ export async function updateProduct(
   }
 }
 
+// Function to delete a a product
 export async function deleteProduct(id: number): Promise<Product> {
   try {
     const res = await apiService.delete(`products/${id}`);
@@ -267,7 +275,7 @@ export async function deleteProduct(id: number): Promise<Product> {
     }
   }
 }
-
+// Function to delete a product part
 export async function deleteProductPart(id: number): Promise<void> {
   try {
     await apiService.delete(`productparts/${id}`);
@@ -288,6 +296,7 @@ export async function deleteProductPart(id: number): Promise<void> {
   }
 }
 
+// Function to add a product part
 export async function postProductPart(
   productPart: ProductPartInsert
 ): Promise<ProductPart> {
@@ -311,6 +320,7 @@ export async function postProductPart(
   }
 }
 
+// Function to update a product part
 export async function updateProductPart(
   productPart: ProductPartInsert,
   id: number
@@ -335,6 +345,7 @@ export async function updateProductPart(
   }
 }
 
+// Function to fetch all conditions
 export async function getPartsConditions(): Promise<ProductPartCondition[]> {
   try {
     const res: AxiosResponse<ProductPartCondition[]> = await apiService.get(
@@ -359,6 +370,7 @@ export async function getPartsConditions(): Promise<ProductPartCondition[]> {
   }
 }
 
+// Function to add a condition
 export async function postCondition(
   condition: ProductPartConditionInsert
 ): Promise<ProductPartCondition> {
@@ -382,6 +394,7 @@ export async function postCondition(
   }
 }
 
+// Function to delete a condition
 export async function deleteCondition(
   partId: number,
   dependantPartId: number
@@ -407,6 +420,7 @@ export async function deleteCondition(
   }
 }
 
+// Function to authenticate an user
 export async function authenticateUser(
   loginUser: LoginUser
 ): Promise<AuthResponseToken> {

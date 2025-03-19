@@ -21,6 +21,10 @@ import { ProductPart } from "../../../../models/productPart";
 import { ModalManageConditionsProps } from "./types";
 import { ProductPartCondition } from "../../../../models/productPartCondition";
 
+/**
+ * Modal component for adding a new product part condition.
+ * Allows users to select a primary and dependent part, define price adjustments, and set restrictions.
+ */
 export const ModalManageConditions = ({
   isOpen,
   setIsOpen,
@@ -28,6 +32,10 @@ export const ModalManageConditions = ({
   conditions,
   productParts,
 }: ModalManageConditionsProps) => {
+  /**
+   * Handles submission of a new product part condition.
+   * Calls the API and updates the state with the new condition.
+   */
   async function handleNewCondition(values: ProductPartCondition) {
     try {
       if (values) {

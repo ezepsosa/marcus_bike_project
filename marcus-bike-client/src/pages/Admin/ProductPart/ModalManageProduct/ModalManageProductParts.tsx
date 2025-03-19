@@ -29,6 +29,9 @@ export const ModalManageProductParts = ({
   setIsOpen,
   changeProductParts,
 }: ModalManageProductPartsProps) => {
+  /**
+   * Modal for adding or editing product parts.
+   */
   async function handleNewProduc(values: ProductPartInsert) {
     try {
       if (values) {

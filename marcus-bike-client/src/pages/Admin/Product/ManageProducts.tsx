@@ -22,6 +22,9 @@ import { ProductPart } from "../../../models/productPart";
 import { ModalProductParts } from "./ModalProductParts/ModalProductParts";
 import { ModalManageProducts } from "./ModalManageProduct/ModalManageProduct";
 
+/**
+ * ManageProducts component allows viewing, adding, editing, and deleting products.
+ */
 export const ManageProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [productParts, setProductParts] = useState<ProductPart[]>([]);
@@ -30,6 +33,9 @@ export const ManageProducts = () => {
   const [isProductModalOpen, setIsProductModalOpen] = useState<boolean>(false);
   const [productSelected, setProductSelected] = useState<Product>();
 
+  /**
+   * Fetch products and product parts when the component is mounted.
+   */
   useEffect(() => {
     async function loadProducts() {
       setProducts(await getProducts());
@@ -40,7 +46,9 @@ export const ManageProducts = () => {
     loadProducts();
     loadParts();
   }, []);
-
+  /**
+   * Delete the product by calling the deleteProduct API and remove it from the list.
+   */
   async function handleDeleteProduct(id: number) {
     try {
       await deleteProduct(id);
