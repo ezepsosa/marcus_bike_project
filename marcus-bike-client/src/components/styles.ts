@@ -50,7 +50,7 @@ export const PrimaryButton = styled.button<ButtonProps>`
   border-radius: 1rem;
   padding: ${({ $padding }) => $padding || "0.7rem 2rem"};
   color: ${GeneralColors.PrimaryButtonColor};
-  font-family: ${fonts.playFairFontFamily};
+  font-family: ${fonts.robotoFontFamily};
   font-weight: 600;
   font-size: 0.9rem;
   border: 0.0625rem solid ${GeneralColors.borderPrimary};
