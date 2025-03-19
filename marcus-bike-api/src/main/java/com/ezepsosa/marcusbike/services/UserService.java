@@ -7,7 +7,6 @@ import com.ezepsosa.marcusbike.dto.UserDTO;
 import com.ezepsosa.marcusbike.dto.UserInsertDTO;
 import com.ezepsosa.marcusbike.mappers.UserMapper;
 import com.ezepsosa.marcusbike.models.User;
-import com.ezepsosa.marcusbike.models.UserRole;
 import com.ezepsosa.marcusbike.repositories.UserDAO;
 import com.ezepsosa.marcusbike.utils.TransactionHandler;
 
@@ -52,11 +51,10 @@ public class UserService {
         });
 
     }
-    
-    public boolean getUserByUsernamePassword(String username, String password) {
+
+    public UserDTO getUserByUsernamePassword(String username, String password) {
         return TransactionHandler.startTransaction((connection) -> {
-        	User user = userDAO.getUserByUsernamePassword(connection, username, password);
-            return user != null && UserRole.USER.equals(user.getRole());
+            return UserMapper.toDTO(userDAO.getUserByUsernamePassword(connection, username, password));
         });
     }
 

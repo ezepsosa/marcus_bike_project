@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ezepsosa.marcusbike.dto.AuthTokenInsert;
+import com.ezepsosa.marcusbike.dto.UserDTO;
 import com.ezepsosa.marcusbike.routes.RouteRegistrar;
 import com.ezepsosa.marcusbike.services.AuthService;
 import com.ezepsosa.marcusbike.services.UserService;
@@ -35,10 +36,10 @@ public class AuthController implements RouteRegistrar {
         exchange.getRequestReceiver().receiveFullBytes((ex, message) -> {
             try {
                 AuthTokenInsert userToAuthenticate = JsonResponseUtil.parseJson(message, AuthTokenInsert.class);
-                Boolean userExists = userService.getUserByUsernamePassword(userToAuthenticate.username(),
+                UserDTO user = userService.getUserByUsernamePassword(userToAuthenticate.username(),
                         userToAuthenticate.password());
-                if (userExists) {
-                    String token = authservice.login(userToAuthenticate.username(), userToAuthenticate.password());
+                if (user != null) {
+                    String token = authservice.login(user.username(), user.role());
                     logger.warn("Invalid login attempt for user: {}", userToAuthenticate.username());
                     JsonResponseUtil.sendJsonResponse(exchange, token);
                 } else {

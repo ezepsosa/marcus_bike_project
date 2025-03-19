@@ -8,8 +8,8 @@ public class AuthService {
 
     }
 
-    public String login(String username, String password) {
-        return JwtUtil.generateToken(username);
+    public String login(String username, String role) {
+        return JwtUtil.generateToken(username, role);
     }
 
     public static boolean isAuthenticated(String token) {

@@ -4,6 +4,7 @@ import java.security.Key;
 import java.util.Date;
 
 import javax.crypto.SecretKey;
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
@@ -13,8 +14,10 @@ public class JwtUtil {
 
     private static final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 
-    public static String generateToken(String subject) {
-        return Jwts.builder().subject(subject).issuedAt(new Date()).signWith(key).compact();
+    // We are not including an expiration date, but in a production environment,
+    // this is highly necessary
+    public static String generateToken(String username, String role) {
+        return Jwts.builder().subject(username).claim("role", role).issuedAt(new Date()).signWith(key).compact();
     }
 
     public static String getSubjectFromToken(String token) {
