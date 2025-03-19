@@ -19,11 +19,14 @@ import { ProductImage } from "../ProductCatalog/styles";
 import { ProductPartCondition } from "../../../models/productPartCondition";
 import { ErrorMessage, Formik } from "formik";
 import { useUserAuth } from "../../../context/User/useUserAuth";
+import { useCart } from "../../../context/Cart/useCart";
+import { OrderLineInsert } from "../../../models/orderLines";
 
 export const ProductDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { token } = useUserAuth();
+  const { addToCart } = useCart();
 
   const { id, productName, imageUrl } = location.state || {};
   const [parts, setProductParts] = useState<ProductPart[]>([]);
@@ -152,7 +155,19 @@ export const ProductDetail = () => {
             if (errors.length > 0) {
               alert("You cannot add this product with incompatible parts");
             } else {
-              console.log("Sending");
+              const productPartsList = Object.entries(selectedParts).map(
+                ([, value]) => ({
+                  productPart: value,
+                  finalPrice:
+                    parts.find((part) => part.id === value)?.basePrice || 0,
+                })
+              );
+              const orderLine: OrderLineInsert = {
+                productId: id,
+                quantity: 1,
+                orderLineProductParts: productPartsList,
+              };
+              addToCart(orderLine);
             }
           }}
         >

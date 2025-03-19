@@ -1,3 +1,4 @@
+import { useCart } from "../../../context/Cart/useCart";
 import { useUserAuth } from "../../../context/User/useUserAuth";
 import { GeneralColors } from "../../../styles/sharedStyles";
 import { LinkText, SecondaryButton } from "../../styles";
@@ -14,6 +15,7 @@ import { GiShoppingCart } from "react-icons/gi";
 
 export const Navbar = () => {
   const { token, role, logout } = useUserAuth();
+  const { cart } = useCart();
   return (
     <Header>
       <Nav>
@@ -40,8 +42,11 @@ export const Navbar = () => {
               <SecondaryButton onClick={logout}>Logout</SecondaryButton>{" "}
             </LinkText>
           ) : null}
-          <SecondaryButton $padding="0.3rem 0.7rem">
-            <ShoppingCarCounter color="white">0</ShoppingCarCounter>
+          <SecondaryButton
+            $padding="0.3rem 0.7rem"
+            onClick={() => console.log(cart)}
+          >
+            <ShoppingCarCounter color="white">{cart.length}</ShoppingCarCounter>
             <GiShoppingCart
               size="1.2rem"
               color={GeneralColors.textPrimary}

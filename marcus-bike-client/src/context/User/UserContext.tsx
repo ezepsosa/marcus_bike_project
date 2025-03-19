@@ -60,13 +60,9 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
     <UserContext.Provider
       value={{
         token,
-        setToken,
         userId,
-        setUserId,
         role,
-        setRole,
         username,
-        setUsername,
         login,
         logout,
       }}
