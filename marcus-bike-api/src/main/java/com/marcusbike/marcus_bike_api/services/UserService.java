@@ -1,10 +1,12 @@
 package com.marcusbike.marcus_bike_api.services;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.marcusbike.marcus_bike_api.models.User;
+import com.marcusbike.marcus_bike_api.dto.UserDTO;
+import com.marcusbike.marcus_bike_api.mappers.UserMapper;
 import com.marcusbike.marcus_bike_api.repositories.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -15,8 +17,8 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public List<UserDTO> findAll() {
+        return userRepository.findAll().stream().map(user -> UserMapper.toDTO(user)).collect(Collectors.toList());
     }
 
 }
