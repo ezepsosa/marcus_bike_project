@@ -44,7 +44,7 @@ jobs:
 
       - name: Build backend with Maven
         run: |
-          cd backend
+          cd marcus-bike-api
           ./mvnw clean verify
 
   frontend:
@@ -62,6 +62,6 @@ jobs:
 
       - name: Install and build frontend
         run: |
-          cd frontend
+          cd markus-bike-client
           npm install
           npm run build
