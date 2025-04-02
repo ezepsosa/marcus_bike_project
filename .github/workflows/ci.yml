@@ -45,7 +45,7 @@ jobs:
       - name: Build backend with Maven
         run: |
           cd marcus-bike-api
-          ./mvnw clean verify
+          mvn clean verify
 
   frontend:
     name: Frontend - Build
