@@ -62,6 +62,6 @@ jobs:
 
       - name: Install and build frontend
         run: |
-          cd markus-bike-client
+          cd marcus-bike-client
           npm install
           npm run build
