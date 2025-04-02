@@ -2,9 +2,9 @@ name: CI - Learnify Fullstack
 
 on:
   push:
-    branches: [main]
+    branches: [init/modern-config]
   pull_request:
-    branches: [main]
+    branches: [init/modern-config]
 
 jobs:
   backend:
