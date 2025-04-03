@@ -1,4 +1,4 @@
-package com.marcusbike.marcus_bike_api.dto;
+package com.marcusbike.marcus_bike_api.dto.response;
 
 import com.marcusbike.marcus_bike_api.models.Role;
 
@@ -7,7 +7,7 @@ import lombok.Value;
 
 @Value
 @Builder
-public class UserDTO {
+public class UserResponseDTO {
     Long id;
     String username;
     String password;
