@@ -17,11 +17,12 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
 
-    public AuthResponse login(String username, String password) {
+    public AuthResponse login(String email, String password) {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-            String token = jwtService.generateRefreshToken(username);
-            return AuthResponse.builder().token(token).build();
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+            String token = jwtService.generateToken(email);
+            String refreshToken = jwtService.generateRefreshToken(email);
+            return AuthResponse.builder().token(token).RefreshToken(refreshToken).build();
         } catch (AuthenticationException e) {
             throw new RuntimeException("Invalid credentials");
 
