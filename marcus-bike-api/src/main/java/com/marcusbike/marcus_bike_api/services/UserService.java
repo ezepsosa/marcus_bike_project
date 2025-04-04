@@ -21,4 +21,8 @@ public class UserService {
         return userRepository.findAll().stream().map(user -> UserMapper.toDTO(user)).collect(Collectors.toList());
     }
 
+    public UserResponseDTO findByEmail(String email) {
+        return UserMapper.toDTO(userRepository.findByEmail(email).orElse(null));
+    }
+
 }
