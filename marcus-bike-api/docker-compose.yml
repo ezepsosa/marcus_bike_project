@@ -26,11 +26,28 @@ services:
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: admin
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      
       JWT_SECRET: rX93PzTnV6kLq2YwFj8HdUmXsAeN0g5B7hsb652GSusgkmds9
       JWT_EXPIRATION: 7200000
       JWT_REFRESH_EXPIRATION: 604800000
     command: ["java", "-jar", "app.jar"]
+
+    
+  flyway:
+    image: flyway/flyway:10
+    container_name: marcus_flyway
+    depends_on:
+      - db
+    command: -connectRetries=10 migrate
+    volumes:
+      - ./src/main/resources/db/migration:/flyway/sql
+    environment:
+      FLYWAY_URL: jdbc:postgresql://db:5432/marcusbike
+      FLYWAY_USER: postgres
+      FLYWAY_PASSWORD: admin
+      FLYWAY_SCHEMAS: public
+      FLYWAY_BASELINE_ON_MIGRATE: true
+      FLYWAY_CLEAN_DISABLED: false
+
 
 volumes:
   pgdata:
