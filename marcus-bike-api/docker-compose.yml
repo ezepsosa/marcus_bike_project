@@ -26,7 +26,7 @@ services:
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: admin
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      JWT_SECRET: rX93PzTnV6kLq2YwFj8HdUmXsAeN0g5B7hsb652GSusgkmds9
+      JWT_SECRET: rX93PzTnV6kLq2YwFj8HdUmXsAeN0g5B7hsb652GSusgkmds9rX93PzTnV6kLq2YwFj8HdUmXsAeN0g5B7hsb652GSusgkmds9
       JWT_EXPIRATION: 7200000
       JWT_REFRESH_EXPIRATION: 604800000
     command: ["java", "-jar", "app.jar"]
