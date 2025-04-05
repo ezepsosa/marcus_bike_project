@@ -1,14 +1,16 @@
 package com.marcusbike.marcus_bike_api.exceptions;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import com.marcusbike.marcus_bike_api.dto.exceptions.FieldValidationError;
+import com.marcusbike.marcus_bike_api.dto.exceptions.ValidationErrorResponse;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -27,14 +29,11 @@ public class GlobalExceptionHandler {
 
     // Handling field exceptions from jakarta
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationError(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach(error -> {
-            String field = ((FieldError) error).getField();
-            String msg = error.getDefaultMessage();
-            errors.put(field, msg);
-        });
-        return ResponseEntity.badRequest().body(errors);
+    public ResponseEntity<ValidationErrorResponse> handleValidationError(MethodArgumentNotValidException ex) {
+        List<FieldValidationError> errors = ex.getBindingResult().getFieldErrors().stream()
+                .map(error -> new FieldValidationError(error.getField(), error.getDefaultMessage()))
+                .collect(Collectors.toList());
+        return ResponseEntity.badRequest().body(new ValidationErrorResponse(errors));
     }
 
     // Exception in any other case
