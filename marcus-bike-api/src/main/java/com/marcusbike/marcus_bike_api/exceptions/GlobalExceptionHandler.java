@@ -1,10 +1,13 @@
 package com.marcusbike.marcus_bike_api.exceptions;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -27,11 +30,23 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 
+    // Exception in case username is already in use
+    @ExceptionHandler(UsernameAlreadyUsedException.class)
+    public ResponseEntity<String> handleUsername(UsernameAlreadyUsedException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+
     // Handling field exceptions from jakarta
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ValidationErrorResponse> handleValidationError(MethodArgumentNotValidException ex) {
-        List<FieldValidationError> errors = ex.getBindingResult().getFieldErrors().stream()
-                .map(error -> new FieldValidationError(error.getField(), error.getDefaultMessage()))
+        Map<String, String> uniqueFieldErrors = new LinkedHashMap<>();
+
+        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+            uniqueFieldErrors.putIfAbsent(error.getField(), error.getDefaultMessage());
+        }
+
+        List<FieldValidationError> errors = uniqueFieldErrors.entrySet().stream()
+                .map(error -> new FieldValidationError(error.getKey(), error.getValue()))
                 .collect(Collectors.toList());
         return ResponseEntity.badRequest().body(new ValidationErrorResponse(errors));
     }
