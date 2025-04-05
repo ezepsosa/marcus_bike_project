@@ -1,20 +1,20 @@
 package com.marcusbike.marcus_bike_api.controllers;
 
-import java.util.List;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.marcusbike.marcus_bike_api.dto.request.AuthRequest;
+import com.marcusbike.marcus_bike_api.dto.request.UserInsertDTO;
 import com.marcusbike.marcus_bike_api.dto.response.AuthResponse;
-import com.marcusbike.marcus_bike_api.models.User;
-import com.marcusbike.marcus_bike_api.repositories.UserRepository;
 import com.marcusbike.marcus_bike_api.security.JwtProperties;
 import com.marcusbike.marcus_bike_api.services.AuthService;
+import com.marcusbike.marcus_bike_api.validations.ValidationSequence;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -28,31 +28,39 @@ public class AuthController {
 
     private final AuthService authService;
     private final JwtProperties jwtProperties;
+    private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody AuthRequest request, HttpServletResponse response) {
-        try {
-            AuthResponse authResponse = authService.login(request.getEmail(), request.getPassword());
+    public ResponseEntity<String> login(@RequestBody @Validated(ValidationSequence.class) AuthRequest request,
+            HttpServletResponse response) {
+        logger.info("Authenticating user");
+        AuthResponse authResponse = authService.login(request.getEmail(), request.getPassword());
 
-            // Access Cookie
-            ResponseCookie accessCookie = ResponseCookie.from("access_token", authResponse.getToken()).httpOnly(false)
-                    .secure(true).sameSite("Lax").path("/").maxAge(jwtProperties.getExpiration()).build();
+        logger.info("Credentials valid. Setting authentication cookies");
+        // Access Cookie
+        ResponseCookie accessCookie = ResponseCookie.from("access_token", authResponse.getToken()).httpOnly(false)
+                .secure(true).sameSite("Lax").path("/").maxAge(jwtProperties.getExpiration()).build();
 
-            // Refresh cookie
-            ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", authResponse.getRefreshToken())
-                    .httpOnly(false).secure(true).sameSite("Lax").path("/").maxAge(jwtProperties.getRefreshExpiration())
-                    .build();
+        // Refresh cookie
+        ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", authResponse.getRefreshToken())
+                .httpOnly(false).secure(true).sameSite("Lax").path("/").maxAge(jwtProperties.getRefreshExpiration())
+                .build();
 
-            response.addHeader("Set-Cookie", accessCookie.toString());
-            response.addHeader("Set-Cookie", refreshCookie.toString());
+        response.addHeader("Set-Cookie", accessCookie.toString());
+        response.addHeader("Set-Cookie", refreshCookie.toString());
 
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Succesfully authenticated");
+        logger.info("User authenticated successfully");
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Succesfully authenticated");
 
-        } catch (Exception e) {
-            System.err.println(e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+    }
 
+    @PostMapping("/register")
+    public ResponseEntity<String> postMethodName(
+            @RequestBody @Validated(ValidationSequence.class) UserInsertDTO registerRequest,
+            HttpServletResponse response) {
+        logger.info("Registering user");
+        authService.register(registerRequest);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Succesfully registered");
     }
 
 }

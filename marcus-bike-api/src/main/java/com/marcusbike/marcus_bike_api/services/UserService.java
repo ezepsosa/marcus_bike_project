@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.marcusbike.marcus_bike_api.dto.request.UserInsertDTO;
 import com.marcusbike.marcus_bike_api.dto.response.UserResponseDTO;
 import com.marcusbike.marcus_bike_api.mappers.UserMapper;
 import com.marcusbike.marcus_bike_api.repositories.UserRepository;
