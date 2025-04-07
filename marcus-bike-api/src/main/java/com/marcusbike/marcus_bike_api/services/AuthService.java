@@ -41,7 +41,7 @@ public class AuthService {
         String token = jwtService.generateToken(email);
         String refreshToken = jwtService.generateRefreshToken(email);
         logger.info("Successfully authentication for user with email {}:", email);
-        return AuthResponse.builder().token(token).RefreshToken(refreshToken).build();
+        return AuthResponse.builder().token(token).refreshToken(refreshToken).build();
     }
 
     public void register(UserInsertDTO registerRequest) {
