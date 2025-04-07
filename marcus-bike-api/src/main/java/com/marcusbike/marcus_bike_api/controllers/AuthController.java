@@ -60,7 +60,7 @@ public class AuthController {
             HttpServletResponse response) {
         logger.info("Registering user");
         authService.register(registerRequest);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Succesfully registered");
+        return ResponseEntity.status(HttpStatus.CREATED).body("Succesfully registered");
     }
 
 }
