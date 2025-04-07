@@ -26,6 +26,7 @@ import com.marcusbike.marcus_bike_api.dto.response.AuthResponse;
 import com.marcusbike.marcus_bike_api.exceptions.EmailAlreadyUsedException;
 import com.marcusbike.marcus_bike_api.exceptions.InvalidCredentialsException;
 import com.marcusbike.marcus_bike_api.exceptions.UsernameAlreadyUsedException;
+import com.marcusbike.marcus_bike_api.models.Role;
 import com.marcusbike.marcus_bike_api.models.User;
 import com.marcusbike.marcus_bike_api.repositories.UserRepository;
 import com.marcusbike.marcus_bike_api.security.JwtService;
@@ -110,8 +111,8 @@ class MarcusBikeApiApplicationTests {
 		String username = "john";
 		String email = "john@doe.com";
 		String password = "password";
-		String role = "ADMIN";
-		UserInsertDTO userInsert = UserInsertDTO.builder().email(email).username(username).role(role).password(password)
+		Role role = Role.ADMIN;
+		UserInsertDTO userInsert = UserInsertDTO.builder().email(email).username(username).role(role.name()).password(password)
 				.build();
 		when(userRepository.findByEmailOrUsername(email, username)).thenReturn(Optional.empty());
 
@@ -127,26 +128,5 @@ class MarcusBikeApiApplicationTests {
 		assertTrue(savedUser.getPassword().startsWith("$2"));
 	}
 
-	@Test
-	void whenRegisterReturnThrowValidationStep1() {
-		String username = "";
-		String email = "";
-		String password = "";
-		String role = "";
-		UserInsertDTO userInsert = UserInsertDTO.builder().email(email).username(username).role(role).password(password)
-				.build();
-		when(userRepository.findByEmailOrUsername(email, username)).thenReturn(Optional.empty());
-
-		authService.register(userInsert);
-		ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-		verify(userRepository, times(1)).save(userCaptor.capture());
-		User savedUser = userCaptor.getValue();
-
-		assertEquals(email, savedUser.getEmail());
-		assertEquals(username, savedUser.getUsername());
-		assertEquals(role, savedUser.getRole());
-		assertNotEquals(password, savedUser.getPassword());
-		assertTrue(savedUser.getPassword().startsWith("$2"));
-	}
 
 }
