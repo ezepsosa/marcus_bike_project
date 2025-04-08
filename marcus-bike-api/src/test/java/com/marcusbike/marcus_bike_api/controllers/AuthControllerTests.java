@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -60,7 +61,7 @@ public class AuthControllerTests {
 				.thenReturn(AuthResponse.builder().token(token).refreshToken(refreshToken).build());
 
 		mockMvc.perform(post("/auth/login").contentType(MediaType.APPLICATION_JSON).content(body))
-				.andExpect(status().isAccepted());
+				.andExpect(status().isAccepted()).andExpect(header().exists("Set-Cookie"));
 	}
 
 	@Test

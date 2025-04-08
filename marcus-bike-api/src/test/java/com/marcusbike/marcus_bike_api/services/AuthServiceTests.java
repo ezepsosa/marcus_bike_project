@@ -31,6 +31,7 @@ import com.marcusbike.marcus_bike_api.models.User;
 import com.marcusbike.marcus_bike_api.repositories.UserRepository;
 import com.marcusbike.marcus_bike_api.security.JwtService;
 
+
 @ExtendWith(MockitoExtension.class)
 class MarcusBikeApiApplicationTests {
 
@@ -112,7 +113,8 @@ class MarcusBikeApiApplicationTests {
 		String email = "john@doe.com";
 		String password = "password";
 		Role role = Role.ADMIN;
-		UserInsertDTO userInsert = UserInsertDTO.builder().email(email).username(username).role(role.name()).password(password)
+		UserInsertDTO userInsert = UserInsertDTO.builder().email(email).username(username).role(role.name())
+				.password(password)
 				.build();
 		when(userRepository.findByEmailOrUsername(email, username)).thenReturn(Optional.empty());
 
@@ -127,6 +129,5 @@ class MarcusBikeApiApplicationTests {
 		assertNotEquals(password, savedUser.getPassword());
 		assertTrue(savedUser.getPassword().startsWith("$2"));
 	}
-
 
 }
