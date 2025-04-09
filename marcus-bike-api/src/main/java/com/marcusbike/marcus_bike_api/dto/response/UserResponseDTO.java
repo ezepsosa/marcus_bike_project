@@ -1,7 +1,5 @@
 package com.marcusbike.marcus_bike_api.dto.response;
 
-import com.marcusbike.marcus_bike_api.models.Role;
-
 import lombok.Builder;
 import lombok.Value;
 
@@ -9,7 +7,8 @@ import lombok.Value;
 @Builder
 public class UserResponseDTO {
     Long id;
+    String email;
     String username;
     String password;
-    Role role;
+    String role;
 }
