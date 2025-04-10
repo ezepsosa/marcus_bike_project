@@ -5,9 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.marcusbike.marcus_bike_api.dto.request.UserInsertDTO;
 import com.marcusbike.marcus_bike_api.dto.response.AuthResponse;
@@ -32,7 +32,7 @@ public class AuthService {
 
     public AuthResponse login(String email, String password) {
         try {
-            logger.info("Trying to authenticate user with email: ", email);
+            logger.info("Trying to authenticate user with email: {}", email);
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
         } catch (AuthenticationException e) {
             logger.warn("Failed authentication for user:", email);
@@ -41,12 +41,13 @@ public class AuthService {
         }
         String token = jwtService.generateToken(email);
         String refreshToken = jwtService.generateRefreshToken(email);
-        logger.info("Successfully authentication for user with email:", email);
-        return AuthResponse.builder().token(token).RefreshToken(refreshToken).build();
+        logger.info("Successfully authentication for user with email {}:", email);
+        return AuthResponse.builder().token(token).refreshToken(refreshToken).build();
     }
-
+    
+    @Transactional
     public void register(UserInsertDTO registerRequest) {
-        logger.info("Checking if email is already in use", registerRequest.getEmail());
+        logger.info("Checking if email {} is already in use", registerRequest.getEmail());
         User user = userRepository.findByEmailOrUsername(registerRequest.getEmail(), registerRequest.getUsername())
                 .orElse(null);
         if (user != null) {

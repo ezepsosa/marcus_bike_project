@@ -5,7 +5,6 @@ import com.marcusbike.marcus_bike_api.validations.Step2;
 import com.marcusbike.marcus_bike_api.validations.Step3;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -21,7 +20,7 @@ public class UserInsertDTO {
     String username;
 
     @NotBlank(message = "Email field is mandatory", groups = Step1.class)
-    @Size(max = 255, message = "Email field can't have more than 255 characters", groups = Step2.class)
+    @Size(max = 254, message = "Email field can't have more than 254 characters", groups = Step2.class)
     @Email(message = "Email format is not correct", groups = Step3.class)
     String email;
 

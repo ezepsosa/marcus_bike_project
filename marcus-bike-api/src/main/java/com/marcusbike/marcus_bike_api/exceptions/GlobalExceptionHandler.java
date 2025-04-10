@@ -20,20 +20,20 @@ public class GlobalExceptionHandler {
 
     // Exception for login phase with invalid credentials
     @ExceptionHandler(InvalidCredentialsException.class)
-    public ResponseEntity<String> handleInvalidCredentials(InvalidCredentialsException ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+    public ResponseEntity<Map<String, String>> handleInvalidCredentials(InvalidCredentialsException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", ex.getMessage()));
     }
 
     // Exception in case email is already in use
     @ExceptionHandler(EmailAlreadyUsedException.class)
-    public ResponseEntity<String> handleEmail(EmailAlreadyUsedException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    public ResponseEntity<Map<String, String>> handleEmail(EmailAlreadyUsedException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", ex.getMessage()));
     }
 
     // Exception in case username is already in use
     @ExceptionHandler(UsernameAlreadyUsedException.class)
-    public ResponseEntity<String> handleUsername(UsernameAlreadyUsedException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    public ResponseEntity<Map<String, String>> handleUsername(UsernameAlreadyUsedException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", ex.getMessage()));
     }
 
     // Handling field exceptions from jakarta
@@ -53,7 +53,7 @@ public class GlobalExceptionHandler {
 
     // Exception in any other case
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleAnyOtherException(Exception ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+    public ResponseEntity<Map<String, String>> handleAnyOtherException(Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", ex.getMessage()));
     }
 }
