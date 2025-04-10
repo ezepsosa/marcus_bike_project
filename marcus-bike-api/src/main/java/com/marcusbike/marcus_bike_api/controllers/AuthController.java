@@ -34,22 +34,22 @@ public class AuthController {
     public ResponseEntity<String> login(@RequestBody @Validated(ValidationSequence.class) AuthRequest request,
             HttpServletResponse response) {
         logger.info("Authenticating user");
-        AuthResponse authResponse = authService.login(request.getEmail(), request.getPassword());
+        AuthResponse authResponse = this.authService.login(request.getEmail(), request.getPassword());
 
         logger.info("Credentials valid. Setting authentication cookies");
         // Access Cookie
         ResponseCookie accessCookie = ResponseCookie.from("access_token", authResponse.getToken()).httpOnly(false)
-                .secure(true).sameSite("Lax").path("/").maxAge(jwtProperties.getExpiration()).build();
+                .secure(true).sameSite("Lax").path("/").maxAge(this.jwtProperties.getExpiration()).build();
 
         // Refresh cookie
         ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", authResponse.getRefreshToken())
-                .httpOnly(false).secure(true).sameSite("Lax").path("/").maxAge(jwtProperties.getRefreshExpiration())
+                .httpOnly(false).secure(true).sameSite("Lax").path("/").maxAge(this.jwtProperties.getRefreshExpiration())
                 .build();
 
         response.addHeader("Set-Cookie", accessCookie.toString());
         response.addHeader("Set-Cookie", refreshCookie.toString());
 
-        logger.info("User authenticated successfully");
+        this.logger.info("User authenticated successfully");
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("Succesfully authenticated");
 
     }
@@ -58,8 +58,8 @@ public class AuthController {
     public ResponseEntity<String> postMethodName(
             @RequestBody @Validated(ValidationSequence.class) UserInsertDTO registerRequest,
             HttpServletResponse response) {
-        logger.info("Registering user");
-        authService.register(registerRequest);
+        this.logger.info("Registering user");
+        this.authService.register(registerRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body("Succesfully registered");
     }
 

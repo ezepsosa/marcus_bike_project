@@ -32,41 +32,41 @@ public class AuthService {
 
     public AuthResponse login(String email, String password) {
         try {
-            logger.info("Trying to authenticate user with email: {}", email);
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+            this.logger.info("Trying to authenticate user with email: {}", email);
+            this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
         } catch (AuthenticationException e) {
             logger.warn("Failed authentication for user:", email);
             throw new InvalidCredentialsException("Invalid credentials");
 
         }
-        String token = jwtService.generateToken(email);
-        String refreshToken = jwtService.generateRefreshToken(email);
-        logger.info("Successfully authentication for user with email {}:", email);
+        String token = this.jwtService.generateToken(email);
+        String refreshToken = this.jwtService.generateRefreshToken(email);
+        this.logger.info("Successfully authentication for user with email {}:", email);
         return AuthResponse.builder().token(token).refreshToken(refreshToken).build();
     }
     
     @Transactional
     public void register(UserInsertDTO registerRequest) {
-        logger.info("Checking if email {} is already in use", registerRequest.getEmail());
-        User user = userRepository.findByEmailOrUsername(registerRequest.getEmail(), registerRequest.getUsername())
+        this.logger.info("Checking if email {} is already in use", registerRequest.getEmail());
+        User user = this.userRepository.findByEmailOrUsername(registerRequest.getEmail(), registerRequest.getUsername())
                 .orElse(null);
         if (user != null) {
             if (user.getEmail().equals(registerRequest.getEmail())) {
-                logger.warn("Email is already in use");
+                this.logger.warn("Email is already in use");
                 throw new EmailAlreadyUsedException("The email is already in use");
             } else {
-                logger.warn("Username is already in use");
+                this.logger.warn("Username is already in use");
                 throw new UsernameAlreadyUsedException("The username is already in use");
             }
         }
-        logger.info("Email validated. Checking if username is already in use.");
+        this.logger.info("Email validated. Checking if username is already in use.");
 
         String hashPassword = new BCryptPasswordEncoder().encode(registerRequest.getPassword());
         Role role = Role.valueOf(registerRequest.getRole().toUpperCase());
         user = User.builder().email(registerRequest.getEmail()).username(registerRequest.getUsername())
                 .password(hashPassword).role(role).build();
 
-        userRepository.save(user);
+        this.userRepository.save(user);
     }
 
 }

@@ -21,7 +21,7 @@ public class UserController {
 
     @GetMapping
     public List<UserResponseDTO> getMethodName() {
-        return userService.findAll();
+        return this.userService.findAll();
     }
 
 }

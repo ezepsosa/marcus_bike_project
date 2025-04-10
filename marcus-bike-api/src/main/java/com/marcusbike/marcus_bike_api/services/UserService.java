@@ -18,11 +18,11 @@ public class UserService {
     private final UserRepository userRepository;
 
     public List<UserResponseDTO> findAll() {
-        return userRepository.findAll().stream().map(user -> UserMapper.toDTO(user)).collect(Collectors.toList());
+        return this.userRepository.findAll().stream().map(user -> UserMapper.toDTO(user)).collect(Collectors.toList());
     }
 
     public UserResponseDTO findByEmail(String email) {
-        return UserMapper.toDTO(userRepository.findByEmail(email).orElse(null));
+        return UserMapper.toDTO(this.userRepository.findByEmail(email).orElse(null));
     }
 
 }

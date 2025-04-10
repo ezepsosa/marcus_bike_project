@@ -23,7 +23,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     // Even if we are using the method loadByUsername, we are actually login by
     // email
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
+        User user =	this.userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         return org.springframework.security.core.userdetails.User.withUsername(user.getEmail())
