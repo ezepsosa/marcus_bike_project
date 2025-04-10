@@ -7,6 +7,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.marcusbike.marcus_bike_api.dto.request.UserInsertDTO;
 import com.marcusbike.marcus_bike_api.dto.response.AuthResponse;
@@ -43,7 +44,8 @@ public class AuthService {
         logger.info("Successfully authentication for user with email {}:", email);
         return AuthResponse.builder().token(token).refreshToken(refreshToken).build();
     }
-
+    
+    @Transactional
     public void register(UserInsertDTO registerRequest) {
         logger.info("Checking if email {} is already in use", registerRequest.getEmail());
         User user = userRepository.findByEmailOrUsername(registerRequest.getEmail(), registerRequest.getUsername())
