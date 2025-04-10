@@ -42,7 +42,7 @@ jobs:
         run: |
           docker run --rm \
             --network=host \
-            -v ${{ github.workspace }}/src/test/resources/db/migration:/flyway/sql \
+            -v ${{ github.workspace }}/marcus-bike-api/src/test/resources/db/migration:/flyway/sql \
             flyway/flyway:10 \
             -url=jdbc:postgresql://localhost:5432/${{ secrets.POSTGRES_TEST_DB }} \
             -user=${{ secrets.POSTGRES_TEST_USER }} \
@@ -51,7 +51,9 @@ jobs:
             migrate || exit 1
 
       - name: Build and test with Maven
-        run: mvn clean verify
+        run: |
+          cd marcus-bike-api
+          mvn clean verify
         env:
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/${{ secrets.POSTGRES_TEST_DB }}
           SPRING_DATASOURCE_USERNAME: ${{ secrets.POSTGRES_TEST_USER }}
