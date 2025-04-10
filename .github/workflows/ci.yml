@@ -1,4 +1,4 @@
-name: Build and Test with Docker
+name: CI - Learnify Fullstack
 
 on:
   push:
@@ -10,7 +10,8 @@ env:
   SPRING_PROFILES_ACTIVE: test
 
 jobs:
-  build-test:
+  backend:
+    name: Backend - Build & Test
     runs-on: ubuntu-latest
 
     services:
@@ -50,7 +51,7 @@ jobs:
             -connectRetries=10 \
             migrate || exit 1
 
-      - name: Build and test with Maven
+      - name: Build and test backend with Maven
         run: |
           cd marcus-bike-api
           mvn clean verify
@@ -61,3 +62,22 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           JWT_EXPIRATION: 7200000
           JWT_REFRESH_EXPIRATION: 604800000
+
+  frontend:
+    name: Frontend - Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install and build frontend
+        run: |
+          cd marcus-bike-client
+          npm install
+          npm run build
