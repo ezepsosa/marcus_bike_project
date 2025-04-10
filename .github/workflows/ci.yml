@@ -51,7 +51,7 @@ jobs:
             migrate || exit 1
 
       - name: Build and test with Maven
-        run: ./mvnw clean verify
+        run: mvn clean verify
         env:
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/${{ secrets.POSTGRES_TEST_DB }}
           SPRING_DATASOURCE_USERNAME: ${{ secrets.POSTGRES_TEST_USER }}
