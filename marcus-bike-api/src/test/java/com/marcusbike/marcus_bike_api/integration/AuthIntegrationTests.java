@@ -33,33 +33,35 @@ public class AuthIntegrationTests {
 
 	@Autowired
 	private MockMvc mockMvc;
-	
+
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
-    @Autowired
-    private Flyway flyway;
-	
-    @BeforeEach
-    void resetDatabase() {
-        flyway.clean();
-        flyway.migrate();
-    }
-	
+
+	@Autowired
+	private Flyway flyway;
+
+	@BeforeEach
+	void resetDatabase() {
+		flyway.clean();
+		flyway.migrate();
+	}
+
 	@Test
 	void shouldRegisterUserSuccessfully() throws Exception {
 		String email = "email@test.com";
 		String password = "Password123#;";
 		String username = "username";
 		String role = "USER";
-		
-		UserInsertDTO userDTO = UserInsertDTO.builder().email(email).username(username).password(password).role(role).build();
+
+		UserInsertDTO userDTO = UserInsertDTO.builder().email(email).username(username).password(password).role(role)
+				.build();
 		String body = new ObjectMapper().writeValueAsString(userDTO);
-		mockMvc.perform(post("/auth/register").contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isCreated());
-		
+		mockMvc.perform(post("/auth/register").contentType(MediaType.APPLICATION_JSON).content(body))
+				.andExpect(status().isCreated());
+
 		User user = userRepository.findByEmail(email).orElseThrow();
 		assertNotNull(user);
 		assertEquals(email, user.getEmail());
@@ -67,20 +69,19 @@ public class AuthIntegrationTests {
 		assertEquals(role, user.getRole().name());
 		assertTrue(passwordEncoder.matches(password, user.getPassword()));
 	}
-	
+
 	@Test
 	void shouldLoginUserSuccessfully() throws Exception {
 		String email = "admin@test.com";
 		String password = "password";
 		AuthRequest authRequest = AuthRequest.builder().email(email).password(password).build();
 		String body = new ObjectMapper().writeValueAsString(authRequest);
-		
+
 		System.out.println(userRepository.findAll());
 		mockMvc.perform(post("/auth/login").contentType(MediaType.APPLICATION_JSON).content(body))
 				.andExpect(status().isAccepted())
 				.andExpect(header().stringValues("Set-Cookie", hasItems(containsString("access_token="),
-				containsString("refresh_token="))));
+						containsString("refresh_token="))));
 	}
-	
-}
 
+}
