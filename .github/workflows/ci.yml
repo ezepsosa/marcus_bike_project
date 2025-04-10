@@ -1,36 +1,32 @@
-name: CI - Learnify Fullstack
+name: Build and Test with Docker
 
 on:
   push:
-    branches: ["*"]
+    branches: [ main ]
   pull_request:
-    branches: [init/modern-config]
+    branches: [ main ]
+
+env:
+  SPRING_PROFILES_ACTIVE: test
 
 jobs:
-  backend:
-    name: Backend - Build and Test
+  build-test:
     runs-on: ubuntu-latest
 
     services:
       postgres:
         image: postgres:16
+        env:
+          POSTGRES_DB: ${{ secrets.POSTGRES_TEST_DB }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_TEST_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_TEST_PASSWORD }}
         ports:
           - 5432:5432
-        env:
-          POSTGRES_DB: marcusbike
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: admin
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
-    env:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/marcusbike
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: admin
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
 
     steps:
       - name: Checkout repo
@@ -39,29 +35,27 @@ jobs:
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
           distribution: 'temurin'
+          java-version: '17'
 
-      - name: Build backend with Maven
+      - name: Run Flyway migrations
         run: |
-          cd marcus-bike-api
-          mvn clean verify
+          docker run --rm \
+            --network=host \
+            -v ${{ github.workspace }}/src/test/resources/db/migration:/flyway/sql \
+            flyway/flyway:10 \
+            -url=jdbc:postgresql://localhost:5432/${{ secrets.POSTGRES_TEST_DB }} \
+            -user=${{ secrets.POSTGRES_TEST_USER }} \
+            -password=${{ secrets.POSTGRES_TEST_PASSWORD }} \
+            -connectRetries=10 \
+            migrate || exit 1
 
-  frontend:
-    name: Frontend - Build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
-
-      - name: Install and build frontend
-        run: |
-          cd marcus-bike-client
-          npm install
-          npm run build
+      - name: Build and test with Maven
+        run: ./mvnw clean verify
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/${{ secrets.POSTGRES_TEST_DB }}
+          SPRING_DATASOURCE_USERNAME: ${{ secrets.POSTGRES_TEST_USER }}
+          SPRING_DATASOURCE_PASSWORD: ${{ secrets.POSTGRES_TEST_PASSWORD }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          JWT_EXPIRATION: 7200000
+          JWT_REFRESH_EXPIRATION: 604800000

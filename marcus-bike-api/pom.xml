@@ -148,13 +148,6 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.flywaydb</groupId>
-				<artifactId>flyway-maven-plugin</artifactId>
-				<configuration>
-					<configFiles>src/main/resources/flyway.conf</configFiles>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
