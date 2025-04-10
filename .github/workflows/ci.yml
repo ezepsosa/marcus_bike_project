@@ -2,9 +2,9 @@ name: Build and Test with Docker
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "**" ]
   pull_request:
-    branches: [ main ]
+    branches: [ "**" ]
 
 env:
   SPRING_PROFILES_ACTIVE: test
