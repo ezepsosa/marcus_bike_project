@@ -3,6 +3,7 @@ package com.marcusbike.marcus_bike_api.models;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -41,10 +42,10 @@ public class Product {
 	@Column(nullable = false)
 	private String imageUrl;
 
-	@OneToMany
-	private List<ProductPart> productParts;
-
 	@Column(nullable = false)
 	@Builder.Default
 	private LocalDateTime createdAt = LocalDateTime.now();
+	
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ProductPartAssociation> productPartAssociations;
 }
