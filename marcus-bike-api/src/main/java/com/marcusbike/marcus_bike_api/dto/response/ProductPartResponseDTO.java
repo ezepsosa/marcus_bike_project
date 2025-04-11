@@ -10,8 +10,8 @@ import lombok.Value;
 public class ProductPartResponseDTO {
 	private Long id;
 	private String partOption;
-	private Double stock = 0.0;
+	private Double stock;
 	private Double basePrice;
 	private String category;
-	private LocalDateTime createdAt = LocalDateTime.now();
+	private LocalDateTime createdAt;
 }

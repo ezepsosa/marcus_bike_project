@@ -15,6 +15,6 @@ public class ProductResponseDTO {
 	private String material;
 	private String imageUrl;
 	private List<ProductPartResponseDTO> productParts;
-	private LocalDateTime createdAt = LocalDateTime.now();
+	private LocalDateTime createdAt;
 
 }
