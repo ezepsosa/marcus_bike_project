@@ -10,9 +10,9 @@ CREATE TABLE app_user (
 create table product_part(
     id SERIAL PRIMARY KEY,
     part_option VARCHAR(100) NOT NULL,
-    stock DOUBLE NOT NULL DEFAULT 0,
+    stock DECIMAL NOT NULL DEFAULT 0,
     base_price DECIMAL(10,2) NOT NULL,
-    category product_part_category NOT NULL,
+    category VARCHAR(20) NOT NULL CHECK (category IN ('FRAME_TYPE', 'FRAME_FINISH', 'WHEEL_TYPE', 'RIM_COLOUR', 'CHAIN_TYPE')),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 
