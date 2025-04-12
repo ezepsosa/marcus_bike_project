@@ -9,6 +9,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ValidationErrorResponse {
     private final String message = "Validation failed";
-    private final List<FieldValidationError> errors;
+    private final List<ErrorResponse> errors;
 
 }
