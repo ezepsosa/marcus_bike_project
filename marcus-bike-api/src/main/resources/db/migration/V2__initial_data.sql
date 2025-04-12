@@ -1,6 +1,5 @@
-INSERT INTO app_user (username, email, password_hash, user_role) VALUES
-('marcus', 'marcus@admin.com', '$2a$10$1m13lkQRaaXDsydETdfHQ.SupMIfe2wHSyGRQO2XrDrvacJonHA7C', 'ADMIN'),
-('john', 'johndoe@example.com', '$2a$10$1m13lkQRaaXDsydETdfHQ.SupMIfe2wHSyGRQO2XrDrvacJonHA7C', 'USER');
+INSERT INTO app_user (username, email, password_hash, user_role) VALUES 
+('admin', 'admin@test.com', '$2a$10$1m13lkQRaaXDsydETdfHQ.SupMIfe2wHSyGRQO2XrDrvacJonHA7C', 'ADMIN');
 
 INSERT INTO product (product_name, brand, category, material, image_url) VALUES
 ('Trek Domane AL 2', 'Trek', 'Ruta', 'Aluminio', 'Trek Domane AL 2.png'),
@@ -25,3 +24,30 @@ INSERT INTO product_part (part_option, stock, base_price, category) VALUES
 ('Single-speed chain', 0, 15, 'CHAIN_TYPE'),
 ('8-speed chain', 22, 15, 'CHAIN_TYPE');
 
+INSERT INTO product_part_association (product_id, product_part_id) VALUES
+(1, 1),
+(1, 2),
+(1, 3),
+(1, 4),
+(1, 5),
+(1, 6),
+(1, 7),
+(1, 8),
+(1, 9),
+(1, 10),
+(1, 11),
+(1, 12),
+(1, 13),
+(2, 1),
+(2, 2),
+(2, 3),
+(2, 4),
+(2, 5),
+(2, 6),
+(2, 7),
+(2, 8),
+(2, 9),
+(2, 10),
+(2, 11),
+(2, 12),
+(2, 13);

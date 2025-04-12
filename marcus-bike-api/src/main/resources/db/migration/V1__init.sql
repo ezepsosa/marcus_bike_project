@@ -25,3 +25,14 @@ CREATE TABLE product (
     image_url TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE product_part_association (
+    id SERIAL PRIMARY KEY,
+    product_id BIGINT NOT NULL,
+    product_part_id BIGINT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE CASCADE,
+    CONSTRAINT fk_product_part FOREIGN KEY (product_part_id) REFERENCES product_part(id) ON DELETE CASCADE,
+    CONSTRAINT uq_product_part UNIQUE (product_id, product_part_id)
+);
+
