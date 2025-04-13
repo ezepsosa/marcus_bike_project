@@ -13,7 +13,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.marcusbike.marcus_bike_api.exceptions.JwtInvalidException;
 import com.marcusbike.marcus_bike_api.repositories.UserRepository;
 
 import jakarta.servlet.FilterChain;
