@@ -1,7 +1,6 @@
 package com.marcusbike.marcus_bike_api.services;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.dao.DataIntegrityViolationException;
