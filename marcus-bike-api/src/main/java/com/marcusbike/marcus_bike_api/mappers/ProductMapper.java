@@ -32,4 +32,13 @@ public class ProductMapper {
 				.imageUrl(productDTO.getImageUrl()).build();
 	}
 
+	public static Product updateEntityFromDTO(Product product, ProductRequestDTO productDTO) {
+		product.setCategory(productDTO.getCategory());
+		product.setImageUrl(productDTO.getImageUrl());
+		product.setMaterial(productDTO.getMaterial());
+		product.setProductName(productDTO.getProductName());
+		product.setBrand(productDTO.getBrand());
+		return product;
+	}
+
 }

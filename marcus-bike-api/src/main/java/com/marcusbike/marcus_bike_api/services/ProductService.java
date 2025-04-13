@@ -1,6 +1,7 @@
 package com.marcusbike.marcus_bike_api.services;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.dao.DataIntegrityViolationException;
@@ -57,6 +58,17 @@ public class ProductService {
 			throw new DataIntegrityViolationException(
 					"Product cannot be deleted because it is being used by another entity");
 		}
+	}
+
+	@Transactional
+	public ProductSummaryResponseDTO update(ProductRequestDTO productDTO, Long id) {
+		Product product = this.productRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
+				String.format("No product found with id: %d, changes cannot be aplied", id)));
+		
+		product = ProductMapper.updateEntityFromDTO(product, productDTO);
+		
+		Product res = this.productRepository.save(product);
+		return ProductMapper.toSummaryDTO(res);
 	}
 
 }
